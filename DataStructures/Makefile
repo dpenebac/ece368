@@ -2,14 +2,14 @@ WARNING = -Wall -Wshadow --pedantic
 GCC = gcc #edit to apply gcc commands
 
 #stack
-SRCS = stack.c #files to run in 
-OBJS = $(SRCS:%.c=%.o)
-
-s: $(OBJS)
+stackSRCS = stack.c #files to run in 
+OBJS = $(stackSRCS:%.c=%.o)
+stack: $(OBJS)
 	$(GCC) $(OBJS) -o stack
-
-testStack: stack
+stackR: stack
 	./stack
+
+
 
 clean: # remove all machine generated files
 	rm -f pa1 *.o output?

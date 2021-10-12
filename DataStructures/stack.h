@@ -3,13 +3,16 @@
 
 #define STACKSIZE 100
 
-struct stack
+typedef struct _stack
 {
-    int Top;
-    int Items[STACKSIZE];
-};
+    int top;
+    int items[STACKSIZE];
+} stack;
 
-//functions
-
+void init(stack*);
+int isEmpty(stack*);
+int top(stack*);
+int pop(stack*);
+int push(stack*);
 
 #endif
