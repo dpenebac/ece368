@@ -1,0 +1,7 @@
+#!/bin/bash
+gcc -O3 -std=c99 -Wall -Wshadow -Wvla -pedantic shell_array.c shell_list.c pa1.c -o pa1
+pa1 pa1_examples/examples/15.b pa1_examples/examples/15AT.b
+diff pa1_examples/examples/15AT.b pa1_examples/examples/15sa.b
+
+  assign out[14] = in[14] | out[15];
+  assign out[13] = in[13] | out[14];

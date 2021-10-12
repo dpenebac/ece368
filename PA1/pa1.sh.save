@@ -1,0 +1,6 @@
+#!/bin/bash
+gcc -O3 -std=c99 -Wall -Wshadow -Wvla -pedantic shell_array.c shell_list.c pa1.c -o pa1
+pa1 pa1_examples/examples/15.b pa1_examples/examples/15AT.b
+diff gcc -O3 -std=c99 -Wall -Wshadow -Wvla -pedantic shell_array.c shell_list.c pa1.c -o pa1
+pa1.exe pa1_examples/examples/15sa.b pa1_examples/examples/15ANS.b
+
