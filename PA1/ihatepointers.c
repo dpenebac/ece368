@@ -20,6 +20,7 @@ void main()
     printf("%d\n",t);
     f1(&t);
     printf("%d", t);
+    //gei
 
     return;
 }
