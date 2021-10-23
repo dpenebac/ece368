@@ -109,6 +109,7 @@ Tnode* top(Lnode* root)
 void traversal(Tnode* node)
 {
     Lnode *stack = NULL;
+    //Tnode *head = node; //original head of node used for postorder
 
     do 
     {
@@ -116,6 +117,7 @@ void traversal(Tnode* node)
         {
             push(&stack, node);
             //printf("%d ", node->info); //preorder
+            //if (node->left == NULL) {printf("%d ", node->info);} //postorder
             node = node->left;
         }
 
@@ -123,17 +125,16 @@ void traversal(Tnode* node)
         while (stack && node == (top(stack))->right)
         {
             node = pop(&stack);
-            printf("%d ", node->info);
         }
         
         //if (stack && node) {printf("%d ", stack->node->info);} //inorder
-
-        //if (!stack) {printf("%d ", node->info);} //last popped value (7)
+        
+        //if (!stack) {printf("%d ", node->info);} //last popped value (7) postorder
 
         if (stack)
         {
             node = (top(stack))->right;
-            //printf("%d ", node->info); //every right value
+            //if (stack->node != head && stack->node->left && stack->node->right) {printf("%d ", stack->node->info);} //postorder
         }
 
     } while(!isEmpty(stack));
