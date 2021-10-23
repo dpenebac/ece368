@@ -123,13 +123,17 @@ void traversal(Tnode* node)
         while (stack && node == (top(stack))->right)
         {
             node = pop(&stack);
+            printf("%d ", node->info);
         }
         
         //if (stack && node) {printf("%d ", stack->node->info);} //inorder
 
+        //if (!stack) {printf("%d ", node->info);} //last popped value (7)
+
         if (stack)
         {
             node = (top(stack))->right;
+            //printf("%d ", node->info); //every right value
         }
 
     } while(!isEmpty(stack));
