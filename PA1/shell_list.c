@@ -307,6 +307,11 @@ int List_Save_To_File(char *filename, Node *list)
     FILE* output = fopen(filename, "wb");
     int count = 0;
 
+    if (output == NULL)
+    {
+        return(NULL);
+    }
+
     while(list != NULL)
     {
         fwrite(list, sizeof(list), 1, output);

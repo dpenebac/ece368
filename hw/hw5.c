@@ -115,15 +115,18 @@ void traversal(Tnode* node)
         while(node != NULL)
         {
             push(&stack, node);
+            //printf("%d ", node->info); //preorder
             node = node->left;
-            //printf("%d ", stack->node->info); //preorder traversal
         }
 
+        //printf("%d ", stack->node->info); //inorder
         while (stack && node == (top(stack))->right)
         {
             node = pop(&stack);
         }
         
+        //if (stack && node) {printf("%d ", stack->node->info);} //inorder
+
         if (stack)
         {
             node = (top(stack))->right;
