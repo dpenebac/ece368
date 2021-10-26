@@ -135,23 +135,23 @@ Tnode* insert(Tnode* node, int val)
 
     int balance = getbalance(node);
 
-    if (balance > 1 && val < node->left->key) //left left
+    if (balance > 1 && val <= node->left->key) //left left
     {
         return(CR(node));
     }
 
-    if (balance < -1 && val > node->right->key) //right right
+    if (balance < -1 && val >= node->right->key) //right right
     {
         return(CCR(node));
     }
 
-    if (balance > 1 && val > node->left->key) //left right
-    {   
+    if (balance > 1 && val >= node->left->key) //left right
+    {
         node->left = CCR(node->left);
         return(CR(node));
     }
 
-    if (balance < -1 && val < node->right->key) //right left
+    if (balance < -1 && val <= node->right->key) //right left
     {
         node->right = CR(node->right);
         return(CCR(node));
@@ -184,8 +184,10 @@ Tnode* buildBST(char* filename)
         fread(&charBuffer, sizeof(charBuffer), 1, ops);
         if (charBuffer == 'i') //insert
         {
-            printf("intBuffer: %d\n", intBuffer);
+            printf("Insert: %d\n", intBuffer);
             bst = insert(bst, intBuffer);
+            preorder(bst);
+            printf("\n");
         }
         else //delete
         {
@@ -200,6 +202,7 @@ Tnode* buildBST(char* filename)
     postorder(bst);
     fprintf(stdout, "\n");
     fclose(ops);
+    freeBST(bst);
     return(bst);
 }
 
@@ -216,7 +219,6 @@ int main(int argc, char* argv[])
     if (strcmp(argv[1], "-b") == 0) //if argv[1] == -b
     {
         Tnode* bst = buildBST(argv[2]);
-        freeBST(bst);
     }
     
     //evaluating a height balanced BST
@@ -224,7 +226,6 @@ int main(int argc, char* argv[])
     {
         printf("godb\n");
     }
-
 
     return EXIT_SUCCESS;
 }
