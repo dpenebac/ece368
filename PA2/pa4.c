@@ -6,11 +6,13 @@ Tnode* newNode(int);
 Tnode* CR(Tnode*);
 Tnode* CCR(Tnode*);
 Tnode* insert(Tnode*, int);
+Tnode* delete(Tnode*, int);
 Tnode* buildBST(char*);
 
 int height(Tnode*);
 int max(int, int);
 int getbalance(Tnode*);
+Tnode* inorderPredessesor(Tnode*);
 void freeBST(Tnode*);
 
 int height(Tnode* n)
@@ -35,6 +37,18 @@ int getbalance(Tnode* n)
     }
     return(height(n->left) - height(n->right));
 }
+
+Tnode* inorderPredessesor(Tnode* n)
+{
+    Tnode* current = n;
+
+    while (current->left != NULL)
+    {
+        current = current->left;
+    }
+
+    return(current);
+} 
 
 void freeBST(Tnode* node)
 {
@@ -104,7 +118,7 @@ Tnode* CR(Tnode* y)
 Tnode* CCR(Tnode* x)
 {
     Tnode* y = x->right;
-    Tnode* t = y->left; //segfault
+    Tnode* t = y->left;
 
     y->left = x;
     x->right = t;
@@ -160,6 +174,84 @@ Tnode* insert(Tnode* node, int val)
     return(node);
 }
 
+int balance_cal(Tnode* root) {
+  // use post-order to calculate the height.
+  if (root == NULL) {
+    return -1;
+  }
+  int lh = balance_cal(root -> left);
+  int rh = balance_cal(root -> right);
+  int bal = lh - rh;
+  root -> height = bal;
+  // the height is the maximum value among lh and rh
+  return(lh >= rh) ? (lh + 1) : (rh + 1);
+}
+
+Tnode* delete(Tnode* root, int val)
+{
+  if (root == NULL) {
+    return NULL;
+  }
+  if (val < root -> key) {
+    root -> left = delete(root->left, val);
+  }
+  else if (val > root -> key) {
+    root -> right = delete(root->right, val);
+  }
+  // now val == root -> key.
+  else {
+    // root has no child.
+    if ((root -> left == NULL) && (root -> right == NULL)) {
+      free(root);
+      return NULL;
+    }
+    if (root -> left == NULL) {
+      // there must be right child.
+      Tnode* rc = root -> right;
+      free(root);
+      return rc;
+    }
+    if (root -> right == NULL) {
+      // must have left child.
+      Tnode* lc = root -> left;
+      free(root);
+      return lc;
+    }
+    // root has both left and right child.
+    // find the largest one in left sub-tree.
+    Tnode* p = root -> left;
+    while (p -> right != NULL) {
+      p = p -> right;
+    }
+    // pass its value to root and delete it.
+    root -> key = p -> key;
+    p -> key = val;
+    root -> left = delete(root->left, val);
+  }
+  // update height and balance.
+  // may need balance at each level.
+  balance_cal(root);
+  int bal = root -> height;
+  int lb = (root -> left == NULL) ? 0: root -> left -> height;
+  int rb = (root -> right == NULL) ? 0: root -> right -> height;
+  if ((bal > 1) && (lb >= 0)) {
+      printf("hi\n");
+    return CR(root);
+  }
+  if ((bal < -1) && (rb <= 0)) {
+    return CCR(root);
+  }
+  if ((bal > 1) && (lb < 0)) {
+    root -> left = CCR(root -> left);
+    return CR(root);
+  }
+  if ((bal < -1) && (rb > 0)) {
+    root -> right = CR(root -> right);
+    return CCR(root);
+  }
+  return root;
+}
+
 Tnode* buildBST(char* filename)
 {
     Tnode* bst = NULL;
@@ -186,12 +278,11 @@ Tnode* buildBST(char* filename)
         {
             printf("Insert: %d\n", intBuffer);
             bst = insert(bst, intBuffer);
-            preorder(bst);
-            printf("\n");
         }
         else //delete
         {
-            printf("DELETE\n");
+            printf("Delete: %d\n", intBuffer);
+            bst = delete(bst, intBuffer);
         }
     }
 

@@ -18,7 +18,7 @@ test3: pa4
 	./pa4 -b examples/ops3.b
 
 testmem: pa4
-	valgrind ./pa4 -b examples/ops3.b
+	valgrind --leak-check=full ./pa4 -b examples/ops3.b
 
 clean: # remove all machine generated files
 	rm -f pa4 *.o output?
