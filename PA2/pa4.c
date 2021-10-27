@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "hbt.h"
+
 Tnode* newNode(int);
 Tnode* CR(Tnode*);
 Tnode* CCR(Tnode*);
@@ -121,7 +122,6 @@ Tnode* insert(Tnode* node, int val)
 
     //balance
     Tnode* temp = NULL;
-    calcHeight(node); //calc "balance"
 
     int leftHeight = 0;
     int rightHeight = 0;
@@ -147,13 +147,13 @@ Tnode* insert(Tnode* node, int val)
     }
     else if ((node->height > 1) && (leftHeight < 0)) //left right
     {
-        node->left = CCR(node -> left);
+        node->left = CCR(node->left);
         temp = CR(node);
         return(temp);
     }
     else if ((node->height < -1) && (rightHeight > 0)) //right left
     {
-        node->right = CR(node -> right);
+        node->right = CR(node->right);
         temp = CCR(node);
         return(temp);
     }
@@ -216,8 +216,6 @@ Tnode* delete(Tnode* root, int key)
     }
     
     //balance
-    calcHeight(root); //calc "balance"
-
     int leftHeight = 0;
     int rightHeight = 0;
     if (root->left != NULL)
@@ -242,13 +240,13 @@ Tnode* delete(Tnode* root, int key)
     }
     else if ((root->height > 1) && (leftHeight < 0)) //left right
     {
-        root->left = CCR(root -> left);
+        root->left = CCR(root->left);
         temp = CR(root);
         return(temp);
     }
     else if ((root->height < -1) && (rightHeight > 0)) //right left
     {
-        root->right = CR(root -> right);
+        root->right = CR(root->right);
         temp = CCR(root);
         return(temp);
     }
@@ -290,6 +288,7 @@ Tnode* buildBST(char* filename)
             //printf("Delete: %d\n", intBuffer);
             bst = delete(bst, intBuffer);
         }
+        calcHeight(bst); //find balance of tree and put them in height
     }
 
     preorder(bst);
@@ -298,6 +297,7 @@ Tnode* buildBST(char* filename)
     fprintf(stdout, "\n");
     postorder(bst);
     fprintf(stdout, "\n");
+
     fclose(ops);
     freeBST(bst);
     return(bst);
