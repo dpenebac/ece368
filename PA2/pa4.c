@@ -94,8 +94,6 @@ Tnode* CR(Tnode* old)
     Tnode* new = old->left;
     old->left = new->right;
     new->right = old;
-
-    printf("CR on %d\n", old->key);
     return(new); 
 }
 
@@ -104,8 +102,6 @@ Tnode* CCR(Tnode* old)
     Tnode* new = old->right;
     old->right = new->left;
     new->left = old;
-
-    //printf("CRR on %d new Val: %d\n", old->key, new->key);
     return(new);
 }
 
@@ -351,21 +347,32 @@ int main(int argc, char* argv[])
     {
         int i;
         int rotate = 0;
-        for (i = 1; i < 1000000; i++)
+        for (i = 1; i < 10; i++)
         {
             bst = insert(bst, i, &rotate);
             rotate = 0;
-            
         }
 
-        /*
+        fprintf(stdout, "\n");
         preorder(bst);
         fprintf(stdout, "\n");
         inorder(bst);
         fprintf(stdout, "\n");
         postorder(bst);
         fprintf(stdout, "\n");
-        */
+
+        for (i = 0; i < 10; i++)
+        {
+            bst = delete(bst, i);
+            fprintf(stdout, "\n");
+            preorder(bst);
+            fprintf(stdout, "\n");
+            inorder(bst);
+            fprintf(stdout, "\n");
+            postorder(bst);
+            fprintf(stdout, "\n");
+        }
+        
     }
 
     return EXIT_SUCCESS;
