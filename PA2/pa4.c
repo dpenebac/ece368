@@ -6,7 +6,7 @@
 Tnode* newNode(int);
 Tnode* CR(Tnode*);
 Tnode* CCR(Tnode*);
-Tnode* insert(Tnode*, int);
+Tnode* insert(Tnode*, int, int*);
 Tnode* delete(Tnode*, int);
 Tnode* buildBST(char*);
 
@@ -15,7 +15,7 @@ int height(Tnode*);
 int max(int, int);
 void freeBST(Tnode*);
 
-int calcHeight(Tnode* node)
+int calcHeight(Tnode* node) //calc balance of each node
 {
     int left;
     int right;
@@ -85,7 +85,7 @@ Tnode* newNode(int val)
     new->key = val;
     new->left = NULL;
     new->right = NULL;
-    new->height = 1;
+    new->height = 0;
     return(new);
 }
 
@@ -95,6 +95,7 @@ Tnode* CR(Tnode* old)
     old->left = new->right;
     new->right = old;
 
+    printf("CR on %d\n", old->key);
     return(new); 
 }
 
@@ -103,9 +104,12 @@ Tnode* CCR(Tnode* old)
     Tnode* new = old->right;
     old->right = new->left;
     new->left = old;
+
+    //printf("CRR on %d new Val: %d\n", old->key, new->key);
+    return(new);
 }
 
-Tnode* insert(Tnode* node, int val)
+Tnode* insert(Tnode* node, int val, int *rotate) //rotate is 0 or 1
 {
     if (node == NULL)
     {
@@ -113,22 +117,35 @@ Tnode* insert(Tnode* node, int val)
     }
     if (val <= node->key) //duplicate keys go left
     {
-        node->left = insert(node->left, val);
+        node->left = insert(node->left, val, rotate);
+        node->height += 1;
     }
     else if (val > node->key)
     {
-        node->right = insert(node->right, val);
+        node->right = insert(node->right, val, rotate);
+        node->height -= 1;
     }
 
     //balance
     Tnode* temp = NULL;
-    if (node->height != 0)
+    //calcHeight(node);
+    if (*rotate != 0) 
     {
-        calcHeight(node); 
-        //printf("node: key: %d height: %d\n\n", node->key, node->height);
+        //printf("\nold: node: %d height: %d", node->key, node->height);
+        //calcHeight(node); //this is still checking root every single time for all of them, maybe just update + or - 1 based on left or right
+        
+        //probably realllllly buggy
+        if (node->height <= -1)
+        {
+            node->height += 1;
+        }
+        else if (node->height >= 1)
+        {
+            node->height -= 1;
+        }
+        
+        //printf("\nnew: node: %d height: %d\n\n", node->key, node->height);
     }
-    //need to only update calc height if rotated doing it everytime is O(n^2)
-    //only need to do it on first pass to calculate initial values, and then whenever something is rotated
 
     int leftHeight = 0;
     int rightHeight = 0;
@@ -145,29 +162,25 @@ Tnode* insert(Tnode* node, int val)
     if ((node->height > 1) && (leftHeight > 0)) //left left
     {
         temp = CR(node);
-        return(temp);
     }
     else if ((node->height < -1) && (rightHeight < 0)) //right right
     {
         temp = CCR(node);
-        return(temp);
     }
     else if ((node->height > 1) && (leftHeight < 0)) //left right
     {
         node->left = CCR(node->left);
         temp = CR(node);
-        return(temp);
     }
     else if ((node->height < -1) && (rightHeight > 0)) //right left
     {
         node->right = CR(node->right);
         temp = CCR(node);
-        return(temp);
     }
-    else //balanced
-    {
-        return node;
-    }
+
+    if (temp != NULL) {*rotate = 1;}
+    calcHeight(temp); //calculate balance after rotations
+    return (temp != NULL) ? temp : node; //return temp if temp if not node
 }
 
 Tnode* delete(Tnode* root, int key)
@@ -282,6 +295,7 @@ Tnode* buildBST(char* filename)
     int intBuffer;
     char charBuffer;
     int i;
+    int rotate = 0; //bool if rotate
 
     for (i = 0; i < size; i++)
     {
@@ -289,8 +303,9 @@ Tnode* buildBST(char* filename)
         fread(&charBuffer, sizeof(charBuffer), 1, ops);
         if (charBuffer == 'i') //insert
         {
-            //printf("Insert: %d\n\n", intBuffer);
-            bst = insert(bst, intBuffer);
+            //printf("\nInsert: %d\n", intBuffer);
+            bst = insert(bst, intBuffer, &rotate);
+            rotate = 0;
         }
         else //delete
         {
@@ -313,7 +328,7 @@ Tnode* buildBST(char* filename)
 
 int main(int argc, char* argv[])
 {
-    if (argc > 3)
+    if (argc > 3) //CHANGE THIS
     {
         return EXIT_FAILURE;
     }
@@ -323,13 +338,34 @@ int main(int argc, char* argv[])
     //building height-balanced BST
     if (strcmp(argv[1], "-b") == 0) //if argv[1] == -b
     {
-        Tnode* bst = buildBST(argv[2]);
+        bst = buildBST(argv[2]);
     }
     
     //evaluating a height balanced BST
     else if (strcmp(argv[1], "-e") == 0) //if argv[1] == -e
     {
         printf("godb\n");
+    }
+
+    else if (strcmp(argv[1], "-t") == 0)
+    {
+        int i;
+        int rotate = 0;
+        for (i = 1; i < 16; i++)
+        {
+            bst = insert(bst, i, &rotate);
+            rotate = 0;
+            
+        }
+
+        /*
+        preorder(bst);
+        fprintf(stdout, "\n");
+        inorder(bst);
+        fprintf(stdout, "\n");
+        postorder(bst);
+        fprintf(stdout, "\n");
+        */
     }
 
     return EXIT_SUCCESS;

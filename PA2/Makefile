@@ -17,6 +17,9 @@ test2: pa4
 test3: pa4
 	./pa4 -b examples/ops3.b
 
+make testt: pa4
+	./pa4 -t
+
 testmem: pa4
 	valgrind --leak-check=full ./pa4 -b examples/ops3.b
 
