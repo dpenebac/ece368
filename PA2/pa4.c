@@ -15,7 +15,7 @@ int getbalance(Tnode*);
 Tnode* inorderPredessesor(Tnode*);
 void freeBST(Tnode*);
 
-int calcHeight(Tnode* root)
+int calcHeight(Tnode* root) //"balance"
 {
     if (root == NULL)
     {
@@ -25,7 +25,7 @@ int calcHeight(Tnode* root)
     int left = calcHeight(root->left);
     int right = calcHeight(root->right);
     root->height = left - right;
-    return(max(left, right));
+    return(max(left, right) + 1);
 }
 
 int height(Tnode* n)
@@ -148,7 +148,6 @@ Tnode* insert(Tnode* node, int val)
     {
         return(newNode(val));
     }
-
     if (val <= node->key) //duplicate keys go left
     {
         node->left = insert(node->left, val);
@@ -158,33 +157,49 @@ Tnode* insert(Tnode* node, int val)
         node->right = insert(node->right, val);
     }
 
-    node->height = 1 + max(height(node->left), height(node->right));
+    //balance
+    Tnode* temp = NULL;
+    Tnode* root = node;
+    calcHeight(root); //calc "balance"
 
-    int balance = getbalance(node);
-
-    if (balance > 1 && val <= node->left->key) //left left
+    int leftHeight = 0;
+    int rightHeight = 0;
+    if (root->left != NULL)
     {
-        return(CR(node));
+        leftHeight = root->left->height;
     }
 
-    if (balance < -1 && val >= node->right->key) //right right
+    if (root->right != NULL)
     {
-        return(CCR(node));
+        rightHeight = root->right->height;
     }
-
-    if (balance > 1 && val >= node->left->key) //left right
+    
+    if ((root->height > 1) && (leftHeight > 0)) //left left
     {
-        node->left = CCR(node->left);
-        return(CR(node));
+        temp = CR(root);
+        return(temp);
     }
-
-    if (balance < -1 && val <= node->right->key) //right left
+    else if ((root->height < -1) && (rightHeight < 0)) //right right
     {
-        node->right = CR(node->right);
-        return(CCR(node));
+        temp = CCR(root);
+        return(temp);
     }
-
-    return(node);
+    else if ((root->height > 1) && (leftHeight < 0)) //left right
+    {
+        root->left = CCR(root -> left);
+        temp = CR(root);
+        return(temp);
+    }
+    else if ((root->height < -1) && (rightHeight > 0)) //right left
+    {
+        root->right = CR(root -> right);
+        temp = CCR(root);
+        return(temp);
+    }
+    else //balanced
+    {
+        return root;
+    }
 }
 
 Tnode* delete(Tnode* root, int key)
@@ -230,13 +245,18 @@ Tnode* delete(Tnode* root, int key)
             {
                 temp = temp->right;
             }
+
+            //swap inorder successor with target node
             root->key = temp->key;
             temp->key = key;
+
             root->left = delete(root->left, key);
         }
     }
-    calcHeight(root);
-    int height = root -> height;
+    
+    //balance
+    calcHeight(root); //calc "balance"
+
     int leftHeight = 0;
     int rightHeight = 0;
     if (root->left != NULL)
@@ -249,29 +269,29 @@ Tnode* delete(Tnode* root, int key)
         rightHeight = root->right->height;
     }
     
-    if ((height > 1) && (leftHeight >= 0))
+    if ((root->height > 1) && (leftHeight > 0)) //left left
     {
         temp = CR(root);
         return(temp);
     }
-    else if ((height < -1) && (rightHeight <= 0)) 
+    else if ((root->height < -1) && (rightHeight < 0)) //right right
     {
         temp = CCR(root);
         return(temp);
     }
-    else if ((height > 1) && (leftHeight < 0)) 
+    else if ((root->height > 1) && (leftHeight < 0)) //left right
     {
         root->left = CCR(root -> left);
         temp = CR(root);
         return(temp);
     }
-    else if ((height < -1) && (rightHeight > 0)) 
+    else if ((root->height < -1) && (rightHeight > 0)) //right left
     {
         root->right = CR(root -> right);
         temp = CCR(root);
         return(temp);
     }
-    else //no rotations needed
+    else //balanced
     {
         return root;
     }
