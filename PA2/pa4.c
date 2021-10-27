@@ -122,7 +122,11 @@ Tnode* insert(Tnode* node, int val)
 
     //balance
     Tnode* temp = NULL;
-    if (node->height != 0){calcHeight(node); /*printf("node: key: %d height: %d\n\n", node->key, node->height);*/} //calc "balance"
+    if (node->height != 0)
+    {
+        calcHeight(node); 
+        //printf("node: key: %d height: %d\n\n", node->key, node->height);
+    }
     //need to only update calc height if rotated doing it everytime is O(n^2)
     //only need to do it on first pass to calculate initial values, and then whenever something is rotated
 
@@ -285,7 +289,7 @@ Tnode* buildBST(char* filename)
         fread(&charBuffer, sizeof(charBuffer), 1, ops);
         if (charBuffer == 'i') //insert
         {
-            printf("Insert: %d\n\n", intBuffer);
+            //printf("Insert: %d\n\n", intBuffer);
             bst = insert(bst, intBuffer);
         }
         else //delete
