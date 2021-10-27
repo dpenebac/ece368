@@ -15,6 +15,19 @@ int getbalance(Tnode*);
 Tnode* inorderPredessesor(Tnode*);
 void freeBST(Tnode*);
 
+int calcHeight(Tnode* root)
+{
+    if (root == NULL)
+    {
+        return(-1);
+    }
+
+    int left = calcHeight(root->left);
+    int right = calcHeight(root->right);
+    root->height = left - right;
+    return(max(left, right));
+}
+
 int height(Tnode* n)
 {
     if (n == NULL)
@@ -174,82 +187,94 @@ Tnode* insert(Tnode* node, int val)
     return(node);
 }
 
-int balance_cal(Tnode* root) {
-  // use post-order to calculate the height.
-  if (root == NULL) {
-    return -1;
-  }
-  int lh = balance_cal(root -> left);
-  int rh = balance_cal(root -> right);
-  int bal = lh - rh;
-  root -> height = bal;
-  // the height is the maximum value among lh and rh
-  return(lh >= rh) ? (lh + 1) : (rh + 1);
-}
-
-Tnode* delete(Tnode* root, int val)
+Tnode* delete(Tnode* root, int key)
 {
-  if (root == NULL) {
-    return NULL;
-  }
-  if (val < root -> key) {
-    root -> left = delete(root->left, val);
-  }
-  else if (val > root -> key) {
-    root -> right = delete(root->right, val);
-  }
-  // now val == root -> key.
-  else {
-    // root has no child.
-    if ((root -> left == NULL) && (root -> right == NULL)) {
-      free(root);
-      return NULL;
+    Tnode* temp;
+
+    if (root == NULL)
+    {
+        return(NULL);
     }
-    if (root -> left == NULL) {
-      // there must be right child.
-      Tnode* rc = root -> right;
-      free(root);
-      return rc;
+    
+    if (key < root->key)
+    {
+        root->left = delete(root->left, key);
     }
-    if (root -> right == NULL) {
-      // must have left child.
-      Tnode* lc = root -> left;
-      free(root);
-      return lc;
+    else if (key > root->key)
+    {
+        root->right = delete(root->right, key);
     }
-    // root has both left and right child.
-    // find the largest one in left sub-tree.
-    Tnode* p = root -> left;
-    while (p -> right != NULL) {
-      p = p -> right;
+    else //val == root->key
+    {
+        if ((root->left == NULL) && (root->right == NULL)) //root has no child
+        {
+            free(root);
+            return(NULL);
+        }
+        else if (root->right != NULL && root->left == NULL) //if only right child
+        {
+            temp = root->right;
+            free(root);
+            return(temp);
+        }
+        else if (root->left != NULL && root->right == NULL) //if only left child
+        {
+            temp = root->left;
+            free(root);
+            return(temp);
+        }
+        else if (root->left && root->right) //both left and right child
+        {   
+            temp = root->left; //finding inorder successor
+            while (temp->right != NULL)
+            {
+                temp = temp->right;
+            }
+            root->key = temp->key;
+            temp->key = key;
+            root->left = delete(root->left, key);
+        }
     }
-    // pass its value to root and delete it.
-    root -> key = p -> key;
-    p -> key = val;
-    root -> left = delete(root->left, val);
-  }
-  // update height and balance.
-  // may need balance at each level.
-  balance_cal(root);
-  int bal = root -> height;
-  int lb = (root -> left == NULL) ? 0: root -> left -> height;
-  int rb = (root -> right == NULL) ? 0: root -> right -> height;
-  if ((bal > 1) && (lb >= 0)) {
-      printf("hi\n");
-    return CR(root);
-  }
-  if ((bal < -1) && (rb <= 0)) {
-    return CCR(root);
-  }
-  if ((bal > 1) && (lb < 0)) {
-    root -> left = CCR(root -> left);
-    return CR(root);
-  }
-  if ((bal < -1) && (rb > 0)) {
-    root -> right = CR(root -> right);
-    return CCR(root);
-  }
-  return root;
+    calcHeight(root);
+    int height = root -> height;
+    int leftHeight = 0;
+    int rightHeight = 0;
+    if (root->left != NULL)
+    {
+        leftHeight = root->left->height;
+    }
+
+    if (root->right != NULL)
+    {
+        rightHeight = root->right->height;
+    }
+    
+    if ((height > 1) && (leftHeight >= 0))
+    {
+        temp = CR(root);
+        return(temp);
+    }
+    else if ((height < -1) && (rightHeight <= 0)) 
+    {
+        temp = CCR(root);
+        return(temp);
+    }
+    else if ((height > 1) && (leftHeight < 0)) 
+    {
+        root->left = CCR(root -> left);
+        temp = CR(root);
+        return(temp);
+    }
+    else if ((height < -1) && (rightHeight > 0)) 
+    {
+        root->right = CR(root -> right);
+        temp = CCR(root);
+        return(temp);
+    }
+    else //no rotations needed
+    {
+        return root;
+    }
 }
 
 Tnode* buildBST(char* filename)
@@ -276,12 +301,12 @@ Tnode* buildBST(char* filename)
         fread(&charBuffer, sizeof(charBuffer), 1, ops);
         if (charBuffer == 'i') //insert
         {
-            printf("Insert: %d\n", intBuffer);
+            //printf("Insert: %d\n", intBuffer);
             bst = insert(bst, intBuffer);
         }
         else //delete
         {
-            printf("Delete: %d\n", intBuffer);
+            //printf("Delete: %d\n", intBuffer);
             bst = delete(bst, intBuffer);
         }
     }
