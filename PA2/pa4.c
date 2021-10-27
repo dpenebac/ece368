@@ -351,7 +351,7 @@ int main(int argc, char* argv[])
     {
         int i;
         int rotate = 0;
-        for (i = 1; i < 16; i++)
+        for (i = 1; i < 1000000; i++)
         {
             bst = insert(bst, i, &rotate);
             rotate = 0;
