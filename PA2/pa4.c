@@ -14,17 +14,22 @@ int height(Tnode*);
 int max(int, int);
 void freeBST(Tnode*);
 
-int calcHeight(Tnode* root) //"balance"
+int calcHeight(Tnode* node)
 {
-    if (root == NULL)
+    int left;
+    int right;
+    int height;
+
+    if (node == NULL)
     {
         return(-1);
     }
 
-    int left = calcHeight(root->left);
-    int right = calcHeight(root->right);
-    root->height = left - right;
-    return(max(left, right) + 1);
+    left = calcHeight(node->left);
+    right = calcHeight(node->right);
+    node->height = left - right;
+    height = max(left, right) + 1;
+    return(height);
 }
 
 int max(int a, int b)
