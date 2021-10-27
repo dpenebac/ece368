@@ -11,7 +11,6 @@ Tnode* buildBST(char*);
 
 int height(Tnode*);
 int max(int, int);
-Tnode* inorderPredessesor(Tnode*);
 void freeBST(Tnode*);
 
 int calcHeight(Tnode* root) //"balance"
@@ -40,18 +39,6 @@ int max(int a, int b)
 {
     return((a > b) ? a : b);
 }
-
-Tnode* inorderPredessesor(Tnode* n)
-{
-    Tnode* current = n;
-
-    while (current->left != NULL)
-    {
-        current = current->left;
-    }
-
-    return(current);
-} 
 
 void freeBST(Tnode* node)
 {
