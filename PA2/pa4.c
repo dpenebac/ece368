@@ -11,7 +11,6 @@ Tnode* buildBST(char*);
 
 int height(Tnode*);
 int max(int, int);
-int getbalance(Tnode*);
 Tnode* inorderPredessesor(Tnode*);
 void freeBST(Tnode*);
 
@@ -40,15 +39,6 @@ int height(Tnode* n)
 int max(int a, int b)
 {
     return((a > b) ? a : b);
-}
-
-int getbalance(Tnode* n)
-{
-    if (n == NULL)
-    {
-        return(0);
-    }
-    return(height(n->left) - height(n->right));
 }
 
 Tnode* inorderPredessesor(Tnode* n)
@@ -114,32 +104,20 @@ Tnode* newNode(int val)
     return(new);
 }
 
-Tnode* CR(Tnode* y)
+Tnode* CR(Tnode* old)
 {
-    Tnode* x = y->left;
-    Tnode* t = x->right;
+    Tnode* new = old->left;
+    old->left = new->right;
+    new->right = old;
 
-    x->right = y;
-    y->left = t;
-
-    y->height = max(height(y->left), height(y->right)) + 1;
-    x->height = max(height(x->left), height(x->right)) + 1;
-
-    return(x); 
+    return(new); 
 }
 
-Tnode* CCR(Tnode* x)
+Tnode* CCR(Tnode* old)
 {
-    Tnode* y = x->right;
-    Tnode* t = y->left;
-
-    y->left = x;
-    x->right = t;
-
-    x->height = max(height(x->left), height(x->right)) + 1;
-    y->height = max(height(y->left), height(y->right)) + 1;
-
-    return(y);
+    Tnode* new = old->right;
+    old->right = new->left;
+    new->left = old;
 }
 
 Tnode* insert(Tnode* node, int val)
@@ -152,53 +130,52 @@ Tnode* insert(Tnode* node, int val)
     {
         node->left = insert(node->left, val);
     }
-    else if (val > node->key)//if val < node->key
+    else if (val > node->key)
     {
         node->right = insert(node->right, val);
     }
 
     //balance
     Tnode* temp = NULL;
-    Tnode* root = node;
-    calcHeight(root); //calc "balance"
+    calcHeight(node); //calc "balance"
 
     int leftHeight = 0;
     int rightHeight = 0;
-    if (root->left != NULL)
+    if (node->left != NULL)
     {
-        leftHeight = root->left->height;
+        leftHeight = node->left->height;
     }
 
-    if (root->right != NULL)
+    if (node->right != NULL)
     {
-        rightHeight = root->right->height;
+        rightHeight = node->right->height;
     }
     
-    if ((root->height > 1) && (leftHeight > 0)) //left left
+    if ((node->height > 1) && (leftHeight > 0)) //left left
     {
-        temp = CR(root);
+        temp = CR(node);
         return(temp);
     }
-    else if ((root->height < -1) && (rightHeight < 0)) //right right
+    else if ((node->height < -1) && (rightHeight < 0)) //right right
     {
-        temp = CCR(root);
+        temp = CCR(node);
         return(temp);
     }
-    else if ((root->height > 1) && (leftHeight < 0)) //left right
+    else if ((node->height > 1) && (leftHeight < 0)) //left right
     {
-        root->left = CCR(root -> left);
-        temp = CR(root);
+        node->left = CCR(node -> left);
+        temp = CR(node);
         return(temp);
     }
-    else if ((root->height < -1) && (rightHeight > 0)) //right left
+    else if ((node->height < -1) && (rightHeight > 0)) //right left
     {
-        root->right = CR(root -> right);
-        temp = CCR(root);
+        node->right = CR(node -> right);
+        temp = CCR(node);
         return(temp);
     }
     else //balanced
     {
-        return root;
+        return node;
     }
 }
 
