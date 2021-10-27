@@ -9,6 +9,7 @@ Tnode* insert(Tnode*, int);
 Tnode* delete(Tnode*, int);
 Tnode* buildBST(char*);
 
+int calcHeight(Tnode*);
 int height(Tnode*);
 int max(int, int);
 void freeBST(Tnode*);
@@ -24,15 +25,6 @@ int calcHeight(Tnode* root) //"balance"
     int right = calcHeight(root->right);
     root->height = left - right;
     return(max(left, right) + 1);
-}
-
-int height(Tnode* n)
-{
-    if (n == NULL)
-    {
-        return(0);
-    }
-    return(n->height);
 }
 
 int max(int a, int b)
