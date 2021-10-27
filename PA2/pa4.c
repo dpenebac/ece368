@@ -122,6 +122,7 @@ Tnode* insert(Tnode* node, int val)
 
     //balance
     Tnode* temp = NULL;
+    calcHeight(node); //calc "balance"
 
     int leftHeight = 0;
     int rightHeight = 0;
@@ -216,6 +217,8 @@ Tnode* delete(Tnode* root, int key)
     }
     
     //balance
+    calcHeight(root); //calc "balance"
+
     int leftHeight = 0;
     int rightHeight = 0;
     if (root->left != NULL)
@@ -288,7 +291,6 @@ Tnode* buildBST(char* filename)
             //printf("Delete: %d\n", intBuffer);
             bst = delete(bst, intBuffer);
         }
-        calcHeight(bst); //find balance of tree and put them in height
     }
 
     preorder(bst);
