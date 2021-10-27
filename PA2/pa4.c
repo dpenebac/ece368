@@ -29,8 +29,8 @@ int calcHeight(Tnode* node) //calc balance of each node
     left = calcHeight(node->left);
     right = calcHeight(node->right);
     node->height = left - right;
-    height = max(left, right) + 1;
-    return(height);
+    printf("Node: %d Height: %d Left: %d Right: %d\n", node->key, node->height, left, right);
+    return(left - right);
 }
 
 int max(int a, int b)
@@ -53,7 +53,7 @@ void preorder(Tnode *node)
 {
     if (node != NULL)
     {
-        fprintf(stdout, "%d ", node->key);
+        fprintf(stdout, "%d,%d ", node->key, node->height);
         preorder(node->left);
         preorder(node->right);
     }
@@ -64,7 +64,7 @@ void inorder(Tnode *node)
     if (node != NULL)
     {
         inorder(node->left);
-        fprintf(stdout, "%d ", node->key);
+        fprintf(stdout, "%d,%d ", node->key, node->height);
         inorder(node->right);
     }
 }
@@ -73,9 +73,9 @@ void postorder(Tnode *node)
 {
     if (node != NULL)
     {
-        inorder(node->left);
-        inorder(node->right);     
-        fprintf(stdout, "%d ", node->key);   
+        postorder(node->left);
+        postorder(node->right);     
+        fprintf(stdout, "%d,%d ", node->key, node->height); 
     }
 }
 
@@ -94,6 +94,7 @@ Tnode* CR(Tnode* old)
     Tnode* new = old->left;
     old->left = new->right;
     new->right = old;
+    printf("CR\n");
     return(new); 
 }
 
@@ -102,6 +103,7 @@ Tnode* CCR(Tnode* old)
     Tnode* new = old->right;
     old->right = new->left;
     new->left = old;
+    printf("CCR\n");
     return(new);
 }
 
@@ -124,12 +126,8 @@ Tnode* insert(Tnode* node, int val, int *rotate) //rotate is 0 or 1
 
     //balance
     Tnode* temp = NULL;
-    //calcHeight(node);
     if (*rotate != 0) 
     {
-        //printf("\nold: node: %d height: %d", node->key, node->height);
-        //calcHeight(node); //this is still checking root every single time for all of them, maybe just update + or - 1 based on left or right
-        
         //probably realllllly buggy
         if (node->height <= -1)
         {
@@ -139,8 +137,6 @@ Tnode* insert(Tnode* node, int val, int *rotate) //rotate is 0 or 1
         {
             node->height -= 1;
         }
-        
-        //printf("\nnew: node: %d height: %d\n\n", node->key, node->height);
     }
 
     int leftHeight = 0;
@@ -174,7 +170,7 @@ Tnode* insert(Tnode* node, int val, int *rotate) //rotate is 0 or 1
         temp = CCR(node);
     }
 
-    if (temp != NULL) {*rotate = 1;}
+    if (temp != NULL) {*rotate = 1; printf("cacl temp: %d\n", temp->key);}
     calcHeight(temp); //calculate balance after rotations
     return (temp != NULL) ? temp : node; //return temp if temp if not node
 }
@@ -299,7 +295,7 @@ Tnode* buildBST(char* filename)
         fread(&charBuffer, sizeof(charBuffer), 1, ops);
         if (charBuffer == 'i') //insert
         {
-            //printf("\nInsert: %d\n", intBuffer);
+            printf("\nInsert: %d\n", intBuffer);
             bst = insert(bst, intBuffer, &rotate);
             rotate = 0;
         }
@@ -308,14 +304,13 @@ Tnode* buildBST(char* filename)
             //printf("Delete: %d\n\n", intBuffer);
             bst = delete(bst, intBuffer);
         }
+        preorder(bst);
+        fprintf(stdout, "\n");
+        inorder(bst);
+        fprintf(stdout, "\n");
+        postorder(bst);
+        fprintf(stdout, "\n");
     }
-
-    preorder(bst);
-    fprintf(stdout, "\n");
-    inorder(bst);
-    fprintf(stdout, "\n");
-    postorder(bst);
-    fprintf(stdout, "\n");
 
     fclose(ops);
     freeBST(bst);
@@ -363,6 +358,7 @@ int main(int argc, char* argv[])
 
         for (i = 0; i < 10; i++)
         {
+            calcHeight(bst);
             bst = delete(bst, i);
             fprintf(stdout, "\n");
             preorder(bst);
