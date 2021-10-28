@@ -7,12 +7,13 @@ Tnode* CR(Tnode*);
 Tnode* CCR(Tnode*);
 Tnode* insert(int, Tnode*);
 Tnode* delete(int, Tnode*);
-Tnode* buildBST(char*);
+Tnode* buildBST(char*, char*);
 
 int height(Tnode*);
 int bigger(int, int);
 int getBalance(Tnode*);
 void freeBST(Tnode*);
+void writePreorder(Tnode*, FILE*);
 
 int calcNewHeight(Tnode* node) //compares left and right
 {
@@ -140,155 +141,141 @@ Tnode* CCR(Tnode* old)
     return(new);
 }
 
-Tnode* insert(int val, Tnode* node)
+Tnode* balance(Tnode* node)
+{
+    Tnode* temp = NULL;
+    int nodeBalance;
+    int rightBalance;
+    int leftBalance;
+
+    nodeBalance = getBalance(node);
+    rightBalance = getBalance(node->right);
+    leftBalance = getBalance(node->left);
+
+    if (nodeBalance > 1) //left side is heavier
+    {
+        if (leftBalance > -1) //left left
+        {
+            temp = CR(node);
+        }
+        else if (leftBalance < 0) //left right
+        {
+            node->left = CCR(node->left);
+            temp = CR(node);
+        }
+    }
+    else if (nodeBalance < -1) //right side is heavier
+    {
+        if (rightBalance < 1) //right left
+        {
+            temp = CCR(node);
+        }
+        else if (rightBalance > 0) //right right
+        {
+            node->right = CR(node->right);
+            temp = CCR(node);
+        }
+    }
+
+    return (temp != NULL) ? temp : node; //if temp return temp if not temp return node
+}
+
+Tnode* insert(int key, Tnode* node)
 {
     //insertion
     if (node == NULL)
     {
-        return(newNode(val));
+        return(newNode(key));
     }
-    if (val > node->key)
+    if (key > node->key)
     {
-        node->right = insert(val, node->right);
+        node->right = insert(key, node->right);
     }
     else //duplicate or less than
     {
-        node->left = insert(val, node->left);
+        node->left = insert(key, node->left);
     }
 
     //balance
-    Tnode* temp = NULL;
-    int nodeBalance;
-    int rightBalance;
-    int leftBalance;
-
     node->height = calcNewHeight(node);
-    nodeBalance = getBalance(node);
-    rightBalance = getBalance(node->right);
-    leftBalance = getBalance(node->left);
+    node = balance(node);
 
-    if (nodeBalance > 1) //left side is heavier
-    {
-        if (leftBalance > -1) //left left
-        {
-            temp = CR(node);
-        }
-        else if (leftBalance < 0) //left right
-        {
-            node->left = CCR(node->left);
-            temp = CR(node);
-        }
-    }
-    else if (nodeBalance < -1) //right side is heavier
-    {
-        if (rightBalance < 1) //right left
-        {
-            temp = CCR(node);
-        }
-        else if (rightBalance > 0) //right right
-        {
-            node->right = CR(node->right);
-            temp = CCR(node);
-        }
-    }
-
-    return (temp != NULL) ? temp : node; //if temp return temp if not temp return node
+    return(node);
 }
 
 Tnode* delete(int key, Tnode* node)
 {
-  if (node == NULL) {
-    return NULL;
-  }
-  if (key < node -> key) {
-    node -> left = delete(key, node -> left);
-  }
-  else if (key > node -> key) {
-    node -> right = delete(key, node -> right);
-  }
-  // now val == node -> key.
-  else {
-    // node has no child.
-    if ((node -> left == NULL) && (node -> right == NULL)) {
-      free(node);
-      return NULL;
-    }
-    if (node -> left == NULL) {
-      // there must be right child.
-      Tnode* rc = node -> right;
-      free(node);
-      return rc;
-    }
-    if (node -> right == NULL) {
-      // must have left child.
-      Tnode* lc = node -> left;
-      free(node);
-      return lc;
-    }
-    // node has both left and right child.
-    // find the largest one in left sub-tree.
-    Tnode* p = node -> left;
-    while (p -> right != NULL) {
-      p = p -> right;
-    }
-    // pass its value to node and delete it.
-    node -> key = p -> key;
-    p -> key = key;
-    node -> left = delete(key, node -> left);
-  }
- 
-    // If the tree had only one node then return
+    Tnode* temp = NULL;
+    Tnode* predecessor = NULL;
+
     if (node == NULL)
-      return node;
+    {
+        return(node);
+    }
+    if (key > node->key)
+    {
+        node->right = delete(key, node->right);
+    }
+    else if (key < node->key)
+    {
+        node->left = delete(key, node->left);
+    }
+    else if (key == node->key)
+    {
+        if (node->left == NULL && node->right == NULL) //no children
+        {
+            free(node);
+            return(NULL);
+        }
+        else if (node->left == NULL && node->right != NULL) //only right child
+        {
+            temp = node->right;
+            free(node);
+            return(temp);
+        }
+        else if (node->left != NULL && node->right == NULL) //only left child
+        {
+            temp = node->left;
+            free(node);
+            return(temp);
+        }
+        else if (node->left != NULL && node->right != NULL) //both children
+        {
+            predecessor = node->left; //find inorder predecessor
+            while(predecessor->right != NULL)
+            {
+                predecessor = predecessor->right;
+            }
+
+            node->key = predecessor->key; //swap values
+            predecessor->key = key;
+            node->left = delete(predecessor->key, node->left);
+        }
+    }
+
+    if (node == NULL) //edge case for when bst is empty
+    {
+        return(NULL);
+    }
  
     //balance
-    Tnode* temp = NULL;
-    int nodeBalance;
-    int rightBalance;
-    int leftBalance;
-
     node->height = calcNewHeight(node);
-    nodeBalance = getBalance(node);
-    rightBalance = getBalance(node->right);
-    leftBalance = getBalance(node->left);
-
-    if (nodeBalance > 1) //left side is heavier
-    {
-        if (leftBalance > -1) //left left
-        {
-            temp = CR(node);
-        }
-        else if (leftBalance < 0) //left right
-        {
-            node->left = CCR(node->left);
-            temp = CR(node);
-        }
-    }
-    else if (nodeBalance < -1) //right side is heavier
-    {
-        if (rightBalance < 1) //right left
-        {
-            temp = CCR(node);
-        }
-        else if (rightBalance > 0) //right right
-        {
-            node->right = CR(node->right);
-            temp = CCR(node);
-        }
-    }
-
-    return (temp != NULL) ? temp : node; //if temp return temp if not temp return node
+    node = balance(node);
+    return(node);
 }
 
-Tnode* buildBST(char* filename)
+Tnode* buildBST(char* input, char* output)
 {
+    //CHANGE TO FILE AND FILE FOR INPUT AND OUTPUT OR DO IT SIMILAR TO PA1 WHERE THE FILE LOAD AND SAVE FUNCTIONS ARE SEPARATE SO YOU 
+    //CAN RETURN EXIT FAILURE
     Tnode* bst = NULL;
     Tnode* temp = NULL;
-    FILE* ops = fopen(filename, "rb");
+
+    FILE* ops = fopen(input, "rb");
 
     if (ops == NULL)
     {
-        return(NULL);
+        return (NULL);
     }
 
     fseek(ops, 0L, SEEK_END);
@@ -335,7 +322,7 @@ Tnode* buildBST(char* filename)
 
 int main(int argc, char* argv[])
 {
-    if (argc > 3)
+    if (argc > 4)
     {
         return EXIT_FAILURE;
     }
@@ -345,7 +332,7 @@ int main(int argc, char* argv[])
     //building height-balanced BST
     if (strcmp(argv[1], "-b") == 0) //if argv[1] == -b
     {
-        Tnode* bst = buildBST(argv[2]);
+        Tnode* bst = buildBST(argv[2], argv[3]);
     }
     
     //evaluating a height balanced BST
@@ -357,17 +344,14 @@ int main(int argc, char* argv[])
     else if (strcmp(argv[1], "-t") == 0)
     {
         int i;
-        for (i = 1; i < 20; i++)
+        for (i = 1; i < 1000; i++)
         {
             bst = insert(i, bst);
         }
-        /*
-        for (i = 1; i < 1000000; i++)
+        for (i = 1; i < 950; i++)
         {
-            bst = delete(bst, i);
-            
+            bst = delete(i, bst);
         }
-        */
         preorder(bst);
         fprintf(stdout, "\n");
         inorder(bst);

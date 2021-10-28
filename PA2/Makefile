@@ -9,19 +9,22 @@ sort: $(OBJS) #gcc files -o name of thing
 testBuild: test1 test2 test3 test4 testBuildmem
 
 test1: pa4
-	./pa4 -b examples/ops0.b
+	./pa4 -b examples/ops0.b examples/test.b
 
 test2: pa4
-	./pa4 -b examples/ops1.b
+	./pa4 -b examples/ops1.b examples/test.b
 
 test3: pa4
-	./pa4 -b examples/ops2.b
+	./pa4 -b examples/ops2.b examples/test.b
 
 test4: pa4
-	./pa4 -b examples/ops3.b
+	./pa4 -b examples/ops3.b examples/test.b
+
+testt: pa4
+	./pa4 -t examples/ops3.b examples/test.b
 
 testBuildmem: pa4
-	valgrind --leak-check=full ./pa4 -b examples/ops3.b
+	valgrind --leak-check=full ./pa4 -b examples/ops3.b examples/test.b
 
 clean: # remove all machine generated files
 	rm -f pa4 *.o output?
