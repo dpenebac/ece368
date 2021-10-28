@@ -10,16 +10,15 @@ Tnode* delete(int, Tnode*);
 Tnode* buildBST(char*);
 
 int height(Tnode*);
-int max(int, int);
+int bigger(int, int);
 int getBalance(Tnode*);
-Tnode* inorderPredessesor(Tnode*);
 void freeBST(Tnode*);
 
-int calcNewHeight(Tnode* node)
+int calcNewHeight(Tnode* node) //compares left and right
 {
-    int leftHeight = getHeight(node->left) + 1;
-    int rightHeight = getHeight(node->right) + 1;
-    int newHeight = max(leftHeight, rightHeight);
+    int leftHeight = getHeight(node->left);
+    int rightHeight = getHeight(node->right);
+    int newHeight = bigger(leftHeight, rightHeight) + 1;
 
     return(newHeight);
 }
@@ -39,7 +38,7 @@ int getHeight(Tnode* n)
     return(height);
 }
 
-int max(int a, int b)
+int bigger(int a, int b)
 {
     return((a > b) ? a : b);
 }
@@ -56,18 +55,6 @@ int getBalance(Tnode* n)
     right = getHeight(n->right);
     return(left - right);
 }
-
-Tnode* inorderPredessesor(Tnode* n)
-{
-    Tnode* current = n;
-
-    while (current->left != NULL)
-    {
-        current = current->left;
-    }
-
-    return(current);
-} 
 
 void freeBST(Tnode* node)
 {
@@ -128,8 +115,8 @@ Tnode* CR(Tnode* y) //change in terms of old and new
     x->right = y;
     y->left = t;
 
-    y->height = max(getHeight(y->left), getHeight(y->right)) + 1; //+1
-    x->height = max(getHeight(x->left), getHeight(x->right)) + 1; //+1
+    y->height = bigger(getHeight(y->left), getHeight(y->right)) + 1; //+1
+    x->height = bigger(getHeight(x->left), getHeight(x->right)) + 1; //+1
 
     //printf("CR on %d, new = %d\n", y->key, x->key);
 
@@ -154,13 +141,11 @@ Tnode* CCR(Tnode* old) //change in terms of old and new
 
 Tnode* insert(int val, Tnode* node)
 {
-
     //insertion
     if (node == NULL)
     {
         return(newNode(val));
     }
-
     if (val > node->key)
     {
         node->right = insert(val, node->right);
@@ -195,11 +180,11 @@ Tnode* insert(int val, Tnode* node)
     }
     else if (nodeBalance < -1) //right side is heavier
     {
-        if (rightBalance < 1) //right right
+        if (rightBalance < 1) //right left
         {
             temp = CCR(node);
         }
-        else if (rightBalance > 0) //right left
+        else if (rightBalance > 0) //right right
         {
             node->right = CR(node->right);
             temp = CCR(node);
@@ -209,85 +194,89 @@ Tnode* insert(int val, Tnode* node)
     return (temp != NULL) ? temp : node; //if temp return temp if not temp return node
 }
 
-Tnode* delete(int key, Tnode* root)
+Tnode* delete(int key, Tnode* node)
 {
-  if (root == NULL) {
+  if (node == NULL) {
     return NULL;
   }
-  if (key < root -> key) {
-    root -> left = delete(key, root -> left);
+  if (key < node -> key) {
+    node -> left = delete(key, node -> left);
   }
-  else if (key > root -> key) {
-    root -> right = delete(key, root -> right);
+  else if (key > node -> key) {
+    node -> right = delete(key, node -> right);
   }
-  // now val == root -> key.
+  // now val == node -> key.
   else {
-    // root has no child.
-    if ((root -> left == NULL) && (root -> right == NULL)) {
-      free(root);
+    // node has no child.
+    if ((node -> left == NULL) && (node -> right == NULL)) {
+      free(node);
       return NULL;
     }
-    if (root -> left == NULL) {
+    if (node -> left == NULL) {
       // there must be right child.
-      Tnode* rc = root -> right;
-      free(root);
+      Tnode* rc = node -> right;
+      free(node);
       return rc;
     }
-    if (root -> right == NULL) {
+    if (node -> right == NULL) {
       // must have left child.
-      Tnode* lc = root -> left;
-      free(root);
+      Tnode* lc = node -> left;
+      free(node);
       return lc;
     }
-    // root has both left and right child.
+    // node has both left and right child.
     // find the largest one in left sub-tree.
-    Tnode* p = root -> left;
+    Tnode* p = node -> left;
     while (p -> right != NULL) {
       p = p -> right;
     }
-    // pass its value to root and delete it.
-    root -> key = p -> key;
+    // pass its value to node and delete it.
+    node -> key = p -> key;
     p -> key = key;
-    root -> left = delete(key, root -> left);
+    node -> left = delete(key, node -> left);
   }
  
     // If the tree had only one node then return
-    if (root == NULL)
-      return root;
+    if (node == NULL)
+      return node;
  
-    // STEP 2: UPDATE HEIGHT OF THE CURRENT NODE
-    root->height = 1 + max(getHeight(root->left),
-                           getHeight(root->right));
- 
-    // STEP 3: GET THE BALANCE FACTOR OF THIS NODE (to
-    // check whether this node became unbalanced)
-    int balance = getBalance(root);
- 
-    // If this node becomes unbalanced, then there are 4 cases
- 
-    // Left Left Case
-    if (balance > 1 && getBalance(root->left) >= 0)
-        return CR(root);
- 
-    // Left Right Case
-    if (balance > 1 && getBalance(root->left) < 0)
+    //balance
+    Tnode* temp = NULL;
+    int nodeBalance;
+    int rightBalance;
+    int leftBalance;
+
+    node->height = calcNewHeight(node);
+    nodeBalance = getBalance(node);
+    rightBalance = getBalance(node->right);
+    leftBalance = getBalance(node->left);
+
+    if (nodeBalance > 1) //left side is heavier
     {
-        root->left =  CCR(root->left);
-        return CR(root);
+        if (leftBalance > -1) //left left
+        {
+            temp = CR(node);
+        }
+        else if (leftBalance < 0) //left right
+        {
+            node->left = CCR(node->left);
+            temp = CR(node);
+        }
     }
- 
-    // Right Right Case
-    if (balance < -1 && getBalance(root->right) <= 0)
-        return CCR(root);
- 
-    // Right Left Case
-    if (balance < -1 && getBalance(root->right) > 0)
+    else if (nodeBalance < -1) //right side is heavier
     {
-        root->right = CR(root->right);
-        return CCR(root);
+        if (rightBalance < 1) //right left
+        {
+            temp = CCR(node);
+        }
+        else if (rightBalance > 0) //right right
+        {
+            node->right = CR(node->right);
+            temp = CCR(node);
+        }
     }
- 
-    return root;
+
+    return (temp != NULL) ? temp : node; //if temp return temp if not temp return node
 }
 
 Tnode* buildBST(char* filename)
