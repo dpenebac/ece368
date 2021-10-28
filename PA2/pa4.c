@@ -181,24 +181,29 @@ Tnode* insert(int val, Tnode* node)
     rightBalance = getBalance(node->right);
     leftBalance = getBalance(node->left);
 
-    //jumble this logic up nodeBalance > 1 and nodeBalance < -1
-    if (nodeBalance > 1 && leftBalance > -1) //left left
+    if (nodeBalance > 1) //left side is heavier
     {
-        temp = CR(node);
+        if (leftBalance > -1) //left left
+        {
+            temp = CR(node);
+        }
+        else if (leftBalance < 0) //left right
+        {
+            node->left = CCR(node->left);
+            temp = CR(node);
+        }
     }
-    else if (nodeBalance < -1 && rightBalance < 1) //right right
+    else if (nodeBalance < -1) //right side is heavier
     {
-        temp = CCR(node);
-    }
-    else if (nodeBalance > 1 && leftBalance < 0) //left right
-    {
-        node->left = CCR(node->left);
-        temp = CR(node);
-    }
-    else if (nodeBalance < -1 && rightBalance > 0) //right left
-    {
-        node->right = CR(node->right);
-        temp = CCR(node);
+        if (rightBalance < 1) //right right
+        {
+            temp = CCR(node);
+        }
+        else if (rightBalance > 0) //right left
+        {
+            node->right = CR(node->right);
+            temp = CCR(node);
+        }
     }
 
     return (temp != NULL) ? temp : node; //if temp return temp if not temp return node
