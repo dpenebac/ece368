@@ -123,15 +123,16 @@ Tnode* CR(Tnode* y) //change in terms of old and new
     return(x); 
 }
 
-Tnode* CCR(Tnode* old) //change in terms of old and new
+Tnode* CCR(Tnode* old)
 {
     Tnode* new;
 
     new = old->right;
-    old->right = new->left;
-    new->left = old;
 
+    old->right = new->left;
     old->height = calcNewHeight(old);
+
+    new->left = old;
     new->height = calcNewHeight(new);
 
     //printf("CCR on %d Height: %d, new = %d Height: %d\n", old->key, old->height, new->key, new->height);
