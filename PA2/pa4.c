@@ -219,9 +219,9 @@ Tnode* delete(Tnode* root, int val)
     }
     // root has both left and right child.
     // find the largest one in left sub-tree.
-    Tnode* p = root -> right;
-    while (p -> left != NULL) {
-      p = p -> left;
+    Tnode* p = root -> left;
+    while (p -> right != NULL) {
+      p = p -> right;
     }
     // pass its value to root and delete it.
     root -> key = p -> key;
