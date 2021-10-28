@@ -219,9 +219,9 @@ Tnode* delete(Tnode* root, int val)
     }
     // root has both left and right child.
     // find the largest one in left sub-tree.
-    Tnode* p = root -> left;
-    while (p -> right != NULL) {
-      p = p -> right;
+    Tnode* p = root -> right;
+    while (p -> left != NULL) {
+      p = p -> left;
     }
     // pass its value to root and delete it.
     root -> key = p -> key;
@@ -321,7 +321,7 @@ int main(int argc, char* argv[])
     else if (strcmp(argv[1], "-t") == 0)
     {
         int i;
-        for (i = 1; i < 11; i++)
+        for (i = 1; i < 1000000; i++)
         {
             bst = insert(bst, i);
             
