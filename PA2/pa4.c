@@ -101,7 +101,7 @@ Tnode* newNode(int val)
     return(new);
 }
 
-Tnode* CR(Tnode* y)
+Tnode* CR(Tnode* y) //change in terms of old and new
 {
     Tnode* x = y->left;
     Tnode* t = x->right;
@@ -115,7 +115,7 @@ Tnode* CR(Tnode* y)
     return(x); 
 }
 
-Tnode* CCR(Tnode* x)
+Tnode* CCR(Tnode* x) //change in terms of old and new
 {
     Tnode* y = x->right;
     Tnode* t = y->left;
@@ -179,8 +179,8 @@ Tnode * minValueNode(Tnode* node)
     Tnode* current = node;
  
     /* loop down to find the leftmost leaf */
-    while (current->left != NULL)
-        current = current->left;
+    while (current->right != NULL)
+        current = current->right;
  
     return current;
 }
@@ -210,7 +210,7 @@ Tnode* delete(Tnode* root, int key)
     else
     {
         // node with only one child or no child
-        if( (root->left == NULL) || (root->right == NULL) )
+        if( (root->left == NULL) || (root->right == NULL) ) //can expand this
         {
             Tnode *temp = root->left ? root->left :
                                              root->right;
@@ -230,7 +230,7 @@ Tnode* delete(Tnode* root, int key)
         {
             // node with two children: Get the inorder
             // successor (smallest in the right subtree)
-            Tnode* temp = minValueNode(root->right);
+            Tnode* temp = minValueNode(root->left);
  
             // Copy the inorder successor's data to this node
             root->key = temp->key;
