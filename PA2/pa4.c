@@ -11,7 +11,7 @@ Tnode* buildBST(char*);
 
 int height(Tnode*);
 int max(int, int);
-int getbalance(Tnode*);
+int getBalance(Tnode*);
 Tnode* inorderPredessesor(Tnode*);
 void freeBST(Tnode*);
 
@@ -29,7 +29,7 @@ int max(int a, int b)
     return((a > b) ? a : b);
 }
 
-int getbalance(Tnode* n)
+int getBalance(Tnode* n)
 {
     if (n == NULL)
     {
@@ -147,7 +147,7 @@ Tnode* insert(Tnode* node, int val)
 
     node->height = 1 + max(height(node->left), height(node->right));
 
-    int balance = getbalance(node);
+    int balance = getBalance(node);
 
     if (balance > 1 && val <= node->left->key) //left left
     {
@@ -174,82 +174,109 @@ Tnode* insert(Tnode* node, int val)
     return(node);
 }
 
-int balance_cal(Tnode* root) {
-  // use post-order to calculate the height.
-  if (root == NULL) {
-    return -1;
-  }
-  int lh = balance_cal(root -> left);
-  int rh = balance_cal(root -> right);
-  int bal = lh - rh;
-  root -> height = bal;
-  // the height is the maximum value among lh and rh
-  return(lh >= rh) ? (lh + 1) : (rh + 1);
-}
-
-Tnode* delete(Tnode* root, int val)
+Tnode * minValueNode(Tnode* node)
 {
-  if (root == NULL) {
-    return NULL;
-  }
-  if (val < root -> key) {
-    root -> left = delete(root->left, val);
-  }
-  else if (val > root -> key) {
-    root -> right = delete(root->right, val);
-  }
-  // now val == root -> key.
-  else {
-    // root has no child.
-    if ((root -> left == NULL) && (root -> right == NULL)) {
-      free(root);
-      return NULL;
+    Tnode* current = node;
+ 
+    /* loop down to find the leftmost leaf */
+    while (current->left != NULL)
+        current = current->left;
+ 
+    return current;
+}
+ 
+// Recursive function to delete a node with given key
+// from subtree with given root. It returns root of
+// the modified subtree.
+Tnode* delete(Tnode* root, int key)
+{
+    // STEP 1: PERFORM STANDARD BST DELETE
+ 
+    if (root == NULL)
+        return root;
+ 
+    // If the key to be deleted is smaller than the
+    // root's key, then it lies in left subtree
+    if ( key < root->key )
+        root->left = delete(root->left, key);
+ 
+    // If the key to be deleted is greater than the
+    // root's key, then it lies in right subtree
+    else if( key > root->key )
+        root->right = delete(root->right, key);
+ 
+    // if key is same as root's key, then This is
+    // the node to be deleted
+    else
+    {
+        // node with only one child or no child
+        if( (root->left == NULL) || (root->right == NULL) )
+        {
+            Tnode *temp = root->left ? root->left :
+                                             root->right;
+ 
+            // No child case
+            if (temp == NULL)
+            {
+                temp = root;
+                root = NULL;
+            }
+            else // One child case
+             *root = *temp; // Copy the contents of
+                            // the non-empty child
+            free(temp);
+        }
+        else
+        {
+            // node with two children: Get the inorder
+            // successor (smallest in the right subtree)
+            Tnode* temp = minValueNode(root->right);
+ 
+            // Copy the inorder successor's data to this node
+            root->key = temp->key;
+ 
+            // Delete the inorder successor
+            root->right = delete(root->right, temp->key);
+        }
     }
-    if (root -> left == NULL) {
-      // there must be right child.
-      Tnode* rc = root -> right;
-      free(root);
-      return rc;
+ 
+    // If the tree had only one node then return
+    if (root == NULL)
+      return root;
+ 
+    // STEP 2: UPDATE HEIGHT OF THE CURRENT NODE
+    root->height = 1 + max(height(root->left),
+                           height(root->right));
+ 
+    // STEP 3: GET THE BALANCE FACTOR OF THIS NODE (to
+    // check whether this node became unbalanced)
+    int balance = getBalance(root);
+ 
+    // If this node becomes unbalanced, then there are 4 cases
+ 
+    // Left Left Case
+    if (balance > 1 && getBalance(root->left) >= 0)
+        return CR(root);
+ 
+    // Left Right Case
+    if (balance > 1 && getBalance(root->left) < 0)
+    {
+        root->left =  CCR(root->left);
+        return CR(root);
     }
-    if (root -> right == NULL) {
-      // must have left child.
-      Tnode* lc = root -> left;
-      free(root);
-      return lc;
+ 
+    // Right Right Case
+    if (balance < -1 && getBalance(root->right) <= 0)
+        return CCR(root);
+ 
+    // Right Left Case
+    if (balance < -1 && getBalance(root->right) > 0)
+    {
+        root->right = CR(root->right);
+        return CCR(root);
     }
-    // root has both left and right child.
-    // find the largest one in left sub-tree.
-    Tnode* p = root -> left;
-    while (p -> right != NULL) {
-      p = p -> right;
-    }
-    // pass its value to root and delete it.
-    root -> key = p -> key;
-    p -> key = val;
-    root -> left = delete(root->left, val);
-  }
-  // update height and balance.
-  // may need balance at each level.
-  balance_cal(root);
-  int bal = root -> height;
-  int lb = (root -> left == NULL) ? 0: root -> left -> height;
-  int rb = (root -> right == NULL) ? 0: root -> right -> height;
-  if ((bal > 1) && (lb >= 0)) {
-      printf("hi\n");
-    return CR(root);
-  }
-  if ((bal < -1) && (rb <= 0)) {
-    return CCR(root);
-  }
-  if ((bal > 1) && (lb < 0)) {
-    root -> left = CCR(root -> left);
-    return CR(root);
-  }
-  if ((bal < -1) && (rb > 0)) {
-    root -> right = CR(root -> right);
-    return CCR(root);
-  }
-  return root;
+ 
+    return root;
 }
 
 Tnode* buildBST(char* filename)
@@ -326,11 +353,12 @@ int main(int argc, char* argv[])
             bst = insert(bst, i);
             
         }
-        preorder(bst);
-        fprintf(stdout, "\n");
+        for (i = 1; i < 1000000; i++)
+        {
+            bst = delete(bst, i);
+            
+        }
         inorder(bst);
-        fprintf(stdout, "\n");
-        postorder(bst);
         fprintf(stdout, "\n");
     }
 
