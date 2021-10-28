@@ -19,7 +19,7 @@ int calcNewHeight(Tnode* node) //compares left and right
 {
     int leftHeight = getHeight(node->left);
     int rightHeight = getHeight(node->right);
-    int newHeight = bigger(leftHeight, rightHeight) + 1;
+    int newHeight = bigger(leftHeight + 1, rightHeight + 1);
 
     return(newHeight);
 }
@@ -41,7 +41,14 @@ int getHeight(Tnode* n)
 
 int bigger(int a, int b)
 {
-    return((a > b) ? a : b);
+    if (a > b)
+    {
+        return(a);
+    }
+    else
+    {
+        return(b);
+    }
 }
 
 int getBalance(Tnode* n)
@@ -104,24 +111,25 @@ Tnode* newNode(int val)
     new->key = val;
     new->left = NULL;
     new->right = NULL;
-    new->height = 0; //1
+    new->height = 0;
     return(new);
 }
 
-Tnode* CR(Tnode* y) //change in terms of old and new
+Tnode* CR(Tnode* old) //change in terms of old and new
 {
-    Tnode* x = y->left;
-    Tnode* t = x->right;
+    Tnode* new;
 
-    x->right = y;
-    y->left = t;
+    new = old->left;
 
-    y->height = bigger(getHeight(y->left), getHeight(y->right)) + 1; //+1
-    x->height = bigger(getHeight(x->left), getHeight(x->right)) + 1; //+1
+    old->left = new->right;
+    old->height = calcNewHeight(old);
 
-    //printf("CR on %d, new = %d\n", y->key, x->key);
+    new->right = old;
+    new->height = calcNewHeight(new);
 
-    return(x); 
+    //printf("CR on %d Height: %d, new = %d Height: %d\n", old->key, old->height, new->key, new->height);
+
+    return(new);
 }
 
 Tnode* CCR(Tnode* old)
@@ -144,9 +152,9 @@ Tnode* CCR(Tnode* old)
 Tnode* balance(Tnode* node)
 {
     Tnode* temp = NULL;
-    int nodeBalance;
-    int rightBalance;
-    int leftBalance;
+    int nodeBalance = 0;
+    int rightBalance = 0;
+    int leftBalance = 0;
 
     nodeBalance = getBalance(node);
     rightBalance = getBalance(node->right);
