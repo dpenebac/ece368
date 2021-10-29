@@ -344,6 +344,7 @@ int main(int argc, char* argv[])
 {
     if (argc > 4)
     {
+        fprintf(stdout, "%d\n", 0);
         return EXIT_FAILURE;
     }
 
@@ -358,10 +359,11 @@ int main(int argc, char* argv[])
 
         if (ops == NULL)
         {
+            fprintf(stdout, "%d\n", 0);
             return EXIT_FAILURE;
         }
 
-        fseek(ops, 0L, SEEK_END);
+        fseek(ops, 0L, SEEK_END); //check if fseek fails
         int size = ftell(ops) / 5; //amount of (int char) in file
         rewind(ops);
 
@@ -374,6 +376,7 @@ int main(int argc, char* argv[])
         {
             fread(&intBuffer, sizeof(intBuffer), 1, ops);
             fread(&charBuffer, sizeof(charBuffer), 1, ops);
+            //maybe check if intbuffer and charbuffer are holding values?
             if (charBuffer == 'i') //insert
             {
                 //printf("\nInsert: %d\n", intBuffer);
@@ -395,6 +398,7 @@ int main(int argc, char* argv[])
 
         if (opsOut == NULL)
         {
+            fprintf(stdout, "%d\n", 0);
             return EXIT_FAILURE;
         }
 
@@ -412,6 +416,8 @@ int main(int argc, char* argv[])
 
         fclose(ops);
         freeBST(bst);
+        fprintf(stdout, "%d\n", 1);
+        return EXIT_SUCCESS;
     }
     
     //evaluating a height balanced BST
@@ -421,6 +427,7 @@ int main(int argc, char* argv[])
 
         if (ops == NULL)
         {
+            fprintf(stdout, "%d\n", 0);
             return EXIT_FAILURE;
         }
 
@@ -430,6 +437,7 @@ int main(int argc, char* argv[])
 
         int intBuffer;
         char charBuffer;
+        //check if malloc fails
         int *keyArr = (int*)malloc(size * sizeof(int)); //array containing keys
         int *branchArr = (int*)malloc(size * sizeof(int)); //array containing # of children for each key
         int i;
@@ -446,31 +454,13 @@ int main(int argc, char* argv[])
         {
             printf("Key: %d Child: %d\n", keyArr[i], branchArr[i]);
         }
+
+        return EXIT_SUCCESS;
     }
 
-    else if (strcmp(argv[1], "-t") == 0)
+    else 
     {
-        int i;
-        for (i = 1; i < 10; i++)
-        {
-            bst = insertAVL(i, bst);
-        }
-        for (i = 1; i < 5; i++)
-        {
-            bst = deleteAVL(i, bst);
-        }
-        for (i = 1; i < 7; i++)
-        {
-            bst = insertAVL(i, bst);
-        }
-        preorder(bst);
-        fprintf(stdout, "\n");
-        inorder(bst);
-        fprintf(stdout, "\n");
-        postorder(bst);
-        fprintf(stdout, "\n");
-        freeBST(bst);
+        fprintf(stdout, "%d\n", 0);
+        return EXIT_FAILURE;
     }
-
-    return EXIT_SUCCESS;
 }

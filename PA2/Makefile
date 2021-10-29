@@ -6,7 +6,7 @@ OBJS = $(SRCS:%.c=%.o)
 sort: $(OBJS) #gcc files -o name of thing
 	$(GCC) $(OBJS) -o pa4
 
-testBuild: test1 test2 test3 test4 testBuildmem
+testBuild: test1 test2 test3 test4 testErr testBuildmem
 
 test1: pa4
 	./pa4 -b examples/ops0.b examples/test.b
@@ -21,6 +21,9 @@ test3: pa4
 
 test4: pa4
 	./pa4 -b examples/ops3.b examples/test.b
+
+testErr: pa4
+	./pa4 -l examples/ops3.b examples/test.b
 
 testt: pa4
 	./pa4 -t examples/ops3.b examples/test.b
