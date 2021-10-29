@@ -15,11 +15,11 @@ int getBalance(Tnode*);
 void freeBST(Tnode*);
 void writePreorder(Tnode*, FILE*);
 
-int calcNewHeight(Tnode* node) //compares left and right
+int calcNewHeight(Tnode* node)
 {
     int leftHeight = getHeight(node->left);
     int rightHeight = getHeight(node->right);
-    int newHeight = bigger(leftHeight + 1, rightHeight + 1);
+    int newHeight = bigger(leftHeight, rightHeight) + 1; //height is higher of the left and right child + 1
 
     return(newHeight);
 }
@@ -30,16 +30,17 @@ int getHeight(Tnode* n)
 
     if (n == NULL)
     {
-        height = -1;
+        height = -1; //height of most bottom node is 0
     }
     else
     {
         height = n->height;
     }
+    
     return(height);
 }
 
-int bigger(int a, int b)
+int bigger(int a, int b) //tired of rewriting this
 {
     if (a > b)
     {
@@ -55,13 +56,18 @@ int getBalance(Tnode* n)
 {
     int left;
     int right;
-    if (n == NULL)
+    int balance;
+
+    if (n == NULL) //if no node balance is 0 so that the above can be + or - 1
     {
         return(0);
     }
+
     left = getHeight(n->left);
     right = getHeight(n->right);
-    return(left - right);
+    balance = left - right;
+
+    return(balance);
 }
 
 void freeBST(Tnode* node)
@@ -122,11 +128,9 @@ Tnode* CR(Tnode* old) //change in terms of old and new
     new = old->left;
 
     old->left = new->right;
-    old->height = calcNewHeight(old);
-
     new->right = old;
-    new->height = calcNewHeight(new);
-
+    
+    old->height = calcNewHeight(old);
     //printf("CR on %d Height: %d, new = %d Height: %d\n", old->key, old->height, new->key, new->height);
 
     return(new);
@@ -139,11 +143,9 @@ Tnode* CCR(Tnode* old)
     new = old->right;
 
     old->right = new->left;
-    old->height = calcNewHeight(old);
-
     new->left = old;
-    new->height = calcNewHeight(new);
 
+    old->height = calcNewHeight(old);
     //printf("CCR on %d Height: %d, new = %d Height: %d\n", old->key, old->height, new->key, new->height);
 
     return(new);
@@ -183,6 +185,11 @@ Tnode* balance(Tnode* node)
             node->right = CR(node->right);
             temp = CCR(node);
         }
+    }
+
+    if (temp)
+    {
+        temp->height = calcNewHeight(temp);
     }
 
     return (temp != NULL) ? temp : node; //if temp return temp if not temp return node
@@ -238,12 +245,14 @@ Tnode* delete(int key, Tnode* node)
         else if (node->left == NULL && node->right != NULL) //only right child
         {
             temp = node->right;
-            free(node);
-            return(temp);
         }
         else if (node->left != NULL && node->right == NULL) //only left child
         {
             temp = node->left;
+        }
+
+        if (temp) //if only either left or right child return temp
+        {
             free(node);
             return(temp);
         }
@@ -261,7 +270,7 @@ Tnode* delete(int key, Tnode* node)
         }
     }
 
-    if (node == NULL) //edge case for when bst is empty
+    if (node == NULL) //edge case for when deleted last node
     {
         return(NULL);
     }
