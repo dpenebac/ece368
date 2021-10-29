@@ -20,12 +20,36 @@ void writePreorder(Tnode*, FILE*);
 //write bst to file using preorder traversal
 void writePreorder(Tnode* node, FILE* file)
 {
-    char a = 10;
-    int i;
-    for (i = 0; i < 8; i++) {
-        printf("%d", !!((a << i) & 0x80));
+    char bit; 
+
+    if (node != NULL)
+    {
+        //solving bitwise
+        if (node->right != NULL && node->left != NULL) //if left and right child
+        {
+            bit = 3;//11
+        }
+        else if (node->right == NULL && node->left != NULL) //if only left child
+        {
+            bit = 2; //10
+        }
+        else if (node->right != NULL && node->left == NULL) //if only right child
+        {
+            bit = 1; //01
+        }
+        else if (node->right == NULL && node->left == NULL) //if no child
+        {
+            bit = 0; //00
+        }
+
+        char direction = bit | 0;
+
+        //printf("Node: %d Child: %d\n",node->key, direction);
+        fwrite(&(node->key), sizeof(int), 1, file);
+        fwrite(&direction, sizeof(char), 1, file);
+        writePreorder(node->left, file);
+        writePreorder(node->right, file);
     }
-    printf("\n");
 
     return;
 }
@@ -233,7 +257,7 @@ Tnode* balance(Tnode* node, int key)
 }
 
 //Insert node and balance
-Tnode* insert(int key, Tnode* node)
+Tnode* insertAVL(int key, Tnode* node)
 {
     //insertion like normal
     if (node == NULL)
@@ -242,11 +266,11 @@ Tnode* insert(int key, Tnode* node)
     }
     if (key > node->key)
     {
-        node->right = insert(key, node->right);
+        node->right = insertAVL(key, node->right);
     }
     else //duplicate or less than
     {
-        node->left = insert(key, node->left);
+        node->left = insertAVL(key, node->left);
     }
 
     //balance
@@ -257,7 +281,7 @@ Tnode* insert(int key, Tnode* node)
 }
 
 //Delete node and balance
-Tnode* delete(int key, Tnode* node)
+Tnode* deleteAVL(int key, Tnode* node)
 {
     Tnode* temp = NULL;
     Tnode* predecessor = NULL;
@@ -269,11 +293,11 @@ Tnode* delete(int key, Tnode* node)
     }
     if (key > node->key)
     {
-        node->right = delete(key, node->right);
+        node->right = deleteAVL(key, node->right);
     }
     else if (key < node->key)
     {
-        node->left = delete(key, node->left);
+        node->left = deleteAVL(key, node->left);
     }
     else if (key == node->key)
     {
@@ -306,7 +330,7 @@ Tnode* delete(int key, Tnode* node)
 
             node->key = predecessor->key; //swap values
             predecessor->key = key;
-            node->left = delete(predecessor->key, node->left);
+            node->left = deleteAVL(predecessor->key, node->left);
         }
     }
  
@@ -341,7 +365,7 @@ int main(int argc, char* argv[])
         int size = ftell(ops) / 5; //amount of (int char) in file
         rewind(ops);
 
-        //Create and fill AVL
+        //Create and fill AVL using file
         int intBuffer;
         char charBuffer;
         int i;
@@ -353,7 +377,7 @@ int main(int argc, char* argv[])
             if (charBuffer == 'i') //insert
             {
                 //printf("\nInsert: %d\n", intBuffer);
-                temp = insert(intBuffer, bst);
+                temp = insertAVL(intBuffer, bst);
                 if (temp)
                 {
                     bst = temp;
@@ -362,7 +386,7 @@ int main(int argc, char* argv[])
             else if (charBuffer == 'd')//delete
             {
                 //printf("Delete: %d\n", intBuffer);
-                bst = delete(intBuffer, bst);
+                bst = deleteAVL(intBuffer, bst);
             }
         }
 
@@ -393,7 +417,35 @@ int main(int argc, char* argv[])
     //evaluating a height balanced BST
     else if (strcmp(argv[1], "-e") == 0) //if argv[1] == -e
     {
-        printf("godb\n");
+        FILE* ops = fopen(argv[2], "rb");
+
+        if (ops == NULL)
+        {
+            return EXIT_FAILURE;
+        }
+
+        fseek(ops, 0L, SEEK_END);
+        int size = ftell(ops) / 5; //amount of (int char) in file
+        rewind(ops);
+
+        int intBuffer;
+        char charBuffer;
+        int *keyArr = (int*)malloc(size * sizeof(int)); //array containing keys
+        int *branchArr = (int*)malloc(size * sizeof(int)); //array containing # of children for each key
+        int i;
+
+        for (i = 0; i < size; i++)
+        {
+            fread(&intBuffer, sizeof(intBuffer), 1, ops);
+            fread(&charBuffer, sizeof(charBuffer), 1, ops);
+            keyArr[i] = intBuffer;
+            branchArr[i] = charBuffer;
+        }
+
+        for (i = 0; i < size; i++)
+        {
+            printf("Key: %d Child: %d\n", keyArr[i], branchArr[i]);
+        }
     }
 
     else if (strcmp(argv[1], "-t") == 0)
@@ -401,15 +453,15 @@ int main(int argc, char* argv[])
         int i;
         for (i = 1; i < 10; i++)
         {
-            bst = insert(i, bst);
+            bst = insertAVL(i, bst);
         }
         for (i = 1; i < 5; i++)
         {
-            bst = delete(i, bst);
+            bst = deleteAVL(i, bst);
         }
         for (i = 1; i < 7; i++)
         {
-            bst = insert(i, bst);
+            bst = insertAVL(i, bst);
         }
         preorder(bst);
         fprintf(stdout, "\n");

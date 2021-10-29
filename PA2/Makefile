@@ -10,9 +10,11 @@ testBuild: test1 test2 test3 test4 testBuildmem
 
 test1: pa4
 	./pa4 -b examples/ops0.b examples/test.b
+	./pa4 -e examples/test.b
 
 test2: pa4
 	./pa4 -b examples/ops1.b examples/test.b
+	./pa4 -e examples/test.b
 
 test3: pa4
 	./pa4 -b examples/ops2.b examples/test.b
