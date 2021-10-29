@@ -9,12 +9,28 @@ Tnode* insert(int, Tnode*);
 Tnode* delete(int, Tnode*);
 Tnode* buildBST(char*, char*);
 
+int calcNewHeight(Tnode*);
+int getHeight(Tnode*);
 int height(Tnode*);
 int bigger(int, int);
 int getBalance(Tnode*);
 void freeBST(Tnode*);
 void writePreorder(Tnode*, FILE*);
 
+//write bst to file using preorder traversal
+void writePreorder(Tnode* node, FILE* file)
+{
+    char a = 10;
+    int i;
+    for (i = 0; i < 8; i++) {
+        printf("%d", !!((a << i) & 0x80));
+    }
+    printf("\n");
+
+    return;
+}
+
+//Calculate height of entire tree
 int calcNewHeight(Tnode* node)
 {
     int leftHeight = getHeight(node->left);
@@ -24,7 +40,8 @@ int calcNewHeight(Tnode* node)
     return(newHeight);
 }
 
-int getHeight(Tnode* n)
+//Get height cause you can't get height from null so this makes it way easier
+int getHeight(Tnode* n) //tired of rewriting this shit
 {
     int height;
 
@@ -40,7 +57,8 @@ int getHeight(Tnode* n)
     return(height);
 }
 
-int bigger(int a, int b) //tired of rewriting this
+//Get bigger of two values
+int bigger(int a, int b) //tired of rewriting this shit
 {
     if (a > b)
     {
@@ -52,6 +70,7 @@ int bigger(int a, int b) //tired of rewriting this
     }
 }
 
+//Calculate the balance of a node using the heights of the left and right child
 int getBalance(Tnode* n)
 {
     int left;
@@ -70,6 +89,7 @@ int getBalance(Tnode* n)
     return(balance);
 }
 
+//free for memory
 void freeBST(Tnode* node)
 {
     if (node == NULL)
@@ -81,6 +101,7 @@ void freeBST(Tnode* node)
     free(node);
 }
 
+//Printing functions for testing
 void preorder(Tnode *node)
 {
     if (node != NULL)
@@ -111,6 +132,7 @@ void postorder(Tnode *node)
     }
 }
 
+//Create new node
 Tnode* newNode(int val)
 {
     Tnode* new = (struct _Tnode*)malloc(sizeof(struct _Tnode));
@@ -121,7 +143,8 @@ Tnode* newNode(int val)
     return(new);
 }
 
-Tnode* CR(Tnode* old) //change in terms of old and new
+//Clockwise rotation
+Tnode* CR(Tnode* old)
 {
     Tnode* new;
 
@@ -131,11 +154,13 @@ Tnode* CR(Tnode* old) //change in terms of old and new
     new->right = old;
     
     old->height = calcNewHeight(old);
+    new->height = calcNewHeight(new);
     //printf("CR on %d Height: %d, new = %d Height: %d\n", old->key, old->height, new->key, new->height);
 
     return(new);
 }
 
+//CounterClockwise rotation
 Tnode* CCR(Tnode* old)
 {
     Tnode* new;
@@ -146,12 +171,14 @@ Tnode* CCR(Tnode* old)
     new->left = old;
 
     old->height = calcNewHeight(old);
+    new->height = calcNewHeight(new);
     //printf("CCR on %d Height: %d, new = %d Height: %d\n", old->key, old->height, new->key, new->height);
 
     return(new);
 }
 
-Tnode* balance(Tnode* node)
+//Function to balance nodes and perform rotations if necessary
+Tnode* balance(Tnode* node, int key)
 {
     Tnode* temp = NULL;
     int nodeBalance = 0;
@@ -162,25 +189,31 @@ Tnode* balance(Tnode* node)
     rightBalance = getBalance(node->right);
     leftBalance = getBalance(node->left);
 
-    if (nodeBalance > 1) //left side is heavier
+    //logic from slides
+    if ((nodeBalance < 2) && (nodeBalance > -2))
     {
-        if (leftBalance > -1) //left left
+        return(node);
+    }
+
+    if (nodeBalance == 2) //left side is heavier
+    {
+        if (leftBalance == 1) //same direction
         {
             temp = CR(node);
         }
-        else if (leftBalance < 0) //left right
+        else if (leftBalance == -1) //oppossite direction
         {
             node->left = CCR(node->left);
             temp = CR(node);
         }
     }
-    else if (nodeBalance < -1) //right side is heavier
+    else if (nodeBalance == -2) //right side is heavier
     {
-        if (rightBalance < 1) //right left
+        if (rightBalance == -1) //same direction
         {
             temp = CCR(node);
         }
-        else if (rightBalance > 0) //right right
+        else if (rightBalance == 1) //opposite direction
         {
             node->right = CR(node->right);
             temp = CCR(node);
@@ -190,14 +223,19 @@ Tnode* balance(Tnode* node)
     if (temp)
     {
         temp->height = calcNewHeight(temp);
+        return(temp);
     }
-
-    return (temp != NULL) ? temp : node; //if temp return temp if not temp return node
+    else
+    {
+        node->height = calcNewHeight(node);
+        return(node);
+    }
 }
 
+//Insert node and balance
 Tnode* insert(int key, Tnode* node)
 {
-    //insertion
+    //insertion like normal
     if (node == NULL)
     {
         return(newNode(key));
@@ -213,16 +251,18 @@ Tnode* insert(int key, Tnode* node)
 
     //balance
     node->height = calcNewHeight(node);
-    node = balance(node);
+    node = balance(node, key);
 
     return(node);
 }
 
+//Delete node and balance
 Tnode* delete(int key, Tnode* node)
 {
     Tnode* temp = NULL;
     Tnode* predecessor = NULL;
 
+    //normal deletion
     if (node == NULL)
     {
         return(node);
@@ -269,72 +309,11 @@ Tnode* delete(int key, Tnode* node)
             node->left = delete(predecessor->key, node->left);
         }
     }
-
-    if (node == NULL) //edge case for when deleted last node
-    {
-        return(NULL);
-    }
  
     //balance
     node->height = calcNewHeight(node);
-    node = balance(node);
+    node = balance(node, key);
     return(node);
-}
-
-Tnode* buildBST(char* input, char* output)
-{
-    //CHANGE TO FILE AND FILE FOR INPUT AND OUTPUT OR DO IT SIMILAR TO PA1 WHERE THE FILE LOAD AND SAVE FUNCTIONS ARE SEPARATE SO YOU 
-    //CAN RETURN EXIT FAILURE
-    Tnode* bst = NULL;
-    Tnode* temp = NULL;
-
-    FILE* ops = fopen(input, "rb");
-
-    if (ops == NULL)
-    {
-        return (NULL);
-    }
-
-    fseek(ops, 0L, SEEK_END);
-    int size = ftell(ops) / 5; //amount of (int char) in file
-    rewind(ops);
-
-    int intBuffer;
-    char charBuffer;
-    int i;
-
-    for (i = 0; i < size; i++)
-    {
-        fread(&intBuffer, sizeof(intBuffer), 1, ops);
-        fread(&charBuffer, sizeof(charBuffer), 1, ops);
-        if (charBuffer == 'i') //insert
-        {
-            //printf("\nInsert: %d\n", intBuffer);
-            temp = insert(intBuffer, bst);
-            if (temp)
-            {
-                bst = temp;
-            }
-        }
-        else //delete
-        {
-            //printf("Delete: %d\n", intBuffer);
-            bst = delete(intBuffer, bst);
-        }
-    }
-    
-    
-    preorder(bst);
-    fprintf(stdout, "\n");
-    inorder(bst);
-    fprintf(stdout, "\n");
-    postorder(bst);
-    fprintf(stdout, "\n");
-    
-
-    fclose(ops);
-    freeBST(bst);
-    return(bst);
 }
 
 int main(int argc, char* argv[])
@@ -345,11 +324,70 @@ int main(int argc, char* argv[])
     }
 
     Tnode* bst = NULL;
+    Tnode* temp = NULL;
 
     //building height-balanced BST
     if (strcmp(argv[1], "-b") == 0) //if argv[1] == -b
     {
-        Tnode* bst = buildBST(argv[2], argv[3]);
+        //Load File
+        FILE* ops = fopen(argv[2], "rb");
+
+        if (ops == NULL)
+        {
+            return EXIT_FAILURE;
+        }
+
+        fseek(ops, 0L, SEEK_END);
+        int size = ftell(ops) / 5; //amount of (int char) in file
+        rewind(ops);
+
+        //Create and fill AVL
+        int intBuffer;
+        char charBuffer;
+        int i;
+
+        for (i = 0; i < size; i++)
+        {
+            fread(&intBuffer, sizeof(intBuffer), 1, ops);
+            fread(&charBuffer, sizeof(charBuffer), 1, ops);
+            if (charBuffer == 'i') //insert
+            {
+                //printf("\nInsert: %d\n", intBuffer);
+                temp = insert(intBuffer, bst);
+                if (temp)
+                {
+                    bst = temp;
+                }
+            }
+            else if (charBuffer == 'd')//delete
+            {
+                //printf("Delete: %d\n", intBuffer);
+                bst = delete(intBuffer, bst);
+            }
+        }
+
+        //Load Output File
+        FILE* opsOut = fopen(argv[3], "wb");
+
+        if (opsOut == NULL)
+        {
+            return EXIT_FAILURE;
+        }
+
+        //Write to file
+        writePreorder(bst, opsOut);
+
+        /*
+        preorder(bst);
+        fprintf(stdout, "\n");
+        inorder(bst);
+        fprintf(stdout, "\n");
+        postorder(bst);
+        fprintf(stdout, "\n");
+        */
+
+        fclose(ops);
+        freeBST(bst);
     }
     
     //evaluating a height balanced BST
@@ -361,13 +399,17 @@ int main(int argc, char* argv[])
     else if (strcmp(argv[1], "-t") == 0)
     {
         int i;
-        for (i = 1; i < 1000; i++)
+        for (i = 1; i < 10; i++)
         {
             bst = insert(i, bst);
         }
-        for (i = 1; i < 950; i++)
+        for (i = 1; i < 5; i++)
         {
             bst = delete(i, bst);
+        }
+        for (i = 1; i < 7; i++)
+        {
+            bst = insert(i, bst);
         }
         preorder(bst);
         fprintf(stdout, "\n");
@@ -375,6 +417,7 @@ int main(int argc, char* argv[])
         fprintf(stdout, "\n");
         postorder(bst);
         fprintf(stdout, "\n");
+        freeBST(bst);
     }
 
     return EXIT_SUCCESS;
