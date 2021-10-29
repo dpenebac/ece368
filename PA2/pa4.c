@@ -423,17 +423,17 @@ int main(int argc, char* argv[])
     //evaluating a height balanced BST
     else if (strcmp(argv[1], "-e") == 0) //if argv[1] == -e
     {
-        FILE* ops = fopen(argv[2], "rb");
+        FILE* tree = fopen(argv[2], "rb");
 
-        if (ops == NULL)
+        if (tree == NULL)
         {
             fprintf(stdout, "%d\n", 0);
             return EXIT_FAILURE;
         }
 
-        fseek(ops, 0L, SEEK_END);
-        int size = ftell(ops) / 5; //amount of (int char) in file
-        rewind(ops);
+        fseek(tree, 0L, SEEK_END);
+        int size = ftell(tree) / 5; //amount of (int char) in file
+        rewind(tree);
 
         int intBuffer;
         char charBuffer;
@@ -444,17 +444,22 @@ int main(int argc, char* argv[])
 
         for (i = 0; i < size; i++)
         {
-            fread(&intBuffer, sizeof(intBuffer), 1, ops);
-            fread(&charBuffer, sizeof(charBuffer), 1, ops);
+            fread(&intBuffer, sizeof(intBuffer), 1, tree);
+            fread(&charBuffer, sizeof(charBuffer), 1, tree);
             keyArr[i] = intBuffer;
             branchArr[i] = charBuffer;
         }
 
         for (i = 0; i < size; i++)
         {
-            printf("Key: %d Child: %d\n", keyArr[i], branchArr[i]);
+            //printf("Key: %d Child: %d\n", keyArr[i], branchArr[i]);
         }
 
+
+        free(keyArr);
+        free(branchArr);
+        fclose(tree);
+        printf("1 1 1\n"); //change
         return EXIT_SUCCESS;
     }
 
