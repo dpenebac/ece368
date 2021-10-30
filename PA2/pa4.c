@@ -518,14 +518,14 @@ int main(int argc, char* argv[])
 
         int index = 0;
         bst = insertBST(keyArr, branchArr, &index, size);
-        int isGood = BST_check(bst);
-        int isGood2 =  balance_check(bst);
+        int isBST = BST_check(bst);
+        int isBalanced =  balance_check(bst);
 
         free(keyArr);
         free(branchArr);
         freeBST(bst);
         fclose(tree);
-        printf("BST????: %d %d\n", isGood, isGood2); //change
+        printf("BST????: %d %d\n", isBST, isBalanced); //change
         return EXIT_SUCCESS;
     }
 
