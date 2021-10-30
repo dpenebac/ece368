@@ -18,12 +18,15 @@ test2: pa4
 
 test3: pa4
 	./pa4 -b examples/ops2.b examples/test.b
+	./pa4 -e examples/test.b
 
 test4: pa4
 	./pa4 -b examples/ops3.b examples/test.b
+	./pa4 -e examples/test.b
 
 testErr: pa4
 	./pa4 -l examples/ops3.b examples/test.b
+	./pa4 -e examples/test.b
 
 testt: pa4
 	./pa4 -t examples/ops3.b examples/test.b

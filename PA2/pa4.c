@@ -340,6 +340,34 @@ Tnode* deleteAVL(int key, Tnode* node)
     return(node);
 }
 
+Tnode* insertBST(int* keys, char* branches, int* index, int size) {
+  if (*index > size) {
+    // reach the end of the array.
+    return NULL;
+  }
+  Tnode* p = newNode(keys[*index]);
+  char child = branches[*index];
+  (*index) ++;
+  if (child == 3) {
+    // this node has both children.
+    p -> left = insertBST(keys, branches, index, size);
+    p -> right = insertBST(keys, branches, index, size);
+    return p;
+  }
+  if (child == 2) {
+    // this node has only left child.
+    p -> left = insertBST(keys, branches, index, size);
+    return p;
+  }
+  if (child == 1) {
+    // this node only has left child.
+    p -> right = insertBST(keys, branches, index, size);
+    return p;
+  }
+  // this node does not have any child.
+  return p;
+}
+
 int main(int argc, char* argv[])
 {
     if (argc > 4)
@@ -351,7 +379,7 @@ int main(int argc, char* argv[])
     Tnode* bst = NULL;
     Tnode* temp = NULL;
 
-    //building height-balanced BST
+    //building height-balanced BST (AVL)
     if (strcmp(argv[1], "-b") == 0) //if argv[1] == -b
     {
         //Load File
@@ -415,12 +443,13 @@ int main(int argc, char* argv[])
         */
 
         fclose(ops);
+        fclose(opsOut);
         freeBST(bst);
         fprintf(stdout, "%d\n", 1);
         return EXIT_SUCCESS;
     }
     
-    //evaluating a height balanced BST
+    //evaluating a BST
     else if (strcmp(argv[1], "-e") == 0) //if argv[1] == -e
     {
         FILE* tree = fopen(argv[2], "rb");
@@ -439,7 +468,7 @@ int main(int argc, char* argv[])
         char charBuffer;
         //check if malloc fails
         int *keyArr = (int*)malloc(size * sizeof(int)); //array containing keys
-        int *branchArr = (int*)malloc(size * sizeof(int)); //array containing # of children for each key
+        char *branchArr = (char*)malloc(size * sizeof(char)); //array containing # of children for each key
         int i;
 
         for (i = 0; i < size; i++)
@@ -450,14 +479,20 @@ int main(int argc, char* argv[])
             branchArr[i] = charBuffer;
         }
 
-        for (i = 0; i < size; i++)
-        {
-            //printf("Key: %d Child: %d\n", keyArr[i], branchArr[i]);
-        }
+        int index = 0;
+        bst = insertBST(keyArr, branchArr, &index, size);
+
+        preorder(bst);
+        fprintf(stdout, "\n");
+        inorder(bst);
+        fprintf(stdout, "\n");
+        postorder(bst);
+        fprintf(stdout, "\n");
 
 
         free(keyArr);
         free(branchArr);
+        freeBST(bst);
         fclose(tree);
         printf("1 1 1\n"); //change
         return EXIT_SUCCESS;
