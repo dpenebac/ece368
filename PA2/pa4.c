@@ -287,6 +287,7 @@ Tnode* deleteAVL(int key, Tnode* node)
     {
         return(node);
     }
+
     if (key > node->key)
     {
         node->right = deleteAVL(key, node->right);
@@ -297,7 +298,7 @@ Tnode* deleteAVL(int key, Tnode* node)
         node->left = deleteAVL(key, node->left);
         node->height = calcNewHeight(node);
     }
-    else if (key == node->key)
+    else if (key == node->key) //need to choose which child to replace after deletion
     {
         if (node->left == NULL && node->right == NULL) //no children
         {
