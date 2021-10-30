@@ -203,7 +203,6 @@ Tnode* balance(Tnode* node, int key)
     int rightBalance = 0;
     int leftBalance = 0;
 
-    node->height = calcNewHeight(node);
     nodeBalance = getBalance(node);
     rightBalance = getBalance(node->right);
     leftBalance = getBalance(node->left);
@@ -270,6 +269,7 @@ Tnode* insertAVL(int key, Tnode* node)
     }
 
     //balance
+    node->height = calcNewHeight(node);
     node = balance(node, key);
 
     return(node);
