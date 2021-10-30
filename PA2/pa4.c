@@ -359,6 +359,19 @@ int BST_check(Tnode* root) {
   return (lrtv && rrtv);
 }
 
+int balance_check(Tnode* root) {
+  if (root == NULL) {
+    return 1;
+  }
+  int bal = getBalance(root);
+  if ((bal < -1) || (bal > 1)) {
+    return 0;
+  }
+  char lb = balance_check(root -> left);
+  char rb = balance_check(root -> right);
+  return (lb && rb);
+}
+
 Tnode* insertBST(int* keys, char* branches, int* index, int size) {
   if (*index > size) {
     // reach the end of the array.
@@ -370,20 +383,26 @@ Tnode* insertBST(int* keys, char* branches, int* index, int size) {
   if (child == 3) {
     // this node has both children.
     p -> left = insertBST(keys, branches, index, size);
+    p->height = calcNewHeight(p);
     p -> right = insertBST(keys, branches, index, size);
+    p->height = calcNewHeight(p);
     return p;
   }
   if (child == 2) {
     // this node has only left child.
     p -> left = insertBST(keys, branches, index, size);
+    p->height = calcNewHeight(p);
     return p;
   }
   if (child == 1) {
     // this node only has left child.
     p -> right = insertBST(keys, branches, index, size);
+    p->height = calcNewHeight(p);
     return p;
   }
   // this node does not have any child.
+
+  p->height = calcNewHeight(p);
   return p;
 }
 
@@ -501,12 +520,13 @@ int main(int argc, char* argv[])
         int index = 0;
         bst = insertBST(keyArr, branchArr, &index, size);
         int isGood = BST_check(bst);
+        int isGood2 =  balance_check(bst);
 
         free(keyArr);
         free(branchArr);
         freeBST(bst);
         fclose(tree);
-        printf("BST????: %d\n", isGood); //change
+        printf("BST????: %d %d\n", isGood, isGood2); //change
         return EXIT_SUCCESS;
     }
 
