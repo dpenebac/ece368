@@ -313,12 +313,6 @@ Tnode* deleteAVL(int key, Tnode* node)
         {
             temp = node->left;
         }
-
-        if (temp) //if only either left or right child return temp
-        {
-            free(node);
-            return(temp);
-        }
         else if (node->left != NULL && node->right != NULL) //both children
         {
             predecessor = node->left; //find inorder predecessor
@@ -331,6 +325,13 @@ Tnode* deleteAVL(int key, Tnode* node)
             predecessor->key = key;
             node->left = deleteAVL(predecessor->key, node->left);
         }
+
+        if (temp) //if only either left or right child return temp
+        {
+            free(node);
+            return(temp);
+        }
+        
         node->height = calcNewHeight(node);
     }
  
