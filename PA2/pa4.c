@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <time.h>
 #include "hbt.h"
 
 Tnode* newNode(int);
@@ -207,6 +208,8 @@ Tnode* balance(Tnode* node, int key)
     rightBalance = getBalance(node->right);
     leftBalance = getBalance(node->left);
 
+    //printf("Node: %d NodeBalance: %d, RightBalance: %d, LeftBalance: %d\n", node->key, nodeBalance, rightBalance, leftBalance);
+
     //logic from slides
     if ((nodeBalance < 2) && (nodeBalance > -2))
     {
@@ -247,6 +250,16 @@ Tnode* balance(Tnode* node, int key)
     }
     else
     {
+        node->height = calcNewHeight(node);
+        if (node->right != NULL)
+        {
+            node->right->height = calcNewHeight(node->right);
+        }
+        
+        if (node->left != NULL)
+        {
+            node->left->height = calcNewHeight(node->left);
+        }
         return(node);
     }
 }
@@ -368,6 +381,7 @@ int balance_check(Tnode* root) {
   }
   char lb = balance_check(root -> left);
   char rb = balance_check(root -> right);
+  printf("lb: %d, rb: %d, lb & rb: %d\n", lb, rb, lb && rb);
   return (lb && rb);
 }
 
@@ -514,6 +528,7 @@ int main(int argc, char* argv[])
             fread(&charBuffer, sizeof(charBuffer), 1, tree);
             keyArr[i] = intBuffer;
             branchArr[i] = charBuffer;
+            printf("Key: %d, Branches: %d\n", keyArr[i], branchArr[i]);
         }
 
         int index = 0;
@@ -526,6 +541,37 @@ int main(int argc, char* argv[])
         freeBST(bst);
         fclose(tree);
         printf("BST????: %d %d\n", isBST, isBalanced); //change
+        return EXIT_SUCCESS;
+    }
+
+    else if (strcmp(argv[1], "-test") == 0)
+    {
+        int num, i;
+        //srand(time(NULL));
+        srand(1635620116);
+
+        for(i=0; i<13; ++i)
+        {
+            num = rand();
+            num = num % 59;
+            printf("\nInsert: %d\n", num);
+            temp = insertAVL(num, bst);
+            if (temp)
+            {
+                bst = temp;
+            }
+        }
+
+        FILE* opsOut = fopen(argv[3], "wb");
+        writePreorder(bst, opsOut);
+        
+        preorder(bst);
+        fprintf(stdout, "\n");
+        inorder(bst);
+        fprintf(stdout, "\n");
+        postorder(bst);
+        fprintf(stdout, "\n");
+
         return EXIT_SUCCESS;
     }
 

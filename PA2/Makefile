@@ -45,5 +45,9 @@ testTree: pa4
 	./pa4 -e examples/invalidtree1.b
 	./pa4 -e examples/invalidtree2.b
 
+testRand: pa4
+	./pa4 -test examples/ops3.b examples/test.b
+	./pa4 -e examples/test.b
+
 clean: # remove all machine generated files
 	rm -f pa4 *.o output?
