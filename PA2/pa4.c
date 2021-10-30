@@ -238,7 +238,7 @@ Tnode* balance(Tnode* node, int key)
         }
     }
 
-    if (temp) //if rotated need to update heights
+    if (temp != NULL) //if rotated need to update heights
     {
         temp->height = calcNewHeight(temp);
         temp->left->height = calcNewHeight(temp->left);
@@ -290,10 +290,12 @@ Tnode* deleteAVL(int key, Tnode* node)
     if (key > node->key)
     {
         node->right = deleteAVL(key, node->right);
+        node->height = calcNewHeight(node);
     }
     else if (key < node->key)
     {
         node->left = deleteAVL(key, node->left);
+        node->height = calcNewHeight(node);
     }
     else if (key == node->key)
     {
@@ -328,10 +330,10 @@ Tnode* deleteAVL(int key, Tnode* node)
             predecessor->key = key;
             node->left = deleteAVL(predecessor->key, node->left);
         }
+        node->height = calcNewHeight(node);
     }
  
     //balance
-    node->height = calcNewHeight(node);
     node = balance(node, key);
     return(node);
 }
