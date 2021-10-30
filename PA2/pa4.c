@@ -503,12 +503,14 @@ int main(int argc, char* argv[])
         //Write to file
         writePreorder(bst, opsOut);
 
+        /*
         preorder(bst);
         fprintf(stdout, "\n");
         inorder(bst);
         fprintf(stdout, "\n");
         postorder(bst);
         fprintf(stdout, "\n");
+        */
 
         fclose(ops);
         fclose(opsOut);
