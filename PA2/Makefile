@@ -36,5 +36,14 @@ testBuildmem: pa4
 	echo
 	valgrind --leak-check=full ./pa4 -e examples/test.b
 
+testTree: pa4
+	./pa4 -e examples/tree0.b
+	./pa4 -e examples/tree1.b
+	./pa4 -e examples/tree2.b
+	./pa4 -e examples/tree3.b
+	./pa4 -e examples/invalidtree0.b
+	./pa4 -e examples/invalidtree1.b
+	./pa4 -e examples/invalidtree2.b
+
 clean: # remove all machine generated files
 	rm -f pa4 *.o output?

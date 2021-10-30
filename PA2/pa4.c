@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 #include "hbt.h"
+
 Tnode* newNode(int);
 Tnode* CR(Tnode*);
 Tnode* CCR(Tnode*);
@@ -173,12 +175,11 @@ Tnode* CR(Tnode* old)
     Tnode* new;
 
     new = old->left;
-
     old->left = new->right;
     new->right = old;
     
     old->height = calcNewHeight(old);
-    new->height = calcNewHeight(new);
+    //new->height = calcNewHeight(new);
     //printf("CR on %d Height: %d, new = %d Height: %d\n", old->key, old->height, new->key, new->height);
 
     return(new);
@@ -190,12 +191,11 @@ Tnode* CCR(Tnode* old)
     Tnode* new;
 
     new = old->right;
-
     old->right = new->left;
     new->left = old;
 
     old->height = calcNewHeight(old);
-    new->height = calcNewHeight(new);
+    //new->height = calcNewHeight(new);
     //printf("CCR on %d Height: %d, new = %d Height: %d\n", old->key, old->height, new->key, new->height);
 
     return(new);
@@ -247,6 +247,7 @@ Tnode* balance(Tnode* node, int key)
     if (temp)
     {
         temp->height = calcNewHeight(temp);
+        node->height = calcNewHeight(node);
         return(temp);
     }
     else
@@ -338,6 +339,24 @@ Tnode* deleteAVL(int key, Tnode* node)
     node->height = calcNewHeight(node);
     node = balance(node, key);
     return(node);
+}
+
+int BST_check(Tnode* root) {
+  if (root == NULL) {
+    return 1;
+  }
+  Tnode* lc = root -> left;
+  Tnode* rc = root -> right;
+  // check if this node satisfy the BST.
+  if ((lc != NULL) && (lc -> key > root -> key)) {
+    return 0;
+  }
+  if ((rc != NULL) && (rc -> key < root -> key)) {
+    return 0;
+  }
+  int lrtv = BST_check(root -> left);
+  int rrtv = BST_check(root -> right);
+  return (lrtv && rrtv);
 }
 
 Tnode* insertBST(int* keys, char* branches, int* index, int size) {
@@ -481,20 +500,13 @@ int main(int argc, char* argv[])
 
         int index = 0;
         bst = insertBST(keyArr, branchArr, &index, size);
-
-        preorder(bst);
-        fprintf(stdout, "\n");
-        inorder(bst);
-        fprintf(stdout, "\n");
-        postorder(bst);
-        fprintf(stdout, "\n");
-
+        int isGood = BST_check(bst);
 
         free(keyArr);
         free(branchArr);
         freeBST(bst);
         fclose(tree);
-        printf("1 1 1\n"); //change
+        printf("BST????: %d\n", isGood); //change
         return EXIT_SUCCESS;
     }
 
