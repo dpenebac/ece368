@@ -323,7 +323,7 @@ Tnode* deleteAVL(int key, Tnode* node)
 
             node->key = predecessor->key; //swap values
             predecessor->key = key;
-            node->left = deleteAVL(predecessor->key, node->left);
+            node->left = deleteAVL(predecessor->key, node->left); //delete the value that was swapped
         }
 
         if (temp) //if only either left or right child return temp
@@ -331,7 +331,7 @@ Tnode* deleteAVL(int key, Tnode* node)
             free(node);
             return(temp);
         }
-        
+
         node->height = calcNewHeight(node);
     }
  
