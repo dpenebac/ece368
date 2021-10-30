@@ -179,7 +179,6 @@ Tnode* CR(Tnode* old) //change in terms of old and new
     old->left = new->right;
     new->right = old;
     
-    old->height = calcNewHeight(old);
     //printf("CR on %d Height: %d, new = %d Height: %d\n", old->key, old->height, new->key, new->height);
 
     return(new);
@@ -194,7 +193,6 @@ Tnode* CCR(Tnode* old)
     old->right = new->left;
     new->left = old;
 
-    old->height = calcNewHeight(old);
     //printf("CCR on %d Height: %d, new = %d Height: %d\n", old->key, old->height, new->key, new->height);
 
     return(new);
@@ -217,11 +215,14 @@ Tnode* balance(Tnode* node, int key)
     {
         if (leftBalance > -1) //left left
         {
+            old = node;
             temp = CR(node);
         }
         else if (leftBalance < 0) //left right
         {
+            old = node->left;
             node->left = CCR(node->left);
+            old2 = node;
             temp = CR(node);
         }
     }
@@ -229,11 +230,14 @@ Tnode* balance(Tnode* node, int key)
     {
         if (rightBalance < 1) //right left
         {
+            old = node;
             temp = CCR(node);
         }
         else if (rightBalance > 0) //right right
         {
+            old = node->right;
             node->right = CR(node->right);
+            old2 = node;
             temp = CCR(node);
         }
     }
@@ -388,9 +392,6 @@ int balance_check(Tnode* root) {
   if (root == NULL) {
     return 1;
   }
-
-  //printf("Root: %d, height: %d, balance %d\n", root->key, root->height, getBalance(root));
-
     
   int bal = getBalance(root);
   if ((bal < -1) || (bal > 1)) {
@@ -561,11 +562,11 @@ int main(int argc, char* argv[])
     else if (strcmp(argv[1], "-test") == 0)
     {
         int num, i;
-        //srand(time(NULL));
-        //printf("srand: %d\n", time(NULL));
-        srand(1635625605);
+        srand(time(NULL));
+        printf("srand: %d\n", time(NULL));
+        //srand(1635625605);
 
-        for(i=0; i < 11; ++i)
+        for(i=0; i < 100000; ++i)
         {
             num = rand();
             num = num % 59;
@@ -578,7 +579,7 @@ int main(int argc, char* argv[])
             bst = insertAVL(num, bst);
         }
         
-        for(i=0; i < 8; ++i)
+        for(i=0; i < 80000; ++i)
         {
             num = rand();
             num = num % 59;
@@ -589,13 +590,6 @@ int main(int argc, char* argv[])
 
         FILE* opsOut = fopen(argv[3], "wb");
         writePreorder(bst, opsOut);
-
-        preorder(bst);
-        fprintf(stdout, "\n");
-        inorder(bst);
-        fprintf(stdout, "\n");
-        postorder(bst);
-        fprintf(stdout, "\n");
 
         return EXIT_SUCCESS;
     }
