@@ -566,7 +566,7 @@ int main(int argc, char* argv[])
         printf("srand: %d\n", time(NULL));
         //srand(1635625605);
 
-        for(i=0; i < 100000; ++i)
+        for(i=0; i < 800; ++i)
         {
             num = rand();
             num = num % 59;
@@ -579,7 +579,7 @@ int main(int argc, char* argv[])
             bst = insertAVL(num, bst);
         }
         
-        for(i=0; i < 80000; ++i)
+        for(i=0; i < 800; ++i)
         {
             num = rand();
             num = num % 59;
