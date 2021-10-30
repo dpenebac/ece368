@@ -178,6 +178,7 @@ Tnode* CR(Tnode* old)
     new = old->left;
     old->left = new->right;
     new->right = old;
+    old->height = calcNewHeight(old);
     //printf("CR on %d Height: %d, new = %d Height: %d\n", old->key, old->height, new->key, new->height);
 
     return(new);
@@ -191,6 +192,8 @@ Tnode* CCR(Tnode* old)
     new = old->right;
     old->right = new->left;
     new->left = old;
+
+    old->height = calcNewHeight(old);
     //printf("CCR on %d Height: %d, new = %d Height: %d\n", old->key, old->height, new->key, new->height);
 
     return(new);
@@ -207,9 +210,7 @@ Tnode* balance(Tnode* node, int key)
     nodeBalance = getBalance(node);
     rightBalance = getBalance(node->right);
     leftBalance = getBalance(node->left);
-
-    //printf("Node: %d NodeBalance: %d, RightBalance: %d, LeftBalance: %d\n", node->key, nodeBalance, rightBalance, leftBalance);
-
+    
     //logic from slides
     if ((nodeBalance < 2) && (nodeBalance > -2))
     {
@@ -379,9 +380,8 @@ int balance_check(Tnode* root) {
   if ((bal < -1) || (bal > 1)) {
     return 0;
   }
-  char lb = balance_check(root -> left);
-  char rb = balance_check(root -> right);
-  printf("lb: %d, rb: %d, lb & rb: %d\n", lb, rb, lb && rb);
+  int lb = balance_check(root -> left);
+  int rb = balance_check(root -> right);
   return (lb && rb);
 }
 
@@ -528,7 +528,6 @@ int main(int argc, char* argv[])
             fread(&charBuffer, sizeof(charBuffer), 1, tree);
             keyArr[i] = intBuffer;
             branchArr[i] = charBuffer;
-            printf("Key: %d, Branches: %d\n", keyArr[i], branchArr[i]);
         }
 
         int index = 0;
@@ -547,14 +546,14 @@ int main(int argc, char* argv[])
     else if (strcmp(argv[1], "-test") == 0)
     {
         int num, i;
-        //srand(time(NULL));
-        srand(1635620116);
+        srand(time(NULL));
+        printf("srand: %d\n", time(NULL));
+        //srand(1635670116);
 
-        for(i=0; i<13; ++i)
+        for(i=0; i<time(NULL) % 61; ++i)
         {
             num = rand();
             num = num % 59;
-            printf("\nInsert: %d\n", num);
             temp = insertAVL(num, bst);
             if (temp)
             {
@@ -564,13 +563,6 @@ int main(int argc, char* argv[])
 
         FILE* opsOut = fopen(argv[3], "wb");
         writePreorder(bst, opsOut);
-        
-        preorder(bst);
-        fprintf(stdout, "\n");
-        inorder(bst);
-        fprintf(stdout, "\n");
-        postorder(bst);
-        fprintf(stdout, "\n");
 
         return EXIT_SUCCESS;
     }
