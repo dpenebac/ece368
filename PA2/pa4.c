@@ -262,14 +262,15 @@ Tnode* insertAVL(int key, Tnode* node)
     if (key > node->key)
     {
         node->right = insertAVL(key, node->right);
+        node->height = calcNewHeight(node);
     }
     else //duplicate or less than
     {
         node->left = insertAVL(key, node->left);
+        node->height = calcNewHeight(node);
     }
 
     //balance
-    node->height = calcNewHeight(node);
     node = balance(node, key);
 
     return(node);
