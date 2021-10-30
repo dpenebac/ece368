@@ -178,7 +178,7 @@ Tnode* CR(Tnode* old)
     new = old->left;
     old->left = new->right;
     new->right = old;
-    old->height = calcNewHeight(old);
+    //old->height = calcNewHeight(old);
     //printf("CR on %d Height: %d, new = %d Height: %d\n", old->key, old->height, new->key, new->height);
 
     return(new);
@@ -193,7 +193,7 @@ Tnode* CCR(Tnode* old)
     old->right = new->left;
     new->left = old;
 
-    old->height = calcNewHeight(old);
+    //old->height = calcNewHeight(old);
     //printf("CCR on %d Height: %d, new = %d Height: %d\n", old->key, old->height, new->key, new->height);
 
     return(new);
@@ -203,6 +203,8 @@ Tnode* CCR(Tnode* old)
 Tnode* balance(Tnode* node, int key)
 {
     Tnode* temp = NULL;
+    Tnode* old = NULL;
+    Tnode* old2 = NULL;
     int nodeBalance = 0;
     int rightBalance = 0;
     int leftBalance = 0;
@@ -210,7 +212,7 @@ Tnode* balance(Tnode* node, int key)
     nodeBalance = getBalance(node);
     rightBalance = getBalance(node->right);
     leftBalance = getBalance(node->left);
-    
+
     //logic from slides
     if ((nodeBalance < 2) && (nodeBalance > -2))
     {
@@ -221,11 +223,14 @@ Tnode* balance(Tnode* node, int key)
     {
         if (leftBalance == 1) //same direction
         {
+            old = node;
             temp = CR(node);
         }
         else if (leftBalance == -1) //oppossite direction
         {
+            old = node->left;
             node->left = CCR(node->left);
+            old2 = node;
             temp = CR(node);
         }
     }
@@ -233,12 +238,45 @@ Tnode* balance(Tnode* node, int key)
     {
         if (rightBalance == -1) //same direction
         {
+            old = node;
             temp = CCR(node);
         }
         else if (rightBalance == 1) //opposite direction
         {
+            old = node->right;
             node->right = CR(node->right);
+            old2 = node;
             temp = CCR(node);
+        }
+    }
+
+    if (old != NULL)
+    {
+        old->height = calcNewHeight(old);
+
+        if (old->left != NULL)
+        {
+            old->left->height = calcNewHeight(old->left);
+        }
+
+        if (old->right != NULL)
+        {
+            old->right->height = calcNewHeight(old->right);
+        }
+    }
+
+    if (old2 != NULL)
+    {
+        old2->height = calcNewHeight(old2);
+
+        if (old2->left != NULL)
+        {
+            old2->left->height = calcNewHeight(old2->left);
+        }
+
+        if (old2->right != NULL)
+        {
+            old2->right->height = calcNewHeight(old2->right);
         }
     }
 
