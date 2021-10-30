@@ -399,49 +399,52 @@ int isBalanced(Tnode* node)
     }
 
     int balance = getBalance(node);
+    int unbalanced = ((balance < -1) || (balance > 1)) ? 1 : 0;
 
-    if ((balance < -1) || (balance > 1)) //if unbalanced
+    if (unbalanced) //if unbalanced
     {
         return(0); 
     }
+    else
+    {
+        int leftBalance = isBalanced(node->left);
+        int rightBalance = isBalanced(node->right);
+        bool isBal = leftBalance && rightBalance;
 
-    int leftBalance = isBalanced(node->left);
-    int rightBalance = isBalanced(node->right);
-    bool isBal = leftBalance && rightBalance;
-
-    return(isBal);
+        return(isBal);
+    }
 }
 
 //
 Tnode* insertBST(int* keys, char* branches, int* index, int size) 
 {
-    if (*index > size)
+    if (*index < size)
     {
-        return(NULL);
+        int i = *index;
+        *index += 1;
+
+        Tnode* temp = newNode(keys[i]);
+        char branch = branches[i];
+
+        if (branch == 3) 
+        {
+            temp -> left = insertBST(keys, branches, index, size);
+            temp -> right = insertBST(keys, branches, index, size);
+        }
+        else if (branch == 2) 
+        {
+            temp -> left = insertBST(keys, branches, index, size);
+        }
+        else if (branch == 1) 
+        {
+            temp -> right = insertBST(keys, branches, index, size);
+        }
+
+        temp->height = calcNewHeight(temp);
+        return temp;
     }
 
-    int i = *index;
-    *index += 1;
-
-    Tnode* temp = newNode(keys[i]);
-    char child = branches[i];
-
-    if (child == 3) 
-    {
-        temp -> left = insertBST(keys, branches, index, size);
-        temp -> right = insertBST(keys, branches, index, size);
-    }
-    else if (child == 2) 
-    {
-        temp -> left = insertBST(keys, branches, index, size);
-    }
-    else if (child == 1) 
-    {
-        temp -> right = insertBST(keys, branches, index, size);
-    }
-
-    temp->height = calcNewHeight(temp);
-    return temp;
+    return(NULL);
 }
 
 int main(int argc, char* argv[])
