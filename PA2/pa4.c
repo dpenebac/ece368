@@ -67,7 +67,7 @@ int calcNewHeight(Tnode* node)
 }
 
 //Get height cause you can't get height from null so this makes it way easier
-int getHeight(Tnode* n) //tired of rewriting this shit
+int getHeight(Tnode* n) //tired of rewriting this
 {
     int height;
 
@@ -175,7 +175,6 @@ Tnode* CR(Tnode* old) //change in terms of old and new
     Tnode* new;
 
     new = old->left;
-
     old->left = new->right;
     new->right = old;
     
@@ -189,7 +188,6 @@ Tnode* CCR(Tnode* old)
     Tnode* new;
 
     new = old->right;
-
     old->right = new->left;
     new->left = old;
 
@@ -369,73 +367,81 @@ Tnode* deleteAVL(int key, Tnode* node)
     return(node);
 }
 
-int BST_check(Tnode* root) {
-  if (root == NULL) {
-    return 1;
-  }
-  Tnode* lc = root -> left;
-  Tnode* rc = root -> right;
-  // check if this node satisfy the BST.
-  if ((lc != NULL) && (lc -> key > root -> key)) {
-    return 0;
-  }
-  if ((rc != NULL) && (rc -> key < root -> key)) {
-    return 0;
-  }
-  int lrtv = BST_check(root -> left);
-  int rrtv = BST_check(root -> right);
-  return (lrtv && rrtv);
+//
+int isBST(Tnode* node)
+{
+    if (node == NULL) //is balanced
+    {
+        return(1);
+    }
+
+    if ((node->left != NULL) && (node->left->key > node->key)) //left child is wrong
+    {
+        return(0);
+    }  
+
+    if ((node->right != NULL) && (node->right->key < node->key)) //right child is wrong
+    {
+        return(0);
+    }
+
+    bool isBst = isBST(node->left) && isBST(node->right);
+
+    return(isBst);
 }
 
-int balance_check(Tnode* root) {
-    
-  if (root == NULL) {
-    return 1;
-  }
-    
-  int bal = getBalance(root);
-  if ((bal < -1) || (bal > 1)) {
-    return 0;
-  }
+//
+int isBalanced(Tnode* node)
+{
+    if (node == NULL)
+    {
+        return(1);
+    }
 
-int lb = balance_check(root -> left);
-  int rb = balance_check(root -> right);
-  return (lb && rb);
+    int balance = getBalance(node);
+
+    if ((balance < -1) || (balance > 1)) //if unbalanced
+    {
+        return(0); 
+    }
+
+    int leftBalance = isBalanced(node->left);
+    int rightBalance = isBalanced(node->right);
+    bool isBal = leftBalance && rightBalance;
+
+    return(isBal);
 }
 
-Tnode* insertBST(int* keys, char* branches, int* index, int size) {
-  if (*index > size) {
-    // reach the end of the array.
-    return NULL;
-  }
-  Tnode* p = newNode(keys[*index]);
-  char child = branches[*index];
-  (*index) ++;
-  if (child == 3) {
-    // this node has both children.
-    p -> left = insertBST(keys, branches, index, size);
-    p->height = calcNewHeight(p);
-    p -> right = insertBST(keys, branches, index, size);
-    p->height = calcNewHeight(p);
-    return p;
-  }
-  if (child == 2) {
-    // this node has only left child.
-    p -> left = insertBST(keys, branches, index, size);
-    p->height = calcNewHeight(p);
-    return p;
-  }
-  if (child == 1) {
-    // this node only has left child.
-    p -> right = insertBST(keys, branches, index, size);
-    p->height = calcNewHeight(p);
-    return p;
-  }
-  if (child == 0) { //no children
-    p->height = calcNewHeight(p);
-    return p;
-  }
-  // this node does not have any child.
+//
+Tnode* insertBST(int* keys, char* branches, int* index, int size) 
+{
+    if (*index > size)
+    {
+        return(NULL);
+    }
+
+    int i = *index;
+    *index += 1;
+
+    Tnode* temp = newNode(keys[i]);
+    char child = branches[i];
+
+    if (child == 3) 
+    {
+        temp -> left = insertBST(keys, branches, index, size);
+        temp -> right = insertBST(keys, branches, index, size);
+    }
+    else if (child == 2) 
+    {
+        temp -> left = insertBST(keys, branches, index, size);
+    }
+    else if (child == 1) 
+    {
+        temp -> right = insertBST(keys, branches, index, size);
+    }
+
+    temp->height = calcNewHeight(temp);
+    return temp;
 }
 
 int main(int argc, char* argv[])
@@ -552,14 +558,14 @@ int main(int argc, char* argv[])
 
         int index = 0;
         bst = insertBST(keyArr, branchArr, &index, size);
-        int isBST = BST_check(bst);
-        int isBalanced =  balance_check(bst);
+        int isBst = isBST(bst);
+        int isBal =  isBalanced(bst);
 
         free(keyArr);
         free(branchArr);
         freeBST(bst);
         fclose(tree);
-        printf("BST????: %d %d\n", isBST, isBalanced); //change
+        printf("BST????: %d %d\n", isBst, isBal); //change
         return EXIT_SUCCESS;
     }
 
