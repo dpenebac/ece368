@@ -431,10 +431,11 @@ Tnode* insertBST(int* keys, char* branches, int* index, int size) {
     p->height = calcNewHeight(p);
     return p;
   }
+  if (child == 0) { //no children
+    p->height = calcNewHeight(p);
+    return p;
+  }
   // this node does not have any child.
-
-  p->height = calcNewHeight(p);
-  return p;
 }
 
 int main(int argc, char* argv[])
@@ -540,6 +541,7 @@ int main(int argc, char* argv[])
 
         for (i = 0; i < size; i++)
         {
+            //if charBuffer not 0 or 1 or 2 or 3 set first integer to 0
             fread(&intBuffer, sizeof(intBuffer), 1, tree);
             fread(&charBuffer, sizeof(charBuffer), 1, tree);
             keyArr[i] = intBuffer;
@@ -566,24 +568,21 @@ int main(int argc, char* argv[])
         printf("srand: %d\n", time(NULL));
         //srand(1635625605);
 
-        for(i=0; i < 800; ++i)
+        for(i=0; i < 10000; ++i)
         {
             num = rand();
             num = num % 59;
 
             //printf("\nInsert: %d\n", num);
             bst = insertAVL(num, bst);
-            //printf("\nInsert: %d\n", num);
-            bst = insertAVL(num, bst);
-            //printf("\nInsert: %d\n", num);
-            bst = insertAVL(num, bst);
         }
-        
-        for(i=0; i < 800; ++i)
+
+        for(i=0; i < 100000; ++i)
         {
             num = rand();
             num = num % 59;
-            //printf("\nDelete: %d\n", num);
+
+            //printf("\nInsert: %d\n", num);
             bst = deleteAVL(num, bst);
         }
         
