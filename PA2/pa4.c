@@ -203,6 +203,7 @@ Tnode* balance(Tnode* node, int key)
     int rightBalance = 0;
     int leftBalance = 0;
 
+    node->height = calcNewHeight(node);
     nodeBalance = getBalance(node);
     rightBalance = getBalance(node->right);
     leftBalance = getBalance(node->left);
@@ -238,7 +239,7 @@ Tnode* balance(Tnode* node, int key)
         }
     }
 
-    if (temp)
+    if (temp) //if rotated need to update heights
     {
         temp->height = calcNewHeight(temp);
         temp->left->height = calcNewHeight(temp->left);
@@ -247,7 +248,6 @@ Tnode* balance(Tnode* node, int key)
     }
     else
     {
-        node->height = calcNewHeight(node);
         return(node);
     }
 }
@@ -270,7 +270,6 @@ Tnode* insertAVL(int key, Tnode* node)
     }
 
     //balance
-    node->height = calcNewHeight(node);
     node = balance(node, key);
 
     return(node);
