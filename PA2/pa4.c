@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-#include <time.h>
 #include "hbt.h"
 
 Tnode* newNode(int);
@@ -171,35 +170,36 @@ Tnode* newNode(int val)
 }
 
 //Clockwise rotation
-Tnode* CR(Tnode* old)
+Tnode* CR(Tnode* old) //change in terms of old and new
 {
     Tnode* new;
 
     new = old->left;
+
     old->left = new->right;
     new->right = old;
-    //old->height = calcNewHeight(old);
+    
+    old->height = calcNewHeight(old);
     //printf("CR on %d Height: %d, new = %d Height: %d\n", old->key, old->height, new->key, new->height);
 
     return(new);
 }
 
-//CounterClockwise rotation
 Tnode* CCR(Tnode* old)
 {
     Tnode* new;
 
     new = old->right;
+
     old->right = new->left;
     new->left = old;
 
-    //old->height = calcNewHeight(old);
+    old->height = calcNewHeight(old);
     //printf("CCR on %d Height: %d, new = %d Height: %d\n", old->key, old->height, new->key, new->height);
 
     return(new);
 }
 
-//Function to balance nodes and perform rotations if necessary
 Tnode* balance(Tnode* node, int key)
 {
     Tnode* temp = NULL;
@@ -213,39 +213,27 @@ Tnode* balance(Tnode* node, int key)
     rightBalance = getBalance(node->right);
     leftBalance = getBalance(node->left);
 
-    //logic from slides
-    if ((nodeBalance < 2) && (nodeBalance > -2))
+    if (nodeBalance > 1) //left side is heavier
     {
-        return(node);
-    }
-
-    if (nodeBalance == 2) //left side is heavier
-    {
-        if (leftBalance == 1) //same direction
+        if (leftBalance > -1) //left left
         {
-            old = node;
             temp = CR(node);
         }
-        else if (leftBalance == -1) //oppossite direction
+        else if (leftBalance < 0) //left right
         {
-            old = node->left;
             node->left = CCR(node->left);
-            old2 = node;
             temp = CR(node);
         }
     }
-    else if (nodeBalance == -2) //right side is heavier
+    else if (nodeBalance < -1) //right side is heavier
     {
-        if (rightBalance == -1) //same direction
+        if (rightBalance < 1) //right left
         {
-            old = node;
             temp = CCR(node);
         }
-        else if (rightBalance == 1) //opposite direction
+        else if (rightBalance > 0) //right right
         {
-            old = node->right;
             node->right = CR(node->right);
-            old2 = node;
             temp = CCR(node);
         }
     }
@@ -280,27 +268,14 @@ Tnode* balance(Tnode* node, int key)
         }
     }
 
-    if (temp != NULL) //if rotated need to update heights
+    if (temp)
     {
         temp->height = calcNewHeight(temp);
-        temp->left->height = calcNewHeight(temp->left);
         temp->right->height = calcNewHeight(temp->right);
-        return(temp);
+        temp->left->height = calcNewHeight(temp->left);
     }
-    else
-    {
-        node->height = calcNewHeight(node);
-        if (node->right != NULL)
-        {
-            node->right->height = calcNewHeight(node->right);
-        }
-        
-        if (node->left != NULL)
-        {
-            node->left->height = calcNewHeight(node->left);
-        }
-        return(node);
-    }
+
+    return (temp != NULL) ? temp : node; //if temp return temp if not temp return node
 }
 
 //Insert node and balance
@@ -339,7 +314,6 @@ Tnode* deleteAVL(int key, Tnode* node)
     {
         return(node);
     }
-
     if (key > node->key)
     {
         node->right = deleteAVL(key, node->right);
@@ -350,7 +324,7 @@ Tnode* deleteAVL(int key, Tnode* node)
         node->left = deleteAVL(key, node->left);
         node->height = calcNewHeight(node);
     }
-    else if (key == node->key) //need to choose which child to replace after deletion
+    else if (key == node->key)
     {
         if (node->left == NULL && node->right == NULL) //no children
         {
@@ -365,6 +339,12 @@ Tnode* deleteAVL(int key, Tnode* node)
         {
             temp = node->left;
         }
+
+        if (temp) //if only either left or right child return temp
+        {
+            free(node);
+            return(temp);
+        }
         else if (node->left != NULL && node->right != NULL) //both children
         {
             predecessor = node->left; //find inorder predecessor
@@ -375,15 +355,8 @@ Tnode* deleteAVL(int key, Tnode* node)
 
             node->key = predecessor->key; //swap values
             predecessor->key = key;
-            node->left = deleteAVL(predecessor->key, node->left); //delete the value that was swapped
+            node->left = deleteAVL(predecessor->key, node->left);
         }
-
-        if (temp) //if only either left or right child return temp
-        {
-            free(node);
-            return(temp);
-        }
-
         node->height = calcNewHeight(node);
     }
  
@@ -411,14 +384,20 @@ int BST_check(Tnode* root) {
 }
 
 int balance_check(Tnode* root) {
+    
   if (root == NULL) {
     return 1;
   }
+
+  //printf("Root: %d, height: %d, balance %d\n", root->key, root->height, getBalance(root));
+
+    
   int bal = getBalance(root);
   if ((bal < -1) || (bal > 1)) {
     return 0;
   }
-  int lb = balance_check(root -> left);
+
+int lb = balance_check(root -> left);
   int rb = balance_check(root -> right);
   return (lb && rb);
 }
@@ -522,14 +501,12 @@ int main(int argc, char* argv[])
         //Write to file
         writePreorder(bst, opsOut);
 
-        /*
         preorder(bst);
         fprintf(stdout, "\n");
         inorder(bst);
         fprintf(stdout, "\n");
         postorder(bst);
         fprintf(stdout, "\n");
-        */
 
         fclose(ops);
         fclose(opsOut);
@@ -584,23 +561,41 @@ int main(int argc, char* argv[])
     else if (strcmp(argv[1], "-test") == 0)
     {
         int num, i;
-        srand(time(NULL));
-        printf("srand: %d\n", time(NULL));
-        //srand(1635670116);
+        //srand(time(NULL));
+        //printf("srand: %d\n", time(NULL));
+        srand(1635625605);
 
-        for(i=0; i<time(NULL) % 61; ++i)
+        for(i=0; i < 11; ++i)
         {
             num = rand();
             num = num % 59;
-            temp = insertAVL(num, bst);
-            if (temp)
-            {
-                bst = temp;
-            }
+
+            //printf("\nInsert: %d\n", num);
+            bst = insertAVL(num, bst);
+            //printf("\nInsert: %d\n", num);
+            bst = insertAVL(num, bst);
+            //printf("\nInsert: %d\n", num);
+            bst = insertAVL(num, bst);
         }
+        
+        for(i=0; i < 8; ++i)
+        {
+            num = rand();
+            num = num % 59;
+            //printf("\nDelete: %d\n", num);
+            bst = deleteAVL(num, bst);
+        }
+        
 
         FILE* opsOut = fopen(argv[3], "wb");
         writePreorder(bst, opsOut);
+
+        preorder(bst);
+        fprintf(stdout, "\n");
+        inorder(bst);
+        fprintf(stdout, "\n");
+        postorder(bst);
+        fprintf(stdout, "\n");
 
         return EXIT_SUCCESS;
     }
