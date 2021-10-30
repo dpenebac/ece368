@@ -177,9 +177,6 @@ Tnode* CR(Tnode* old)
     new = old->left;
     old->left = new->right;
     new->right = old;
-    
-    old->height = calcNewHeight(old);
-    //new->height = calcNewHeight(new);
     //printf("CR on %d Height: %d, new = %d Height: %d\n", old->key, old->height, new->key, new->height);
 
     return(new);
@@ -193,9 +190,6 @@ Tnode* CCR(Tnode* old)
     new = old->right;
     old->right = new->left;
     new->left = old;
-
-    old->height = calcNewHeight(old);
-    //new->height = calcNewHeight(new);
     //printf("CCR on %d Height: %d, new = %d Height: %d\n", old->key, old->height, new->key, new->height);
 
     return(new);
@@ -247,7 +241,8 @@ Tnode* balance(Tnode* node, int key)
     if (temp)
     {
         temp->height = calcNewHeight(temp);
-        node->height = calcNewHeight(node);
+        temp->left->height = calcNewHeight(temp->left);
+        temp->right->height = calcNewHeight(temp->right);
         return(temp);
     }
     else
