@@ -399,9 +399,9 @@ int isBalanced(Tnode* node)
     }
 
     int balance = getBalance(node);
-    bool unbalanced = ((balance < -1) || (balance > 1));
+    bool balanced = !((balance < -1) || (balance > 1));
 
-    if (unbalanced == false)
+    if (balanced)
     {
         int leftBalance = isBalanced(node->left);
         int rightBalance = isBalanced(node->right);
@@ -409,7 +409,7 @@ int isBalanced(Tnode* node)
 
         return(isBal);
     }
-    else if (unbalanced == true)
+    else if (!balanced)
     {
         return(0);
     }
