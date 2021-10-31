@@ -44,8 +44,6 @@ testTree: pa4
 	./pa4 -e examples/invalidtree0.b
 	./pa4 -e examples/invalidtree1.b
 	./pa4 -e examples/invalidtree2.b
-	valgrind ./pa4 -e examples/tree3.b
-	valgrind ./pa4 -e examples/invalidtree2.b
 
 testRand: clean pa4
 	clear

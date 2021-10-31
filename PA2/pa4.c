@@ -170,7 +170,7 @@ Tnode* newNode(int val)
 }
 
 //Clockwise rotation
-Tnode* CR(Tnode* old) //change in terms of old and new
+Tnode* CR(Tnode* old)
 {
     Tnode* new;
 
@@ -283,7 +283,7 @@ Tnode* balance(Tnode* node, int key)
 //Insert node and balance
 Tnode* insertAVL(int key, Tnode* node)
 {
-    //insertion like normal
+    //insertion
     if (node == NULL)
     {
         return(newNode(key));
@@ -357,7 +357,7 @@ Tnode* deleteAVL(int key, Tnode* node)
 
             node->key = predecessor->key; //swap values
             predecessor->key = key;
-            node->left = deleteAVL(predecessor->key, node->left);
+            node->left = deleteAVL(key, node->left); //delete the same key again
         }
         node->height = calcNewHeight(node);
     }
@@ -367,27 +367,30 @@ Tnode* deleteAVL(int key, Tnode* node)
     return(node);
 }
 
-//
+//fluffy kinda?
 int isBST(Tnode* node)
 {
     if (node == NULL) //is balanced
     {
+        return(1); //true
+    }
+
+    if (((node->left != NULL) && (node->left->key > node->key)) || ((node->right != NULL) && (node->right->key < node->key)))
+    {
+        return(0); //false
+    }
+
+    int leftBst = isBST(node->left);
+    int rightBst = isBST(node->right);
+
+    if ((leftBst == 0) || (rightBst == 0))
+    {
+        return(0);
+    }
+    else
+    {
         return(1);
     }
-
-    if ((node->left != NULL) && (node->left->key > node->key)) //left child is wrong
-    {
-        return(0);
-    }  
-
-    if ((node->right != NULL) && (node->right->key < node->key)) //right child is wrong
-    {
-        return(0);
-    }
-
-    bool isBst = isBST(node->left) && isBST(node->right);
-
-    return(isBst);
 }
 
 //pretty fluffy
@@ -405,7 +408,7 @@ int isBalanced(Tnode* node)
     {
         int leftBalance = isBalanced(node->left);
         int rightBalance = isBalanced(node->right);
-        bool isBal = leftBalance && rightBalance;
+        int isBal = leftBalance && rightBalance;
 
         return(isBal);
     }
@@ -415,7 +418,7 @@ int isBalanced(Tnode* node)
     }
 }
 
-//too similar
+//a lil fluffy need more fluff but how?
 Tnode* insertBST(int* keys, char* branches, int* index, int size) 
 {
     if (*index < size)
@@ -441,10 +444,12 @@ Tnode* insertBST(int* keys, char* branches, int* index, int size)
         }
 
         temp->height = calcNewHeight(temp);
-        return temp;
+        return(temp);
     }
-
-    return(NULL);
+    else
+    {
+        return(NULL);
+    }
 }
 
 int main(int argc, char* argv[])
@@ -512,14 +517,14 @@ int main(int argc, char* argv[])
         //Write to file
         writePreorder(bst, opsOut);
 
-        /*
+        
         preorder(bst);
         fprintf(stdout, "\n");
         inorder(bst);
         fprintf(stdout, "\n");
         postorder(bst);
         fprintf(stdout, "\n");
-        */
+        
 
         fclose(ops);
         fclose(opsOut);
@@ -552,7 +557,7 @@ int main(int argc, char* argv[])
 
         for (i = 0; i < size; i++)
         {
-            //if charBuffer not 0 or 1 or 2 or 3 set first integer to 0
+            //if charBuffer not 0 or 1 or 2 or 3
             fread(&intBuffer, sizeof(intBuffer), 1, tree);
             fread(&charBuffer, sizeof(charBuffer), 1, tree);
             keyArr[i] = intBuffer;
@@ -588,14 +593,20 @@ int main(int argc, char* argv[])
             bst = insertAVL(num, bst);
         }
 
-        for(i=0; i < 800; ++i)
+        for(i=0; i < 10000; ++i)
         {
             num = rand();
             num = num % 59;
 
-            //printf("\nInsert: %d\n", num);
+            //printf("\nDelete: %d\n", num);
             bst = deleteAVL(num, bst);
         }
+
+        bst = NULL;
+
+        bst = insertAVL(1,bst);
+        bst = insertAVL(1,bst);
+        bst = insertAVL(1,bst);
         
 
         FILE* opsOut = fopen(argv[3], "wb");
