@@ -517,14 +517,14 @@ int main(int argc, char* argv[])
         //Write to file
         writePreorder(bst, opsOut);
 
-        
+        /*
         preorder(bst);
         fprintf(stdout, "\n");
         inorder(bst);
         fprintf(stdout, "\n");
         postorder(bst);
         fprintf(stdout, "\n");
-        
+        */
 
         fclose(ops);
         fclose(opsOut);
@@ -569,6 +569,15 @@ int main(int argc, char* argv[])
         int isBst = isBST(bst);
         int isBal =  isBalanced(bst);
 
+        /*
+        preorder(bst);
+        fprintf(stdout, "\n");
+        inorder(bst);
+        fprintf(stdout, "\n");
+        postorder(bst);
+        fprintf(stdout, "\n");
+        */
+
         free(keyArr);
         free(branchArr);
         freeBST(bst);
@@ -601,13 +610,6 @@ int main(int argc, char* argv[])
             //printf("\nDelete: %d\n", num);
             bst = deleteAVL(num, bst);
         }
-
-        bst = NULL;
-
-        bst = insertAVL(1,bst);
-        bst = insertAVL(1,bst);
-        bst = insertAVL(1,bst);
-        
 
         FILE* opsOut = fopen(argv[3], "wb");
         writePreorder(bst, opsOut);
