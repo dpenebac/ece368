@@ -390,7 +390,7 @@ int isBST(Tnode* node)
     return(isBst);
 }
 
-//
+//pretty fluffy
 int isBalanced(Tnode* node)
 {
     if (node == NULL)
@@ -399,13 +399,9 @@ int isBalanced(Tnode* node)
     }
 
     int balance = getBalance(node);
-    int unbalanced = ((balance < -1) || (balance > 1)) ? 1 : 0;
+    bool unbalanced = ((balance < -1) || (balance > 1));
 
-    if (unbalanced) //if unbalanced
-    {
-        return(0); 
-    }
-    else
+    if (unbalanced == false)
     {
         int leftBalance = isBalanced(node->left);
         int rightBalance = isBalanced(node->right);
@@ -413,9 +409,13 @@ int isBalanced(Tnode* node)
 
         return(isBal);
     }
+    else if (unbalanced == true)
+    {
+        return(0);
+    }
 }
 
-//
+//too similar
 Tnode* insertBST(int* keys, char* branches, int* index, int size) 
 {
     if (*index < size)
@@ -428,16 +428,16 @@ Tnode* insertBST(int* keys, char* branches, int* index, int size)
 
         if (branch == 3) 
         {
-            temp -> left = insertBST(keys, branches, index, size);
-            temp -> right = insertBST(keys, branches, index, size);
+            temp->left = insertBST(keys, branches, index, size);
+            temp->right = insertBST(keys, branches, index, size);
         }
         else if (branch == 2) 
         {
-            temp -> left = insertBST(keys, branches, index, size);
+            temp->left = insertBST(keys, branches, index, size);
         }
         else if (branch == 1) 
         {
-            temp -> right = insertBST(keys, branches, index, size);
+            temp->right = insertBST(keys, branches, index, size);
         }
 
         temp->height = calcNewHeight(temp);
