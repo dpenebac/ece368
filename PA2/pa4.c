@@ -432,18 +432,20 @@ Tnode* insertBST(int* keys, char* branches, int* index, int size)
         if (branch == 3) 
         {
             temp->left = insertBST(keys, branches, index, size);
+            temp->height = calcNewHeight(temp);
             temp->right = insertBST(keys, branches, index, size);
+            temp->height = calcNewHeight(temp);
         }
         else if (branch == 2) 
         {
             temp->left = insertBST(keys, branches, index, size);
+            temp->height = calcNewHeight(temp);
         }
         else if (branch == 1) 
         {
             temp->right = insertBST(keys, branches, index, size);
+            temp->height = calcNewHeight(temp);
         }
-
-        temp->height = calcNewHeight(temp);
         return(temp);
     }
     else
@@ -466,10 +468,19 @@ int main(int argc, char* argv[])
     //building height-balanced BST (AVL)
     if (strcmp(argv[1], "-b") == 0) //if argv[1] == -b
     {
-        //Load File
+        //Load Input File
         FILE* ops = fopen(argv[2], "rb");
 
         if (ops == NULL)
+        {
+            fprintf(stdout, "%d\n", -1);
+            return EXIT_FAILURE;
+        }
+
+        //Load Output File
+        FILE* opsOut = fopen(argv[3], "wb");
+
+        if (opsOut == NULL)
         {
             fprintf(stdout, "%d\n", 0);
             return EXIT_FAILURE;
@@ -503,15 +514,12 @@ int main(int argc, char* argv[])
                 //printf("Delete: %d\n", intBuffer);
                 bst = deleteAVL(intBuffer, bst);
             }
-        }
-
-        //Load Output File
-        FILE* opsOut = fopen(argv[3], "wb");
-
-        if (opsOut == NULL)
-        {
-            fprintf(stdout, "%d\n", 0);
-            return EXIT_FAILURE;
+            else //wrong format
+            {
+                writePreorder(bst, opsOut);
+                fprintf(stdout, "%d\n", -1);
+                return EXIT_FAILURE;
+            }
         }
 
         //Write to file
@@ -540,7 +548,7 @@ int main(int argc, char* argv[])
 
         if (tree == NULL)
         {
-            fprintf(stdout, "%d\n", 0);
+            fprintf(stdout, "%d %d %d\n", -1, 0, 0);
             return EXIT_FAILURE;
         }
 
@@ -562,6 +570,12 @@ int main(int argc, char* argv[])
             fread(&charBuffer, sizeof(charBuffer), 1, tree);
             keyArr[i] = intBuffer;
             branchArr[i] = charBuffer;
+
+            if (charBuffer != 0 && charBuffer != 1 && charBuffer != 2 && charBuffer != 3)
+            {
+                fprintf(stdout, "%d %d %d\n", 0, 0, 0);
+                return EXIT_FAILURE;
+            }
         }
 
         int index = 0;
@@ -582,7 +596,7 @@ int main(int argc, char* argv[])
         free(branchArr);
         freeBST(bst);
         fclose(tree);
-        printf("BST????: %d %d\n", isBst, isBal); //change
+        fprintf(stdout, "%d %d %d\n", 1, isBst, isBal);
         return EXIT_SUCCESS;
     }
 
@@ -593,7 +607,7 @@ int main(int argc, char* argv[])
         printf("srand: %d\n", time(NULL));
         srand(1635629892);
 
-        for(i=0; i < 10000; ++i)
+        for(i=30; i > 0; --i)
         {
             num = rand();
             num = num % 59;
@@ -602,7 +616,7 @@ int main(int argc, char* argv[])
             bst = insertAVL(num, bst);
         }
 
-        for(i=0; i < 10000; ++i)
+        for(i=0; i < 40; ++i)
         {
             num = rand();
             num = num % 59;
