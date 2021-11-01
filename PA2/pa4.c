@@ -84,7 +84,7 @@ int getHeight(Tnode* n) //tired of rewriting this
 }
 
 //Get bigger of two values
-int bigger(int a, int b) //tired of rewriting this shit
+int bigger(int a, int b) //tired of rewriting this
 {
     if (a > b)
     {
@@ -342,7 +342,7 @@ Tnode* deleteAVL(int key, Tnode* node)
             temp = node->left;
         }
 
-        if (temp) //if only either left or right child return temp
+        if (temp) //if only either left or right child replace with temp
         {
             free(node);
             return(temp);
