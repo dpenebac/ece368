@@ -429,23 +429,25 @@ Tnode* insertBST(int* keys, char* branches, int* index, int size)
         Tnode* temp = newNode(keys[i]);
         char branch = branches[i];
 
-        if (branch == 3) 
+        if (branch == 1) //01
+        {
+            temp->right = insertBST(keys, branches, index, size);
+            temp->height = calcNewHeight(temp);
+        }
+        else if (branch == 2) //10
+        {
+            temp->left = insertBST(keys, branches, index, size);
+            temp->height = calcNewHeight(temp);
+        }
+        else if (branch == 3) //11
         {
             temp->left = insertBST(keys, branches, index, size);
             temp->height = calcNewHeight(temp);
             temp->right = insertBST(keys, branches, index, size);
             temp->height = calcNewHeight(temp);
         }
-        else if (branch == 2) 
-        {
-            temp->left = insertBST(keys, branches, index, size);
-            temp->height = calcNewHeight(temp);
-        }
-        else if (branch == 1) 
-        {
-            temp->right = insertBST(keys, branches, index, size);
-            temp->height = calcNewHeight(temp);
-        }
+
+        temp->height = calcNewHeight(temp);
         return(temp);
     }
     else
@@ -573,7 +575,7 @@ int main(int argc, char* argv[])
 
             if (charBuffer != 0 && charBuffer != 1 && charBuffer != 2 && charBuffer != 3)
             {
-                fprintf(stdout, "%d %d %d\n", 0, 0, 0);
+                fprintf(stdout, "%d %d %d\n", -1, 0, 0);
                 return EXIT_FAILURE;
             }
         }
