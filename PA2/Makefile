@@ -25,7 +25,7 @@ test4: pa4
 	./pa4 -e examples/test.b
 
 testErr: pa4
-	./pa4 -l examples/ops3.b examples/test.b
+	valgrind --leak-check=full ./pa4 -l examples/tree0.b examples/test.b
 
 testt: pa4
 	./pa4 -t examples/ops3.b examples/test.b

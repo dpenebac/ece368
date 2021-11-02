@@ -519,6 +519,9 @@ int main(int argc, char* argv[])
             else //wrong format
             {
                 writePreorder(bst, opsOut);
+                freeBST(bst);
+                fclose(ops);
+                fclose(opsOut);
                 fprintf(stdout, "%d\n", -1);
                 return EXIT_FAILURE;
             }
@@ -563,6 +566,8 @@ int main(int argc, char* argv[])
         //check if malloc fails
         int *keyArr = (int*)malloc(size * sizeof(int)); //array containing keys
         char *branchArr = (char*)malloc(size * sizeof(char)); //array containing # of children for each key
+        //if malloc fail
+
         int i;
 
         for (i = 0; i < size; i++)
@@ -576,6 +581,9 @@ int main(int argc, char* argv[])
             if (charBuffer != 0 && charBuffer != 1 && charBuffer != 2 && charBuffer != 3)
             {
                 fprintf(stdout, "%d %d %d\n", -1, 0, 0);
+                free(keyArr);
+                free(branchArr);
+                fclose(tree);
                 return EXIT_FAILURE;
             }
         }
