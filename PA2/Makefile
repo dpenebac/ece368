@@ -43,11 +43,13 @@ testTree: pa4
 	./pa4 -e examples/invalidtree0.b
 	./pa4 -e examples/invalidtree1.b
 	./pa4 -e examples/invalidtree2.b
+	valgrind --leak-check=full ./pa4 -e examples/invalidtree2.b
+	valgrind --leak-check=full ./pa4 -e examples/tree3.b
 
 testRand: clean pa4
 	clear
-	./pa4 -test examples/ops3.b examples/test.b
-	./pa4 -e examples/test.b
+	valgrind --leak-check=full ./pa4 -test examples/ops3.b examples/test.b
+	valgrind --leak-check=full ./pa4 -e examples/test.b
 
 clean: # remove all machine generated files
 	rm -f pa4 *.o output?

@@ -29,7 +29,7 @@ void writePreorder(Tnode* node, FILE* file)
         //solving bitwise
         if (node->right != NULL && node->left != NULL) //if left and right child
         {
-            bit = 3;//11
+            bit = 3; //11
         }
         else if (node->right == NULL && node->left != NULL) //if only left child
         {
@@ -49,6 +49,7 @@ void writePreorder(Tnode* node, FILE* file)
         //printf("Node: %d Child: %d\n",node->key, direction);
         fwrite(&(node->key), sizeof(int), 1, file);
         fwrite(&direction, sizeof(char), 1, file);
+        printf("%d ", node->key);
         writePreorder(node->left, file);
         writePreorder(node->right, file);
     }
@@ -385,11 +386,11 @@ int isBST(Tnode* node)
 
     if ((leftBst == 0) || (rightBst == 0))
     {
-        return(0);
+        return(0); //false
     }
     else
     {
-        return(1);
+        return(1); //true
     }
 }
 
@@ -418,10 +419,14 @@ int isBalanced(Tnode* node)
     }
 }
 
-//a lil fluffy need more fluff but how?
+//
 Tnode* insertBST(int* keys, char* branches, int* index, int size) 
 {
-    if (*index < size)
+    if (*index > size)
+    {
+        return(NULL);
+    }
+    else if (*index < size)
     {
         int i = *index;
         *index += 1;
@@ -529,15 +534,7 @@ int main(int argc, char* argv[])
 
         //Write to file
         writePreorder(bst, opsOut);
-
-        /*
-        preorder(bst);
-        fprintf(stdout, "\n");
-        inorder(bst);
-        fprintf(stdout, "\n");
-        postorder(bst);
-        fprintf(stdout, "\n");
-        */
+        printf("\n");
 
         fclose(ops);
         fclose(opsOut);
@@ -572,7 +569,6 @@ int main(int argc, char* argv[])
 
         for (i = 0; i < size; i++)
         {
-            //if charBuffer not 0 or 1 or 2 or 3
             fread(&intBuffer, sizeof(intBuffer), 1, tree);
             fread(&charBuffer, sizeof(charBuffer), 1, tree);
             keyArr[i] = intBuffer;
@@ -580,7 +576,7 @@ int main(int argc, char* argv[])
 
             if (charBuffer != 0 && charBuffer != 1 && charBuffer != 2 && charBuffer != 3)
             {
-                fprintf(stdout, "%d %d %d\n", -1, 0, 0);
+                fprintf(stdout, "%d %d %d\n", 0, 0, 0);
                 free(keyArr);
                 free(branchArr);
                 fclose(tree);
@@ -592,15 +588,6 @@ int main(int argc, char* argv[])
         bst = insertBST(keyArr, branchArr, &index, size);
         int isBst = isBST(bst);
         int isBal =  isBalanced(bst);
-
-        /*
-        preorder(bst);
-        fprintf(stdout, "\n");
-        inorder(bst);
-        fprintf(stdout, "\n");
-        postorder(bst);
-        fprintf(stdout, "\n");
-        */
 
         free(keyArr);
         free(branchArr);
@@ -638,6 +625,8 @@ int main(int argc, char* argv[])
         FILE* opsOut = fopen(argv[3], "wb");
         writePreorder(bst, opsOut);
 
+        freeBST(bst);
+        fclose(opsOut);
         return EXIT_SUCCESS;
     }
 
