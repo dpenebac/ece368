@@ -49,7 +49,6 @@ void writePreorder(Tnode* node, FILE* file)
         //printf("Node: %d Child: %d\n",node->key, direction);
         fwrite(&(node->key), sizeof(int), 1, file);
         fwrite(&direction, sizeof(char), 1, file);
-        printf("%d ", node->key);
         writePreorder(node->left, file);
         writePreorder(node->right, file);
     }
