@@ -493,7 +493,7 @@ int main(int argc, char* argv[])
 
         if (opsOut == NULL)
         {
-            fprintf(stdout, "%d\n", 0);
+            fprintf(stdout, "%d\n", -1);
             return EXIT_FAILURE;
         }
 
@@ -531,7 +531,7 @@ int main(int argc, char* argv[])
                 freeBST(bst);
                 fclose(ops);
                 fclose(opsOut);
-                fprintf(stdout, "%d\n", -1);
+                fprintf(stdout, "%d\n", 0);
                 return EXIT_FAILURE;
             }
         }
@@ -567,6 +567,12 @@ int main(int argc, char* argv[])
         int *keyArr = (int*)malloc(size * sizeof(int)); //array containing keys
         char *branchArr = (char*)malloc(size * sizeof(char)); //array containing # of children for each key
         //if malloc fail
+        if (*keyArr == NULL || *branchArr == NULL)
+        {
+            fprintf(stdout, "%d %d %d\n", 0, 0, 0);
+            fclose(tree);
+            return(EXIT_FAILURE);
+        }
 
         int i;
 
