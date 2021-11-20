@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <time.h>
 #include "hbt.h"
 
 Tnode* newNode(int);
@@ -416,6 +417,10 @@ int isBalanced(Tnode* node)
     {
         return(0);
     }
+    else
+    {
+        return(0);
+    }
 }
 
 //make bst using characters and keys arrays
@@ -599,8 +604,6 @@ int main(int argc, char* argv[])
     {
         int num, i;
         srand(time(NULL));
-        printf("srand: %d\n", time(NULL));
-        srand(1635629892);
 
         for(i=30; i > 0; --i)
         {

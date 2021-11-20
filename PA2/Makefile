@@ -1,10 +1,10 @@
 WARNING = -Wall -Wshadow --pedantic
-GCC = gcc -std=c99 -pedantic -Wvla -Wall -Wshadow -03 *.c -o pa4 #edit to apply gcc commands
+GCC = gcc -std=c99 -pedantic -Wvla -Wall -Wshadow -O3 #edit to apply gcc commands
 SRCS = pa4.c #files to run in 
 OBJS = $(SRCS:%.c=%.o)
 
-sort: $(OBJS) #gcc files -o name of thing
-	$(GCC) $(OBJS) -o pa4
+pa4: $(OBJS) #gcc files -o name of thing
+	gcc -std=c99 -pedantic -Wvla -Wall -Wshadow -O3 pa4.c -o pa4
 
 testBuild: test1 test2 test3 test4 testBuildmem
 
