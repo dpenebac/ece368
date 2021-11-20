@@ -367,7 +367,7 @@ Tnode* deleteAVL(int key, Tnode* node)
     return(node);
 }
 
-//fluffy kinda?
+//check to make sure if tree is a binary search tree
 int isBST(Tnode* node)
 {
     if (node == NULL) //is balanced
@@ -393,7 +393,7 @@ int isBST(Tnode* node)
     }
 }
 
-//pretty fluffy
+//check if tree is balanced
 int isBalanced(Tnode* node)
 {
     if (node == NULL)
@@ -418,7 +418,7 @@ int isBalanced(Tnode* node)
     }
 }
 
-//
+//make bst using characters and keys arrays
 Tnode* insertBST(int* keys, char* branches, int* index, int size) 
 {
     if (*index > size)
@@ -533,7 +533,6 @@ int main(int argc, char* argv[])
 
         //Write to file
         writePreorder(bst, opsOut);
-        printf("\n");
 
         fclose(ops);
         fclose(opsOut);
