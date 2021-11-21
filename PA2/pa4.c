@@ -566,14 +566,6 @@ int main(int argc, char* argv[])
         //check if malloc fails
         int *keyArr = (int*)malloc(size * sizeof(int)); //array containing keys
         char *branchArr = (char*)malloc(size * sizeof(char)); //array containing # of children for each key
-        //if malloc fail
-        if (*keyArr == NULL || *branchArr == NULL)
-        {
-            fprintf(stdout, "%d %d %d\n", 0, 0, 0);
-            fclose(tree);
-            return(EXIT_FAILURE);
-        }
-
         int i;
 
         for (i = 0; i < size; i++)
