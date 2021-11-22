@@ -467,7 +467,7 @@ Tnode* insertBST(int* keys, char* branches, int* index, int size)
 
 int main(int argc, char* argv[])
 {
-    if (argc > 4)
+    if (argc > 4 || argc < 2)
     {
         fprintf(stdout, "%d\n", 0);
         return EXIT_FAILURE;
