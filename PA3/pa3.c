@@ -76,7 +76,12 @@ int main(int argc, char* argv[])
     //write grid in text formatting to file
     FILE* inputGridTxt = fopen(argv[2], "w");
     writeGrid(r, c, grid, inputGridTxt);
-    printGrid(r, c, grid);
+    //printGrid(r, c, grid);
+
+
+    //Finding all paths
+    
+
 
 
     //FILE* fastestTimes = fopen(argv[1], "wb");
