@@ -298,7 +298,7 @@ void printSolution(int dist[], int n, int parent[])
 // The main function that calculates
 // distances of shortest paths from src to all
 // vertices. It is a O(ELogV) function
-void dijkstra(struct Graph* graph, int src)
+void dijkstra(struct Graph* graph, int src, int parent[], int dist[])
 {
 	
 	// Get the number of vertices in graph
@@ -306,15 +306,10 @@ void dijkstra(struct Graph* graph, int src)
 
 	// dist values used to pick
 	// minimum weight edge in cut
-	//int dist[V];	
-    int *dist = (int*)malloc(V * sizeof(int));
+	//int dist[V];
 
 	// minHeap represents set E
 	struct MinHeap* minHeap = createMinHeap(V);
-
-	//array to hold path
-	//int parent[V];
-    int *parent = (int*)malloc(V * sizeof(int));
 
 	// Initialize min heap with all
 	// vertices. dist value of all vertices
@@ -368,13 +363,10 @@ void dijkstra(struct Graph* graph, int src)
 			// not finalized yet, and distance to v
 			// through u is less than its
 			// previously calculated distance
-			if (isInMinHeap(minHeap, v) &&
-					dist[u] != INT_MAX &&
-			pCrawl->weight + dist[u] < dist[v])
+			if (isInMinHeap(minHeap, v) && dist[u] != INT_MAX && pCrawl->weight + dist[u] < dist[v])
 			{
 				//parent
 				parent[v] = u;
-
 
 				dist[v] = dist[u] + pCrawl->weight;
 
@@ -387,126 +379,12 @@ void dijkstra(struct Graph* graph, int src)
 	}
 
 	// print the calculated shortest distances
+	/*
 	printArr(dist, V);
 	printf("\n\n\n");
 	printSolution(dist, V, parent);
 	printf("\n\n\n");
-}
-
-// Driver program to test above functions
-int test()
-{
-	// create the graph given in above fugure
-	/*
-	int V = 6; 
-	struct Graph* graph = createGraph(V);
-
-	addEdge(graph, 1, 0, 0); //1->0 weight 0
-	addEdge(graph, 2, 0, 0); //2->0 weight 0
-
-	addEdge(graph, 1, 2, 2); //1->2 weight 2
-	addEdge(graph, 1, 3, 3); //1->3 weight 3
-
-	addEdge(graph, 2, 1, 1); //2->1 weight 1
-	addEdge(graph, 2, 4, 4); //2->4 weight 4
-
-	addEdge(graph, 3, 1, 1); //3->1 weight 1
-	addEdge(graph, 3, 4, 4); //3->4 weight 4
-
-	addEdge(graph, 4, 2, 2); //4->2 weight 2
-	addEdge(graph, 4, 3, 3); //4->3 weight 3
-
-	//END POINTS COMBINED == 5
-	addEdge(graph, 5, 3, 0); //5->3 weight 0
-	addEdge(graph, 5, 4, 0); //5->4 weight 0
 	*/
-
-	int V = 14; 
-	struct Graph* graph = createGraph(V);
-
-	//addEdge(gra, S, E, W);
-
-	//S
-	addEdge(graph, 1, 0, 1);
-	addEdge(graph, 2, 0, 1);
-	addEdge(graph, 3, 0, 1);
-	addEdge(graph, 4, 0, 1);
-
-	//1
-	addEdge(graph, 1, 2, 1);
-	addEdge(graph, 1, 5, 1);
-	/*							  S
-	1	1	1	1			1	2	3	4
-	1	1	10 	1	 ==		5	6	7	8
-	10	10	10	1			9	10	11	12
-								  E
-	*/		
-
-	//2
-	addEdge(graph, 2, 1, 1);
-	addEdge(graph, 2, 3, 1);
-	addEdge(graph, 2, 6, 1);
-
-	//3
-	addEdge(graph, 3, 2, 1);
-	addEdge(graph, 3, 4, 1);
-	addEdge(graph, 3, 7, 10);
-
-	//4
-	addEdge(graph, 4, 3, 1);
-	addEdge(graph, 4, 8, 1);
-
-	//5
-	addEdge(graph, 5, 1, 1);
-	addEdge(graph, 5, 6, 1);
-	addEdge(graph, 5, 9, 10);
-
-	//6
-	addEdge(graph, 6, 2, 1);
-	addEdge(graph, 6, 5, 1);
-	addEdge(graph, 6, 7, 10);
-	addEdge(graph, 6, 10, 10);
-
-	//7
-	addEdge(graph, 7, 3, 1);
-	addEdge(graph, 7, 6, 1);
-	addEdge(graph, 7, 8, 1);
-	addEdge(graph, 7, 11, 10);
-
-	//8
-	addEdge(graph, 8, 4, 1);
-	addEdge(graph, 8, 7, 10);
-	addEdge(graph, 8, 12, 1);
-
-	//9
-	addEdge(graph, 9, 5, 1);
-	addEdge(graph, 9, 10, 10);
-	
-	//10
-	addEdge(graph, 10, 6, 1);
-	addEdge(graph, 10, 9, 10);
-	addEdge(graph, 10, 11, 10);
-
-	//11
-	addEdge(graph, 11, 7, 10);
-	addEdge(graph, 11, 10, 10);
-	addEdge(graph, 11, 12, 1);
-
-	//12
-	addEdge(graph, 12, 8, 1);
-	addEdge(graph, 12, 11, 10);
-
-	//E
-	addEdge(graph, 13, 9, 1);
-	addEdge(graph, 13, 10, 1);
-	addEdge(graph, 13, 11, 1);
-	addEdge(graph, 13, 12, 1);
-
-	//add all vertex and edges seperately
-
-	dijkstra(graph, 13);
-
-	return 0;
 }
 
 void printGrid(short r, short c, short *grid)
@@ -603,6 +481,15 @@ int main(int argc, char* argv[])
 			20
 	*/
 
+	/*
+	4 2 4 1 
+	2 0 2 7 
+	1 4 2 2 
+	0 1 2 9 
+	5 0 7 2 
+	*/
+
+
 	//make graph from matrix
 	int v = r * c; //vertices, +2 is for Start and End
 	struct Graph* graph = createGraph(v + 1);
@@ -628,7 +515,7 @@ int main(int argc, char* argv[])
 			printf("Right of %d: Adding: %d to %d with weight of %d\n", grid[i], i, i + 1, grid[i + 1]);
 		}
 
-		if (i - c > 0) //up
+		if (i - c >= 0) //up
 		{
 			addEdge(graph, i, i - c, grid[i - c]);
 			printf("Up of    %d: Adding: %d to %d with weight of %d\n", grid[i], i, i - c, grid[i - c]);
@@ -644,30 +531,19 @@ int main(int argc, char* argv[])
 	}
 
 	//E edges
-	printf("End Edge: ");
+	//printf("End Edge: ");
 	for (i = v - c; i < v; i++)
 	{
-		addEdge(graph, v, i, 1);
-		printf("%d ", i);
+		addEdge(graph, v, i, grid[i]);
+		//printf("%d ", i);
 	}
-	printf("\n\n");
+	//printf("\n\n");
 
-	dijkstra(graph, v); //v cause idk just cause
-
-	/*
-    int V = 14; 
-	struct Graph* graph = createGraph(V);
-	S
-	addEdge(graph, 1, 0, 1);
-	addEdge(graph, 2, 0, 1);
-	addEdge(graph, 3, 0, 1);
-	addEdge(graph, 4, 0, 1);
-	1
-	addEdge(graph, 1, 2, 1);
-	addEdge(graph, 1, 5, 1);
-	dijkstra(graph, 13);
-	*/
-
+	int *dist = (int*)malloc(v * sizeof(int));
+	int *parent = (int*)malloc(v * sizeof(int));
+	dijkstra(graph, v, parent, dist); //v is E
+	printSolution(dist, c, parent); //can only enter from top
+	printf("\n");
 
 
     //FILE* fastestTimes = fopen(argv[1], "wb");

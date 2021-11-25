@@ -16,7 +16,7 @@ test2: pa3
 	./pa3 examples/5_4.b examples/answers/5_4.t examples/answers/5_4.f examples/answers/5_4.p
 	diff examples/answers/5_4.t examples/5_4.t
 
-test3: pa3
+test4: pa3
 	./pa3 examples/7_7.b examples/answers/7_7.t examples/answers/7_7.f examples/answers/7_7.p
 	diff examples/answers/7_7.t examples/7_7.t
 	
