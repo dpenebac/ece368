@@ -283,8 +283,8 @@ void printPath(int parent[], int j)
 
 void printSolution(int dist[], int n, int parent[])
 {
-    int src = 13;
-    printf("Vertex\t 		Distance\tPath");
+    int src = 20;
+    printf("Vertex\t Distance\tPath");
     int i;
     for (i = 0; i < n; i++)
     {
@@ -593,22 +593,78 @@ int main(int argc, char* argv[])
 	1 7 2 9 2 
 	*/
 
-	/*
-			S
-	1	2	3	4	5
-	6	7	8	9	10
-	11	12	13	14	15
-	16	17	18	19	20
-			E
+	//4 2 1 0 5 2 0 4 1 0 4 2 2 2 7 1 7 2 9 2
+
+	/*	
+	0	1	2	3	4
+	5	6	7	8	9
+	10	11	12	13	14
+	15	16	17	18	19
+			20
 	*/
+
 	//make graph from matrix
-	int vertices = r * c + 1; // +1 is going to go to the edge
-	struct Graph* graph = createGraph(vertices);
+	int v = r * c; //vertices, +2 is for Start and End
+	struct Graph* graph = createGraph(v + 1);
 	
+
+	printf("\nv = %d\n", v);
+	printf("Graph:\n");
+	for (i = 0; i < v; i++)
+	{
+		if (i % c != 0) //left
+		{
+			addEdge(graph, i, i - 1, grid[i - 1]);
+			printf("Left of  %d: Adding: %d to %d with weight of %d\n", grid[i], i, i - 1, grid[i - 1]);
+		}
+
+		//so not 4, 9, 14, 19
+		//0,1,2,3
+		//5,6,7,8
+		//10,11,12,13
+		if ((i + 1) % c != 0) //right
+		{
+			addEdge(graph, i, i + 1, grid[i + 1]);
+			printf("Right of %d: Adding: %d to %d with weight of %d\n", grid[i], i, i + 1, grid[i + 1]);
+		}
+
+		if (i - c > 0) //up
+		{
+			addEdge(graph, i, i - c, grid[i - c]);
+			printf("Up of    %d: Adding: %d to %d with weight of %d\n", grid[i], i, i - c, grid[i - c]);
+		}
+
+		if (i + r < r * c) //down
+		{
+			addEdge(graph, i, i + c, grid[i + c]);
+			printf("Down of  %d: Adding: %d to %d with weight of %d\n", grid[i], i, i + c, grid[i + c]);
+		}
+
+		printf("\n");
+	}
+
+	//E edges
+	printf("End Edge: ");
+	for (i = v - c; i < v; i++)
+	{
+		addEdge(graph, v, i, 1);
+		printf("%d ", i);
+	}
+	printf("\n\n");
+
+	dijkstra(graph, v); //v cause idk just cause
 
 	/*
     int V = 14; 
 	struct Graph* graph = createGraph(V);
+	S
+	addEdge(graph, 1, 0, 1);
+	addEdge(graph, 2, 0, 1);
+	addEdge(graph, 3, 0, 1);
+	addEdge(graph, 4, 0, 1);
+	1
+	addEdge(graph, 1, 2, 1);
+	addEdge(graph, 1, 5, 1);
 	dijkstra(graph, 13);
 	*/
 
@@ -620,17 +676,7 @@ int main(int argc, char* argv[])
 
     fclose(inputGrid);
     fclose(inputGridTxt);
-    test();
 
 
     return EXIT_SUCCESS;
 }
-
-/*
-    int graph[V][V] = { {0, 1, 1, 0, 0, 0},
-                        {1, 0, 2, 3, 0, 0},
-                        {1, 1, 0, 0, 4, 0},
-                        {0, 1, 0, 0, 4, 1},
-                        {0, 0, 2, 3, 0, 1},
-                        {0, 0, 0, 1, 1, 0}};
-*/
