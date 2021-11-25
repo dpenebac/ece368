@@ -271,14 +271,13 @@ void printArr(int dist[], int n)
 // using parent array
 void printPath(int parent[], int j)
 {
-       
     // Base Case : If j is source
     if (parent[j] == - 1)
         return;
    
+	printf("%d ", j);
+
     printPath(parent, parent[j]);
-   
-    printf("%d ", j);
 }
 
 void printSolution(int dist[], int n, int parent[])
@@ -377,14 +376,6 @@ void dijkstra(struct Graph* graph, int src, int parent[], int dist[])
 			pCrawl = pCrawl->next;
 		}
 	}
-
-	// print the calculated shortest distances
-	/*
-	printArr(dist, V);
-	printf("\n\n\n");
-	printSolution(dist, V, parent);
-	printf("\n\n\n");
-	*/
 }
 
 void printGrid(short r, short c, short *grid)
@@ -493,16 +484,13 @@ int main(int argc, char* argv[])
 	//make graph from matrix
 	int v = r * c; //vertices, +2 is for Start and End
 	struct Graph* graph = createGraph(v + 1);
-	
 
-	printf("\nv = %d\n", v);
-	printf("Graph:\n");
 	for (i = 0; i < v; i++)
 	{
 		if (i % c != 0) //left
 		{
 			addEdge(graph, i, i - 1, grid[i - 1]);
-			printf("Left of  %d: Adding: %d to %d with weight of %d\n", grid[i], i, i - 1, grid[i - 1]);
+			//printf("Left of  %d: Adding: %d to %d with weight of %d\n", grid[i], i, i - 1, grid[i - 1]);
 		}
 
 		//so not 4, 9, 14, 19
@@ -512,22 +500,22 @@ int main(int argc, char* argv[])
 		if ((i + 1) % c != 0) //right
 		{
 			addEdge(graph, i, i + 1, grid[i + 1]);
-			printf("Right of %d: Adding: %d to %d with weight of %d\n", grid[i], i, i + 1, grid[i + 1]);
+			//printf("Right of %d: Adding: %d to %d with weight of %d\n", grid[i], i, i + 1, grid[i + 1]);
 		}
 
 		if (i - c >= 0) //up
 		{
 			addEdge(graph, i, i - c, grid[i - c]);
-			printf("Up of    %d: Adding: %d to %d with weight of %d\n", grid[i], i, i - c, grid[i - c]);
+			//printf("Up of    %d: Adding: %d to %d with weight of %d\n", grid[i], i, i - c, grid[i - c]);
 		}
 
 		if (i + r < r * c) //down
 		{
 			addEdge(graph, i, i + c, grid[i + c]);
-			printf("Down of  %d: Adding: %d to %d with weight of %d\n", grid[i], i, i + c, grid[i + c]);
+			//printf("Down of  %d: Adding: %d to %d with weight of %d\n", grid[i], i, i + c, grid[i + c]);
 		}
 
-		printf("\n");
+		//printf("\n");
 	}
 
 	//E edges
@@ -543,6 +531,21 @@ int main(int argc, char* argv[])
 	int *parent = (int*)malloc(v * sizeof(int));
 	dijkstra(graph, v, parent, dist); //v is E
 	printSolution(dist, c, parent); //can only enter from top
+	printf("\n");
+
+
+	int minIndex = INT_MAX;
+
+	for (i = 0; i < c; i++)
+	{
+		printf("Total Distance From %d: %d\n", i, dist[i]);
+		if (dist[i] < minIndex)
+		{
+			minIndex = i;
+		}
+	}
+
+	printPath(parent, i);
 	printf("\n");
 
 
