@@ -1,12 +1,3 @@
-// C program for Dijkstra's single
-// source shortest path algorithm.
-// The program is for adjacency matrix
-// representation of the graph.
-#include <stdio.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <stdbool.h>
-
 // Number of vertices
 // in the graph
 // C / C++ program for Dijkstra's
@@ -47,12 +38,9 @@ struct Graph
 
 // A utility function to create
 // a new adjacency list node
-struct AdjListNode* newAdjListNode(
-				int dest, int weight)
+struct AdjListNode* newAdjListNode(int dest, int weight)
 {
-	struct AdjListNode* newNode =
-			(struct AdjListNode*)
-	malloc(sizeof(struct AdjListNode));
+	struct AdjListNode* newNode = (struct AdjListNode*)malloc(sizeof(struct AdjListNode));
 	newNode->dest = dest;
 	newNode->weight = weight;
 	newNode->next = NULL;
@@ -82,25 +70,15 @@ struct Graph* createGraph(int V)
 }
 
 // Adds an edge to an undirected graph
-void addEdge(struct Graph* graph, int src,
-				int dest, int weight)
+void addEdge(struct Graph* graph, int src, int dest, int weight)
 {
 	// Add an edge from src to dest.
 	// A new node is added to the adjacency
 	// list of src. The node is
 	// added at the beginning
-	struct AdjListNode* newNode =
-			newAdjListNode(dest, weight);
+	struct AdjListNode* newNode = newAdjListNode(dest, weight);
 	newNode->next = graph->array[src].head;
 	graph->array[src].head = newNode;
-
-	// Since graph is undirected,
-	// add an edge from dest to src also
-	/*
-	newNode = newAdjListNode(src, weight);
-	newNode->next = graph->array[dest].head;
-	graph->array[dest].head = newNode;
-	*/
 }
 
 // Structure to represent a min heap node
@@ -126,8 +104,7 @@ struct MinHeap
 
 // A utility function to create a
 // new Min Heap Node
-struct MinHeapNode* newMinHeapNode(int v,
-								int dist)
+struct MinHeapNode* newMinHeapNode(int v, int dist)
 {
 	struct MinHeapNode* minHeapNode =
 		(struct MinHeapNode*)
@@ -157,8 +134,7 @@ struct MinHeap* createMinHeap(int capacity)
 // A utility function to swap two
 // nodes of min heap.
 // Needed for min heapify
-void swapMinHeapNode(struct MinHeapNode** a,
-					struct MinHeapNode** b)
+void swapMinHeapNode(struct MinHeapNode** a, struct MinHeapNode** b)
 {
 	struct MinHeapNode* t = *a;
 	*a = *b;
@@ -170,8 +146,7 @@ void swapMinHeapNode(struct MinHeapNode** a,
 // This function also updates
 // position of nodes when they are swapped.
 // Position is needed for decreaseKey()
-void minHeapify(struct MinHeap* minHeap,
-								int idx)
+void minHeapify(struct MinHeap* minHeap, int idx)
 {
 	int smallest, left, right;
 	smallest = idx;
@@ -217,8 +192,7 @@ int isEmpty(struct MinHeap* minHeap)
 
 // Standard function to extract
 // minimum node from heap
-struct MinHeapNode* extractMin(struct MinHeap*
-								minHeap)
+struct MinHeapNode* extractMin(struct MinHeap* minHeap)
 {
 	if (isEmpty(minHeap))
 		return NULL;
@@ -247,8 +221,7 @@ struct MinHeapNode* extractMin(struct MinHeap*
 // of a given vertex v. This function
 // uses pos[] of min heap to get the
 // current index of node in min heap
-void decreaseKey(struct MinHeap* minHeap,
-						int v, int dist)
+void decreaseKey(struct MinHeap* minHeap, int v, int dist)
 {
 	// Get the index of v in heap array
 	int i = minHeap->pos[v];
@@ -308,11 +281,10 @@ void printPath(int parent[], int j)
     printf("%d ", j);
 }
 
-void printSolution(int dist[], int n, 
-                      int parent[])
+void printSolution(int dist[], int n, int parent[])
 {
-    int src = 5;
-    printf("Vertex\t Distance\tPath");
+    int src = 13;
+    printf("Vertex\t 		Distance\tPath");
     int i;
     for (i = 0; i < n; i++)
     {
@@ -425,6 +397,7 @@ void dijkstra(struct Graph* graph, int src)
 int test()
 {
 	// create the graph given in above fugure
+	/*
 	int V = 6; 
 	struct Graph* graph = createGraph(V);
 
@@ -446,11 +419,92 @@ int test()
 	//END POINTS COMBINED == 5
 	addEdge(graph, 5, 3, 0); //5->3 weight 0
 	addEdge(graph, 5, 4, 0); //5->4 weight 0
+	*/
 
+	int V = 14; 
+	struct Graph* graph = createGraph(V);
+
+	//addEdge(gra, S, E, W);
+
+	//S
+	addEdge(graph, 1, 0, 1);
+	addEdge(graph, 2, 0, 1);
+	addEdge(graph, 3, 0, 1);
+	addEdge(graph, 4, 0, 1);
+
+	//1
+	addEdge(graph, 1, 2, 1);
+	addEdge(graph, 1, 5, 1);
+	/*							  S
+	1	1	1	1			1	2	3	4
+	1	1	10 	1	 ==		5	6	7	8
+	10	10	10	1			9	10	11	12
+								  E
+	*/		
+
+	//2
+	addEdge(graph, 2, 1, 1);
+	addEdge(graph, 2, 3, 1);
+	addEdge(graph, 2, 6, 1);
+
+	//3
+	addEdge(graph, 3, 2, 1);
+	addEdge(graph, 3, 4, 1);
+	addEdge(graph, 3, 7, 10);
+
+	//4
+	addEdge(graph, 4, 3, 1);
+	addEdge(graph, 4, 8, 1);
+
+	//5
+	addEdge(graph, 5, 1, 1);
+	addEdge(graph, 5, 6, 1);
+	addEdge(graph, 5, 9, 10);
+
+	//6
+	addEdge(graph, 6, 2, 1);
+	addEdge(graph, 6, 5, 1);
+	addEdge(graph, 6, 7, 10);
+	addEdge(graph, 6, 10, 10);
+
+	//7
+	addEdge(graph, 7, 3, 1);
+	addEdge(graph, 7, 6, 1);
+	addEdge(graph, 7, 8, 1);
+	addEdge(graph, 7, 11, 10);
+
+	//8
+	addEdge(graph, 8, 4, 1);
+	addEdge(graph, 8, 7, 10);
+	addEdge(graph, 8, 12, 1);
+
+	//9
+	addEdge(graph, 9, 5, 1);
+	addEdge(graph, 9, 10, 10);
+	
+	//10
+	addEdge(graph, 10, 6, 1);
+	addEdge(graph, 10, 9, 10);
+	addEdge(graph, 10, 11, 10);
+
+	//11
+	addEdge(graph, 11, 7, 10);
+	addEdge(graph, 11, 10, 10);
+	addEdge(graph, 11, 12, 1);
+
+	//12
+	addEdge(graph, 12, 8, 1);
+	addEdge(graph, 12, 11, 10);
+
+	//E
+	addEdge(graph, 13, 9, 1);
+	addEdge(graph, 13, 10, 1);
+	addEdge(graph, 13, 11, 1);
+	addEdge(graph, 13, 12, 1);
 
 	//add all vertex and edges seperately
 
-	dijkstra(graph, 5);
+	dijkstra(graph, 13);
 
 	return 0;
 }
@@ -531,7 +585,32 @@ int main(int argc, char* argv[])
 
 
     //Finding all paths
-    
+
+	/*
+	4 2 1 0 5 
+	2 0 4 1 0 
+	4 2 2 2 7 
+	1 7 2 9 2 
+	*/
+
+	/*
+			S
+	1	2	3	4	5
+	6	7	8	9	10
+	11	12	13	14	15
+	16	17	18	19	20
+			E
+	*/
+	//make graph from matrix
+	int vertices = r * c + 1; // +1 is going to go to the edge
+	struct Graph* graph = createGraph(vertices);
+	
+
+	/*
+    int V = 14; 
+	struct Graph* graph = createGraph(V);
+	dijkstra(graph, 13);
+	*/
 
 
 
