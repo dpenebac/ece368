@@ -269,27 +269,28 @@ void printArr(int dist[], int n)
 // Function to print shortest
 // path from source to j
 // using parent array
-void printPath(int parent[], int j)
+void printPath(int parent[], int j, int *length, int r, int c)
 {
     // Base Case : If j is source
     if (parent[j] == - 1)
         return;
    
-	printf("%d ", j);
+	//something like r / c + j / r?
+	int row = j / r;
+	int col = j / c;
+	printf("%d %d %d   RC: %d%d\n",row, col, j, r, c);
 
-    printPath(parent, parent[j]);
+    printPath(parent, parent[j], length, r, c);
+	*length += 1;
 }
 
 void printSolution(int dist[], int n, int parent[])
 {
-    int src = 20;
-    printf("Vertex\t Distance\tPath");
     int i;
     for (i = 0; i < n; i++)
     {
-        printf("\n%d -> %d \t\t %d\t\t%d ",
-                      src, i, dist[i], src);
-        printPath(parent, i);
+        printf("\n%d\t", dist[i]);
+        printPath(parent, i, 0, 0, 0);
     }
     return;
 }
@@ -530,23 +531,32 @@ int main(int argc, char* argv[])
 	int *dist = (int*)malloc(v * sizeof(int));
 	int *parent = (int*)malloc(v * sizeof(int));
 	dijkstra(graph, v, parent, dist); //v is E
-	printSolution(dist, c, parent); //can only enter from top
+	//printSolution(dist, c, parent); //can only enter from top
 	printf("\n");
 
 
-	int minIndex = INT_MAX;
-
+	//fastest times from each entrance
+	printf("%d\n", c);
 	for (i = 0; i < c; i++)
+    {
+        printf("%d ", dist[i]);
+    }
+	printf("\n");
+
+	//fastest path
+	int minidx = 0;
+	for (i = 1; i < c; i++) //finding min path index
 	{
-		printf("Total Distance From %d: %d\n", i, dist[i]);
-		if (dist[i] < minIndex)
+		if (dist[i] < dist[minidx])
 		{
-			minIndex = i;
+			minidx = i;
 		}
 	}
 
-	printPath(parent, i);
-	printf("\n");
+	printf("\n%d\n%d\n", dist[minidx], 1); //replace 1 with len(path)
+	int length;
+	printPath(parent, minidx, &length, r, c);
+	printf("%d\n\n", length - 1);
 
 
     //FILE* fastestTimes = fopen(argv[1], "wb");
