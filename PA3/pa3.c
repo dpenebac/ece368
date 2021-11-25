@@ -274,14 +274,36 @@ void printPath(int parent[], int j, int *length, int r, int c)
     // Base Case : If j is source
     if (parent[j] == - 1)
         return;
-   
-	//something like r / c + j / r?
-	int row = j / r;
-	int col = j / c;
-	printf("%d %d %d   RC: %d%d\n",row, col, j, r, c);
+
+	int row = j / c;
+
+	//NEED TO CHANGE THIS TO SOMETHING ELSE
+	int col = j;
+	while (col > c)
+	{
+		col -= c;
+	}
+	if (col == c)
+	{
+		col = 0;
+	}
+	
+	//can only be max of 5
+	//if greater than 5, than / 5 by how many times
+	//j is greater than 5
+
+	printf("%d %d\n",row, col);
 
     printPath(parent, parent[j], length, r, c);
 	*length += 1;
+
+	/*	
+	0	1	2	3	4		
+	5	6	7	8	9
+	10	11	12	13	14
+	15	16	17	18	19
+			20
+	*/
 }
 
 void printSolution(int dist[], int n, int parent[])
@@ -556,7 +578,7 @@ int main(int argc, char* argv[])
 	printf("\n%d\n%d\n", dist[minidx], 1); //replace 1 with len(path)
 	int length;
 	printPath(parent, minidx, &length, r, c);
-	printf("%d\n\n", length - 1);
+	printf("REPLACE WITH 1 ABOVE: %d\n\n", length - 1);
 
 
     //FILE* fastestTimes = fopen(argv[1], "wb");
