@@ -278,32 +278,46 @@ void printPath(int parent[], int j, int *length, int r, int c)
 	int row = j / c;
 
 	//NEED TO CHANGE THIS TO SOMETHING ELSE
-	int col = j;
-	while (col > c)
-	{
-		col -= c;
-	}
-	if (col == c)
-	{
-		col = 0;
-	}
-	
-	//can only be max of 5
-	//if greater than 5, than / 5 by how many times
-	//j is greater than 5
+		int col = j;
+		while (col > c)
+		{
+			col -= c;
+		}
+		if (col == c)
+		{
+			col = 0;
+		}
 
 	printf("%d %d\n",row, col);
 
     printPath(parent, parent[j], length, r, c);
 	*length += 1;
+}
 
-	/*	
-	0	1	2	3	4		
-	5	6	7	8	9
-	10	11	12	13	14
-	15	16	17	18	19
-			20
-	*/
+void writePath(int parent[], int j, int *length, int r, int c, FILE* output)
+{
+    // Base Case : If j is source
+    if (parent[j] == - 1)
+        return;
+
+	short row = j / c;
+
+	//NEED TO CHANGE THIS TO SOMETHING ELSE
+		short col = j;
+		while (col > c)
+		{
+			col -= c;
+		}
+		if (col == c)
+		{
+			col = 0;
+		}
+
+	fwrite(&row, sizeof(row), 1, output);
+	fwrite(&col, sizeof(row), 1, output);
+
+    writePath(parent, parent[j], length, r, c, output);
+	*length += 1;
 }
 
 void printSolution(int dist[], int n, int parent[])
@@ -475,35 +489,7 @@ int main(int argc, char* argv[])
     writeGrid(r, c, grid, inputGridTxt);
     printGrid(r, c, grid);
 
-
     //Finding all paths
-
-	/*
-	4 2 1 0 5 
-	2 0 4 1 0 
-	4 2 2 2 7 
-	1 7 2 9 2 
-	*/
-
-	//4 2 1 0 5 2 0 4 1 0 4 2 2 2 7 1 7 2 9 2
-
-	/*	
-	0	1	2	3	4
-	5	6	7	8	9
-	10	11	12	13	14
-	15	16	17	18	19
-			20
-	*/
-
-	/*
-	4 2 4 1 
-	2 0 2 7 
-	1 4 2 2 
-	0 1 2 9 
-	5 0 7 2 
-	*/
-
-
 	//make graph from matrix
 	int v = r * c; //vertices, +2 is for Start and End
 	struct Graph* graph = createGraph(v + 1);
@@ -577,12 +563,23 @@ int main(int argc, char* argv[])
 
 	printf("\n%d\n%d\n", dist[minidx], 1); //replace 1 with len(path)
 	int length;
-	printPath(parent, minidx, &length, r, c);
-	printf("REPLACE WITH 1 ABOVE: %d\n\n", length - 1);
+	printPath(parent, minidx, &length, r, c); //NEED TO COUNT LENGTH BEFORE WRITING TO BINARY FILE DONT DELETE THIS
+	length -= 1;
+	printf("REPLACE WITH 1 ABOVE: %d\n\n", length);
 
-
-    //FILE* fastestTimes = fopen(argv[1], "wb");
-    //FILE* fastestPath = fopen(argv[1], "wb");
+	//writing fastest times
+    FILE* fastestTimes = fopen(argv[3], "wb");
+	fwrite(&c, sizeof(c), 1, fastestTimes);
+	for (i = 0; i < c; i++)
+	{
+		fwrite(&dist[i], sizeof(dist[i]), 1, fastestTimes);
+	}
+	
+	//writing fastest path
+    FILE* fastestPath = fopen(argv[4], "wb");
+	fwrite(&dist[minidx], sizeof(dist[minidx]), 1, fastestPath);
+	fwrite(&length, sizeof(length), 1, fastestPath);
+	writePath(parent, minidx, &length, r, c, fastestPath);
 
 
     fclose(inputGrid);
