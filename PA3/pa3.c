@@ -21,9 +21,8 @@ struct AdjListNode
 // an adjacency list
 struct AdjList
 {
-	
-// Pointer to head node of list
-struct AdjListNode *head;
+	// Pointer to head node of list
+	struct AdjListNode *head;
 };
 
 // A structure to represent a graph.
@@ -51,20 +50,20 @@ struct AdjListNode* newAdjListNode(int dest, int weight)
 // a graph of V vertices
 struct Graph* createGraph(int V)
 {
-	struct Graph* graph = (struct Graph*)
-			malloc(sizeof(struct Graph));
+	struct Graph* graph = (struct Graph*)malloc(sizeof(struct Graph));
 	graph->V = V;
 
 	// Create an array of adjacency lists.
 	// Size of array will be V
-	graph->array = (struct AdjList*)
-	malloc(V * sizeof(struct AdjList));
+	graph->array = (struct AdjList*)malloc(V * sizeof(struct AdjList));
 
 	// Initialize each adjacency list
 	// as empty by making head as NULL
     int i;
 	for (i = 0; i < V; ++i)
+	{
 		graph->array[i].head = NULL;
+	}
 
 	return graph;
 }
@@ -106,9 +105,7 @@ struct MinHeap
 // new Min Heap Node
 struct MinHeapNode* newMinHeapNode(int v, int dist)
 {
-	struct MinHeapNode* minHeapNode =
-		(struct MinHeapNode*)
-	malloc(sizeof(struct MinHeapNode));
+	struct MinHeapNode* minHeapNode = (struct MinHeapNode*)malloc(sizeof(struct MinHeapNode));
 	minHeapNode->v = v;
 	minHeapNode->dist = dist;
 	return minHeapNode;
@@ -117,17 +114,11 @@ struct MinHeapNode* newMinHeapNode(int v, int dist)
 // A utility function to create a Min Heap
 struct MinHeap* createMinHeap(int capacity)
 {
-	struct MinHeap* minHeap =
-		(struct MinHeap*)
-	malloc(sizeof(struct MinHeap));
-	minHeap->pos = (int *)malloc(
-			capacity * sizeof(int));
+	struct MinHeap* minHeap = (struct MinHeap*)malloc(sizeof(struct MinHeap));
+	minHeap->pos = (int *)malloc(capacity * sizeof(int));
 	minHeap->size = 0;
 	minHeap->capacity = capacity;
-	minHeap->array =
-		(struct MinHeapNode**)
-				malloc(capacity *
-	sizeof(struct MinHeapNode*));
+	minHeap->array = (struct MinHeapNode**)malloc(capacity * sizeof(struct MinHeapNode*));
 	return minHeap;
 }
 
@@ -136,7 +127,7 @@ struct MinHeap* createMinHeap(int capacity)
 // Needed for min heapify
 void swapMinHeapNode(struct MinHeapNode** a, struct MinHeapNode** b)
 {
-	struct MinHeapNode* t = *a;
+	struct MinHeapNode *t = *a;
 	*a = *b;
 	*b = t;
 }
@@ -153,22 +144,23 @@ void minHeapify(struct MinHeap* minHeap, int idx)
 	left = 2 * idx + 1;
 	right = 2 * idx + 2;
 
-	if (left < minHeap->size &&
-		minHeap->array[left]->dist <
-		minHeap->array[smallest]->dist )
-	smallest = left;
+	if (left < minHeap->size && minHeap->array[left]->dist < minHeap->array[smallest]->dist)
+	{
+		smallest = left;
+	}
 
-	if (right < minHeap->size &&
-		minHeap->array[right]->dist <
-		minHeap->array[smallest]->dist )
-	smallest = right;
+	if (right < minHeap->size && minHeap->array[right]->dist < minHeap->array[smallest]->dist)
+	{
+		smallest = right;
+	}
 
 	if (smallest != idx)
 	{
 		// The nodes to be swapped in min heap
 		struct MinHeapNode *smallestNode;
-		smallestNode = minHeap->array[smallest];
 		struct MinHeapNode *idxNode;
+
+		smallestNode = minHeap->array[smallest];
 		idxNode = minHeap->array[idx];
 
 		// Swap positions
@@ -176,34 +168,26 @@ void minHeapify(struct MinHeap* minHeap, int idx)
 		minHeap->pos[idxNode->v] = smallest;
 
 		// Swap nodes
-		swapMinHeapNode(&minHeap->array[smallest],
-						&minHeap->array[idx]);
+		swapMinHeapNode(&minHeap->array[smallest], &minHeap->array[idx]);
 
 		minHeapify(minHeap, smallest);
 	}
-}
-
-// A utility function to check if
-// the given minHeap is ampty or not
-int isEmpty(struct MinHeap* minHeap)
-{
-	return minHeap->size == 0;
 }
 
 // Standard function to extract
 // minimum node from heap
 struct MinHeapNode* extractMin(struct MinHeap* minHeap)
 {
-	if (isEmpty(minHeap))
+	if (minHeap->size == 0)
+	{
 		return NULL;
+	}
 
 	// Store the root node
-	struct MinHeapNode* root =
-				minHeap->array[0];
+	struct MinHeapNode* root = minHeap->array[0];
 
 	// Replace root node with last node
-	struct MinHeapNode* lastNode =
-		minHeap->array[minHeap->size - 1];
+	struct MinHeapNode* lastNode = minHeap->array[minHeap->size - 1];
 	minHeap->array[0] = lastNode;
 
 	// Update position of last node
@@ -211,7 +195,7 @@ struct MinHeapNode* extractMin(struct MinHeap* minHeap)
 	minHeap->pos[lastNode->v] = 0;
 
 	// Reduce heap size and heapify root
-	--minHeap->size;
+	minHeap->size -= 1;
 	minHeapify(minHeap, 0);
 
 	return root;
@@ -252,9 +236,12 @@ void decreaseKey(struct MinHeap* minHeap, int v, int dist)
 // 'v' is in min heap or not
 bool isInMinHeap(struct MinHeap *minHeap, int v)
 {
-if (minHeap->pos[v] < minHeap->size)
-	return true;
-return false;
+	if (minHeap->pos[v] < minHeap->size)
+	{
+		return true;
+	}
+
+	return false;
 }
 
 // A utility function used to print the solution
@@ -340,10 +327,6 @@ void dijkstra(struct Graph* graph, int src, int parent[], int dist[])
 	// Get the number of vertices in graph
 	int V = graph->V;
 
-	// dist values used to pick
-	// minimum weight edge in cut
-	//int dist[V];
-
 	// minHeap represents set E
 	struct MinHeap* minHeap = createMinHeap(V);
 
@@ -355,13 +338,8 @@ void dijkstra(struct Graph* graph, int src, int parent[], int dist[])
 		dist[v] = INT_MAX;
 		minHeap->array[v] = newMinHeapNode(v, dist[v]);
 		minHeap->pos[v] = v;
-	}
-
-    for (v = 0; v < V; v++)
-    {
-        //parent
 		parent[v] = -1;
-    }
+	}
 
 	// Make dist value of src vertex
 	// as 0 so that it is extracted first
@@ -377,7 +355,7 @@ void dijkstra(struct Graph* graph, int src, int parent[], int dist[])
 	// min heap contains all nodes
 	// whose shortest distance
 	// is not yet finalized.
-	while (!isEmpty(minHeap))
+	while (minHeap->size != 0)
 	{
 		// Extract the vertex with
 		// minimum distance value
