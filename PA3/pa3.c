@@ -29,7 +29,7 @@ void printPath(int parent[], int j, int *length, int r, int c)
     if (parent[j] == - 1)
         return;
 
-	int row = j / c;
+	//int row = j / c;
 
 	//NEED TO CHANGE THIS TO SOMETHING ELSE
 		int col = j;
@@ -42,7 +42,7 @@ void printPath(int parent[], int j, int *length, int r, int c)
 			col = 0;
 		}
 
-	printf("%d %d\n",row, col);
+	//printf("%d %d\n",row, col);
 
     printPath(parent, parent[j], length, r, c);
 	*length += 1;
@@ -232,7 +232,7 @@ int main(int argc, char* argv[])
     //write grid in text formatting to file
     FILE* inputGridTxt = fopen(argv[2], "w");
     writeGrid(r, c, grid, inputGridTxt);
-    printGrid(r, c, grid);
+    //printGrid(r, c, grid);
 
     //Finding all paths
 	//make graph from matrix
@@ -285,16 +285,18 @@ int main(int argc, char* argv[])
 	int *parent = (int*)malloc(v * sizeof(int));
 	dijkstra(g, v, parent, dist); //v is E
 	//printSolution(dist, c, parent); //can only enter from top
-	printf("\n");
+	//printf("\n");
 
 
 	//fastest times from each entrance
+	/*
 	printf("%d\n", c);
 	for (i = 0; i < c; i++)
     {
         printf("%d ", dist[i]);
     }
 	printf("\n");
+	*/
 
 	//fastest path
 	int minidx = 0;
@@ -306,11 +308,11 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	printf("\n%d\n%d\n", dist[minidx], 1); //replace 1 with len(path)
+	//printf("\n%d\n%d\n", dist[minidx], 1); //replace 1 with len(path)
 	int length;
 	printPath(parent, minidx, &length, r, c); //NEED TO COUNT LENGTH BEFORE WRITING TO BINARY FILE DONT DELETE THIS
 	length -= 1;
-	printf("REPLACE WITH 1 ABOVE: %d\n\n", length);
+	//printf("REPLACE WITH 1 ABOVE: %d\n\n", length);
 
 	//writing fastest times
     FILE* fastestTimes = fopen(argv[3], "wb");

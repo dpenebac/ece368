@@ -6,7 +6,7 @@ OBJS = $(SRCS:%.c=%.o)
 pa3: $(OBJS) #gcc files -o name of thing
 	gcc -std=c99 -pedantic -Wvla -Wall -Wshadow -O3 pa3.c -o pa3
 
-testBuild: test1
+testAll: test1 test2 test3 test4
 
 test1: pa3
 	./pa3 examples/4_5.b examples/answers/4_5.t examples/answers/4_5.f examples/answers/4_5.p
