@@ -10,41 +10,41 @@
 struct Matrix
 {
 	int V;
-	struct AdjList* array;
+	struct AdjList* list;
 };
 
 // A utility function that creates
 // a graph of V vertices
 struct Matrix* createGraph(int V)
 {
-	struct Matrix* g = (struct Matrix*)malloc(sizeof(struct Matrix));
-	g->V = V;
+	struct Matrix* m = (struct Matrix*)malloc(sizeof(struct Matrix));
+	m->V = V;
 
 	// Create an array of adjacency lists.
 	// Size of array will be V
-	g->array = (struct AdjList*)malloc(V * sizeof(struct AdjList));
+	m->list = (struct AdjList*)malloc(V * sizeof(struct AdjList));
 
 	// Initialize each adjacency list
 	// as empty by making head as NULL
     int i;
 	for (i = 0; i < V; ++i)
 	{
-		g->array[i].head = NULL;
+		m->list[i].head = NULL;
 	}
 
-	return g;
+	return m;
 }
 
 // Adds an edge to an undirected graph
-void addEdge(struct Matrix* g, int src, int dest, int weight)
+void addEdge(struct Matrix* m, int src, int dest, int weight)
 {
 	// Add an edge from src to dest.
 	// A new node is added to the adjacency
 	// list of src. The node is
 	// added at the beginning
 	struct AdjListNode* newNode = newAdjListNode(dest, weight);
-	newNode->next = g->array[src].head;
-	g->array[src].head = newNode;
+	newNode->next = m->list[src].head;
+	m->list[src].head = newNode;
 }
 
 #endif

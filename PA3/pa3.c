@@ -88,11 +88,11 @@ void printSolution(int dist[], int n, int parent[])
 // The main function that calculates
 // distances of shortest paths from src to all
 // vertices. It is a O(ELogV) function
-void dijkstra(struct Matrix* g, int src, int parent[], int dist[])
+void dijkstra(struct Matrix* m , int src, int parent[], int dist[])
 {
 	
 	// Get the number of vertices in graph
-	int V = g->V;
+	int V = m->V;
 
 	// minHeap represents set E
 	struct MinHeap* minHeap = createMinHeap(V);
@@ -135,7 +135,7 @@ void dijkstra(struct Matrix* g, int src, int parent[], int dist[])
 		// vertices of u (the extracted
 		// vertex) and update
 		// their distance values
-		struct AdjListNode* pCrawl = g->array[u].head;
+		struct AdjListNode* pCrawl = m->list[u].head;
 		while (pCrawl != NULL)
 		{
 			v = pCrawl->dest;
@@ -237,13 +237,13 @@ int main(int argc, char* argv[])
     //Finding all paths
 	//make graph from matrix
 	int v = r * c; //vertices, +2 is for Start and End
-	struct Matrix* g = createGraph(v + 1);
+	struct Matrix* m = createGraph(v + 1);
 
 	for (i = 0; i < v; i++)
 	{
 		if (i % c != 0) //left
 		{
-			addEdge(g, i, i - 1, grid[i - 1]);
+			addEdge(m, i, i - 1, grid[i - 1]);
 			//printf("Left of  %d: Adding: %d to %d with weight of %d\n", grid[i], i, i - 1, grid[i - 1]);
 		}
 
@@ -253,19 +253,19 @@ int main(int argc, char* argv[])
 		//10,11,12,13
 		if ((i + 1) % c != 0) //right
 		{
-			addEdge(g, i, i + 1, grid[i + 1]);
+			addEdge(m, i, i + 1, grid[i + 1]);
 			//printf("Right of %d: Adding: %d to %d with weight of %d\n", grid[i], i, i + 1, grid[i + 1]);
 		}
 
 		if (i - c >= 0) //up
 		{
-			addEdge(g, i, i - c, grid[i - c]);
+			addEdge(m, i, i - c, grid[i - c]);
 			//printf("Up of    %d: Adding: %d to %d with weight of %d\n", grid[i], i, i - c, grid[i - c]);
 		}
 
 		if (i + r < r * c) //down
 		{
-			addEdge(g, i, i + c, grid[i + c]);
+			addEdge(m, i, i + c, grid[i + c]);
 			//printf("Down of  %d: Adding: %d to %d with weight of %d\n", grid[i], i, i + c, grid[i + c]);
 		}
 
@@ -276,14 +276,14 @@ int main(int argc, char* argv[])
 	//printf("End Edge: ");
 	for (i = v - c; i < v; i++)
 	{
-		addEdge(g, v, i, grid[i]);
+		addEdge(m, v, i, grid[i]);
 		//printf("%d ", i);
 	}
 	//printf("\n\n");
 
 	int *dist = (int*)malloc(v * sizeof(int));
 	int *parent = (int*)malloc(v * sizeof(int));
-	dijkstra(g, v, parent, dist); //v is E
+	dijkstra(m, v, parent, dist); //v is E
 	//printSolution(dist, c, parent); //can only enter from top
 	//printf("\n");
 
