@@ -284,19 +284,6 @@ int main(int argc, char* argv[])
 	int *dist = (int*)malloc(v * sizeof(int));
 	int *parent = (int*)malloc(v * sizeof(int));
 	dijkstra(m, v, parent, dist); //v is E
-	//printSolution(dist, c, parent); //can only enter from top
-	//printf("\n");
-
-
-	//fastest times from each entrance
-	/*
-	printf("%d\n", c);
-	for (i = 0; i < c; i++)
-    {
-        printf("%d ", dist[i]);
-    }
-	printf("\n");
-	*/
 
 	//fastest path
 	int minidx = 0;
@@ -331,6 +318,8 @@ int main(int argc, char* argv[])
 
     fclose(inputGrid);
     fclose(inputGridTxt);
+	fclose(fastestTimes);
+	fclose(fastestPath);
 
 
     return EXIT_SUCCESS;

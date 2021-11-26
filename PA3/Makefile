@@ -8,6 +8,9 @@ pa3: $(OBJS) #gcc files -o name of thing
 
 testAll: test1 test2 test3 test4
 
+testMem: pa3
+	valgrind ./pa3 examples/4_5.b examples/answers/4_5.t examples/answers/4_5.f examples/answers/4_5.p
+
 test1: pa3
 	./pa3 examples/4_5.b examples/answers/4_5.t examples/answers/4_5.f examples/answers/4_5.p
 	diff examples/answers/4_5.t examples/4_5.t
