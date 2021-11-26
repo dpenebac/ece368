@@ -1,6 +1,5 @@
 #ifndef adjList
 #define adjList
-#include <stdlib.h>
 
 // A structure to represent
 // an adjacency list

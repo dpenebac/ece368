@@ -1,6 +1,5 @@
 #ifndef matrix
 #define matrix
-#include <stdlib.h>
 #include "adjList.h"
 
 // A structure to represent a graph.

@@ -1,6 +1,5 @@
 #ifndef minheap
 #define minheap
-#include <stdlib.h>
 
 // Structure to represent a min heap node
 struct MinHeapNode

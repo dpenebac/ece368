@@ -218,7 +218,8 @@ int main(int argc, char* argv[])
     short r,c; //rows, columns
     fread(&r, sizeof(r), 1, inputGrid);
     fread(&c, sizeof(c), 1, inputGrid);
-    
+
+	
     short *grid = (short *)malloc((r * c) * sizeof(short));
 
     int i;
@@ -283,6 +284,7 @@ int main(int argc, char* argv[])
 
 	int *dist = (int*)malloc(v * sizeof(int));
 	int *parent = (int*)malloc(v * sizeof(int));
+	
 	dijkstra(m, v, parent, dist); //v is E
 
 	//fastest path
@@ -320,7 +322,6 @@ int main(int argc, char* argv[])
     fclose(inputGridTxt);
 	fclose(fastestTimes);
 	fclose(fastestPath);
-
 
     return EXIT_SUCCESS;
 }
