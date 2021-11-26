@@ -142,12 +142,9 @@ void decreaseKey(struct MinHeap* minHeap, int v, int dist)
 		minHeap->array[(i - 1) / 2]->dist)
 	{
 		// Swap this node with its parent
-		minHeap->pos[minHeap->array[i]->v] =
-									(i-1)/2;
-		minHeap->pos[minHeap->array[
-							(i-1)/2]->v] = i;
-		swapMinHeapNode(&minHeap->array[i],
-				&minHeap->array[(i - 1) / 2]);
+		minHeap->pos[minHeap->array[i]->v] = (i-1)/2;
+		minHeap->pos[minHeap->array[(i-1)/2]->v] = i;
+		swapMinHeapNode(&minHeap->array[i], &minHeap->array[(i - 1) / 2]);
 
 		// move to parent index
 		i = (i - 1) / 2;

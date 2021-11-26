@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <stdbool.h>
-#include "graph.h"
+#include "matrix.h"
 #include "adjList.h"
 #include "minheap.h"
 
@@ -88,7 +88,7 @@ void printSolution(int dist[], int n, int parent[])
 // The main function that calculates
 // distances of shortest paths from src to all
 // vertices. It is a O(ELogV) function
-void dijkstra(struct Graph* g, int src, int parent[], int dist[])
+void dijkstra(struct Matrix* g, int src, int parent[], int dist[])
 {
 	
 	// Get the number of vertices in graph
@@ -237,7 +237,7 @@ int main(int argc, char* argv[])
     //Finding all paths
 	//make graph from matrix
 	int v = r * c; //vertices, +2 is for Start and End
-	struct Graph* g = createGraph(v + 1);
+	struct Matrix* g = createGraph(v + 1);
 
 	for (i = 0; i < v; i++)
 	{

@@ -1,6 +1,6 @@
 WARNING = -Wall -Wshadow --pedantic
 GCC = gcc -std=c99 -pedantic -Wvla -Wall -Wshadow -O3 #edit to apply gcc commands
-SRCS = pa3.c #files to run in 
+SRCS = minheap.h adjList.h matrix.h pa3.c #files to run in 
 OBJS = $(SRCS:%.c=%.o)
 
 pa3: $(OBJS) #gcc files -o name of thing

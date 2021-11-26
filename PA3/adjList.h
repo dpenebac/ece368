@@ -2,6 +2,14 @@
 #define adjList
 #include <stdlib.h>
 
+// A structure to represent
+// an adjacency list
+struct AdjList
+{
+	// Pointer to head node of list
+	struct AdjListNode *head;
+};
+
 // A structure to represent a
 // node in adjacency list
 struct AdjListNode
@@ -9,14 +17,6 @@ struct AdjListNode
 	int dest;
 	int weight;
 	struct AdjListNode* next;
-};
-
-// A structure to represent
-// an adjacency list
-struct AdjList
-{
-	// Pointer to head node of list
-	struct AdjListNode *head;
 };
 
 // A utility function to create
