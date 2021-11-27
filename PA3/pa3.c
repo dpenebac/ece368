@@ -26,8 +26,10 @@ void printArr(int dist[], int n)
 void printPath(int parent[], int j, int *length, int r, int c)
 {
     // Base Case : If j is source
-    if (parent[j] == - 1)
+    if (parent[j] == -1)
+	{
         return;
+	}
 	*length += 1;
     printPath(parent, parent[j], length, r, c);
 }
@@ -208,16 +210,16 @@ int main(int argc, char* argv[])
     }
     
     //find size
-    short r,c; //rows, columns
+    short r = 0, c = 0; //rows, columns
     fread(&r, sizeof(r), 1, inputGrid);
     fread(&c, sizeof(c), 1, inputGrid);
 
 	
     short *grid = (short *)malloc((r * c) * sizeof(short)); //r * c * sizeof(short) = 40
 
-    int i;
-    short temp;
-    for (i = 0; i < r * c; i++)
+    int i = 0;
+    short temp = 0;
+    for (i = 0; i < r * c; i++) 
     {
         fread(&temp, sizeof(short), 1, inputGrid);
         grid[i] = temp;
@@ -230,7 +232,8 @@ int main(int argc, char* argv[])
 
     //Finding all paths
 	//make graph from matrix
-	int v = r * c; //vertices, +2 is for Start and End
+	int v;
+	v = r * c; //vertices, +2 is for Start and End
 	struct Matrix* m = createGraph(v + 1);
 
 	for (i = 0; i < v; i++)
@@ -278,7 +281,7 @@ int main(int argc, char* argv[])
 	int *dist = (int*)malloc(v * sizeof(int));
 	int *parent = (int*)malloc(v * sizeof(int));
 	
-	dijkstra(m, v, parent, dist); //v is E
+	dijkstra(m, v, parent, dist); //v is the last node which combines all the destinations
 
 	//fastest path
 	int minidx = 0;
@@ -291,10 +294,15 @@ int main(int argc, char* argv[])
 	}
 
 	//printf("\n%d\n%d\n", dist[minidx], 1); //replace 1 with len(path)
-	int length;
-	printPath(parent, minidx, &length, r, c); //NEED TO COUNT LENGTH BEFORE WRITING TO BINARY FILE DONT DELETE THIS
-	length -= 1;
-	//printf("REPLACE WITH 1 ABOVE: %d\n\n", length);
+	int length = 0;
+	int j = minidx;
+	//printPath(parent, minidx, &length, r, c); //NEED TO COUNT LENGTH BEFORE WRITING TO BINARY FILE DONT DELETE THIS
+
+	while (parent[j] != -1)
+	{
+		length += 1;
+		j = parent[j];
+	}
 
 	//writing fastest times
     FILE* fastestTimes = fopen(argv[3], "wb");
