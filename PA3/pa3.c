@@ -115,8 +115,7 @@ void dijkstra(struct Matrix* m , int src, int parent[], int dist[])
 				// value in min heap also
 				decreaseKey(minHeap, v, dist[v]);
 			}
-
-			pCrawl = pCrawl->next;	
+			pCrawl = pCrawl->next;
 		}
 		free(minHeapNode);
 	}
@@ -290,8 +289,6 @@ int main(int argc, char* argv[])
 	fwrite(&dist[minidx], sizeof(dist[minidx]), 1, fastestPath);
 	fwrite(&length, sizeof(length), 1, fastestPath);
 	writePath(parent, minidx, &length, r, c, fastestPath);
-
-	
 
 	//free matrix
 	int d;

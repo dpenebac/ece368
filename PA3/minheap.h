@@ -51,6 +51,7 @@ void swapMinHeapNode(struct MinHeapNode** a, struct MinHeapNode** b)
 	struct MinHeapNode *t = *a;
 	*a = *b;
 	*b = t;
+	return;
 }
 
 // A standard function to
@@ -93,6 +94,7 @@ void minHeapify(struct MinHeap* minHeap, int idx)
 
 		minHeapify(minHeap, smallest);
 	}
+	return;
 }
 
 struct MinHeapNode* extractMin(struct MinHeap* minHeap)
@@ -146,6 +148,7 @@ void decreaseKey(struct MinHeap* minHeap, int v, int dist)
 		// move to parent index
 		i = (i - 1) / 2;
 	}
+	return;
 }
 
 // A utility function to check if a given vertex
