@@ -20,20 +20,6 @@ void printArr(int dist[], int n)
 		printf("%d \t\t %d\n", i, dist[i]);
 }
 
-// Function to print shortest
-// path from source to j
-// using parent array
-void printPath(int parent[], int j, int *length, int r, int c)
-{
-    // Base Case : If j is source
-    if (parent[j] == -1)
-	{
-        return;
-	}
-	*length += 1;
-    printPath(parent, parent[j], length, r, c);
-}
-
 void writePath(int parent[], int j, int *length, int r, int c, FILE* output)
 {
     // Base Case : If j is source
@@ -60,23 +46,11 @@ void writePath(int parent[], int j, int *length, int r, int c, FILE* output)
 	*length += 1;
 }
 
-void printSolution(int dist[], int n, int parent[])
-{
-    int i;
-    for (i = 0; i < n; i++)
-    {
-        printf("\n%d\t", dist[i]);
-        printPath(parent, i, 0, 0, 0);
-    }
-    return;
-}
-
 // The main function that calculates
 // distances of shortest paths from src to all
 // vertices. It is a O(ELogV) function
 void dijkstra(struct Matrix* m , int src, int parent[], int dist[])
 {
-	
 	// Get the number of vertices in graph
 	int V = m->V;
 
@@ -116,7 +90,7 @@ void dijkstra(struct Matrix* m , int src, int parent[], int dist[])
 	
 		// Store the extracted vertex number
 		int u = minHeapNode->v;
-
+		
 		// Traverse through all adjacent
 		// vertices of u (the extracted
 		// vertex) and update
@@ -145,7 +119,6 @@ void dijkstra(struct Matrix* m , int src, int parent[], int dist[])
 			pCrawl = pCrawl->next;	
 		}
 		free(minHeapNode);
-		free(pCrawl);
 	}
 
     free(minHeap->pos);
@@ -215,7 +188,7 @@ int main(int argc, char* argv[])
     fread(&c, sizeof(c), 1, inputGrid);
 
 	
-    short *grid = (short *)malloc((r * c) * sizeof(short)); //r * c * sizeof(short) = 40
+    short *grid = (short *)malloc((r * c) * sizeof(short *)); //r * c * sizeof(short) = 40
 
     int i = 0;
     short temp = 0;
@@ -278,8 +251,8 @@ int main(int argc, char* argv[])
 	}
 	//printf("\n\n");
 
-	int *dist = (int*)malloc(v * sizeof(int));
-	int *parent = (int*)malloc(v * sizeof(int));
+	int *dist = (int*)malloc(v * sizeof(int*));
+	int *parent = (int*)malloc(v * sizeof(int*));
 	
 	dijkstra(m, v, parent, dist); //v is the last node which combines all the destinations
 

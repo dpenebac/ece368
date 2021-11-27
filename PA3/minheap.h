@@ -95,8 +95,6 @@ void minHeapify(struct MinHeap* minHeap, int idx)
 	}
 }
 
-// Standard function to extract
-// minimum node from heap
 struct MinHeapNode* extractMin(struct MinHeap* minHeap)
 {
 	if (minHeap->size == 0)
