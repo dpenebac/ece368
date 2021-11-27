@@ -28,24 +28,8 @@ void printPath(int parent[], int j, int *length, int r, int c)
     // Base Case : If j is source
     if (parent[j] == - 1)
         return;
-
-	//int row = j / c;
-
-	//NEED TO CHANGE THIS TO SOMETHING ELSE
-		int col = j;
-		while (col > c)
-		{
-			col -= c;
-		}
-		if (col == c)
-		{
-			col = 0;
-		}
-
-	//printf("%d %d\n",row, col);
-
-    printPath(parent, parent[j], length, r, c);
 	*length += 1;
+    printPath(parent, parent[j], length, r, c);
 }
 
 void writePath(int parent[], int j, int *length, int r, int c, FILE* output)
@@ -67,8 +51,8 @@ void writePath(int parent[], int j, int *length, int r, int c, FILE* output)
 			col = 0;
 		}
 
-	fwrite(&row, sizeof(row), 1, output);
-	fwrite(&col, sizeof(row), 1, output);
+	fwrite(&row, sizeof(short), 1, output);
+	fwrite(&col, sizeof(short), 1, output);
 
     writePath(parent, parent[j], length, r, c, output);
 	*length += 1;
@@ -155,9 +139,18 @@ void dijkstra(struct Matrix* m , int src, int parent[], int dist[])
 				// value in min heap also
 				decreaseKey(minHeap, v, dist[v]);
 			}
-			pCrawl = pCrawl->next;
+
+			pCrawl = pCrawl->next;	
 		}
+		free(minHeapNode);
+		free(pCrawl);
 	}
+
+    free(minHeap->pos);
+    free(minHeap->array);
+    free(minHeap);
+
+	return;
 }
 
 void printGrid(short r, short c, short *grid)
@@ -220,13 +213,13 @@ int main(int argc, char* argv[])
     fread(&c, sizeof(c), 1, inputGrid);
 
 	
-    short *grid = (short *)malloc((r * c) * sizeof(short));
+    short *grid = (short *)malloc((r * c) * sizeof(short)); //r * c * sizeof(short) = 40
 
     int i;
     short temp;
     for (i = 0; i < r * c; i++)
     {
-        fread(&temp, sizeof(temp), 1, inputGrid);
+        fread(&temp, sizeof(short), 1, inputGrid);
         grid[i] = temp;
     }
 
@@ -316,6 +309,28 @@ int main(int argc, char* argv[])
 	fwrite(&dist[minidx], sizeof(dist[minidx]), 1, fastestPath);
 	fwrite(&length, sizeof(length), 1, fastestPath);
 	writePath(parent, minidx, &length, r, c, fastestPath);
+
+	
+
+	//free matrix
+	int d;
+	for(d=0; d<m->V; d++)
+    {
+        struct AdjListNode *p1=m->list[d].head, *p2;
+        while(p1)
+        {
+              p2=p1;
+              p1=p1->next;
+              free(p2);
+        }
+    }
+
+	free(m->list);
+	free(m);
+
+	free(grid);
+	free(dist);
+	free(parent);
 
 
     fclose(inputGrid);

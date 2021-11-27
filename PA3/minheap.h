@@ -116,7 +116,7 @@ struct MinHeapNode* extractMin(struct MinHeap* minHeap)
 	minHeap->pos[lastNode->v] = 0;
 
 	// Reduce heap size and heapify root
-	minHeap->size -= 1;
+	--minHeap->size;
 	minHeapify(minHeap, 0);
 
 	return root;

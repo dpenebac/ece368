@@ -16,12 +16,12 @@ struct Matrix
 // a graph of V vertices
 struct Matrix* createGraph(int V)
 {
-	struct Matrix* m = (struct Matrix*)malloc(sizeof(struct Matrix));
+	struct Matrix* m = malloc(sizeof(struct Matrix));
 	m->V = V;
 
 	// Create an array of adjacency lists.
 	// Size of array will be V
-	m->list = (struct AdjList*)malloc(V * sizeof(struct AdjList));
+	m->list = malloc(V * sizeof(struct AdjList));
 
 	// Initialize each adjacency list
 	// as empty by making head as NULL
