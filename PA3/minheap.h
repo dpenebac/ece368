@@ -19,7 +19,7 @@ struct MinHeap
 
 	// This is needed for decreaseKey()
 	int *pos;
-	struct MinHeapNode **array;
+	struct MinHeapNode **array;//////
 };
 
 // A utility function to create a
@@ -116,13 +116,13 @@ struct MinHeapNode* extractMin(struct MinHeap* minHeap)
 	minHeap->pos[lastNode->v] = 0;
 
 	// Reduce heap size and heapify root
-	--minHeap->size;
+	minHeap->size -= 1;
 	minHeapify(minHeap, 0);
 
 	return root;
 }
 
-// Function to decreasy dist value
+// Function to decreas dist value
 // of a given vertex v. This function
 // uses pos[] of min heap to get the
 // current index of node in min heap
@@ -137,8 +137,7 @@ void decreaseKey(struct MinHeap* minHeap, int v, int dist)
 	// Travel up while the complete
 	// tree is not hepified.
 	// This is a O(Logn) loop
-	while (i && minHeap->array[i]->dist <
-		minHeap->array[(i - 1) / 2]->dist)
+	while (i && minHeap->array[i]->dist < minHeap->array[(i - 1) / 2]->dist)
 	{
 		// Swap this node with its parent
 		minHeap->pos[minHeap->array[i]->v] = (i-1)/2;

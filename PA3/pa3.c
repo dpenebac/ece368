@@ -49,16 +49,14 @@ void writePath(int parent[], int j, int *length, int r, int c, FILE* output)
 // The main function that calculates
 // distances of shortest paths from src to all
 // vertices. It is a O(ELogV) function
+//THE ONLY THING WE MAKE IN HERE IS CREATEMINHEAP AND NEWMINHEAPNODE EVERYTHING ELSE IDC
 void dijkstra(struct Matrix* m , int src, int parent[], int dist[])
 {
-	// Get the number of vertices in graph
 	int V = m->V;
 
 	// minHeap represents set E
 	struct MinHeap* minHeap = createMinHeap(V);
 
-	// Initialize min heap with all
-	// vertices. dist value of all vertices
     int v;
 	for (v = 0; v < V; ++v)
 	{
@@ -68,52 +66,39 @@ void dijkstra(struct Matrix* m , int src, int parent[], int dist[])
 		parent[v] = -1;
 	}
 
-	// Make dist value of src vertex
-	// as 0 so that it is extracted first
-	minHeap->array[src] = newMinHeapNode(src, dist[src]);
+	//minHeap->array[src] = newMinHeapNode(src, dist[src]); //THIS SHIT
 	minHeap->pos[src] = src;
 	dist[src] = 0;
 	decreaseKey(minHeap, src, dist[src]);
 
-	// Initially size of min heap is equal to V
+	
 	minHeap->size = V;
+	
+	struct AdjListNode* pCrawl = NULL;
 
-	// In the followin loop,
-	// min heap contains all nodes
-	// whose shortest distance
-	// is not yet finalized.
+	struct MinHeapNode* minHeapNode = NULL;
 	while (minHeap->size != 0)
 	{
-		// Extract the vertex with
-		// minimum distance value
-		struct MinHeapNode* minHeapNode = extractMin(minHeap);
+		minHeapNode = extractMin(minHeap);
 	
-		// Store the extracted vertex number
 		int u = minHeapNode->v;
-		
-		// Traverse through all adjacent
-		// vertices of u (the extracted
-		// vertex) and update
-		// their distance values
-		struct AdjListNode* pCrawl = m->list[u].head;
-		while (pCrawl != NULL)
+
+		pCrawl = m->list[u].head;
+		while (1)
 		{
 			v = pCrawl->dest;
 
-			// If shortest distance to v is
-			// not finalized yet, and distance to v
-			// through u is less than its
-			// previously calculated distance
 			if (isInMinHeap(minHeap, v) && dist[u] != INT_MAX && pCrawl->weight + dist[u] < dist[v])
 			{
-				//parent
 				parent[v] = u;
 
 				dist[v] = dist[u] + pCrawl->weight;
 
-				// update distance
-				// value in min heap also
 				decreaseKey(minHeap, v, dist[v]);
+			}
+			if (pCrawl->next == NULL)
+			{
+				break;
 			}
 			pCrawl = pCrawl->next;
 		}
@@ -121,8 +106,8 @@ void dijkstra(struct Matrix* m , int src, int parent[], int dist[])
 	}
 
     free(minHeap->pos);
-    free(minHeap->array);
-    free(minHeap);
+    free(minHeap->array); //
+    free(minHeap);	
 
 	return;
 }
@@ -294,7 +279,7 @@ int main(int argc, char* argv[])
 	int d;
 	for(d=0; d<m->V; d++)
     {
-        struct AdjListNode *p1=m->list[d].head, *p2;
+        struct AdjListNode *p1 = m->list[d].head, *p2;
         while(p1)
         {
               p2=p1;
