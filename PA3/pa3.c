@@ -102,11 +102,11 @@ void dijkstra(struct Matrix* m , int src, int parent[], int dist[])
 
 				dist[dest] = dist[vertex] + weight; //calculate new shortest path
 
-				decreaseKey(minHeap, dest, dist[dest]); //
+				decreaseKey(minHeap, dest, dist[dest]); //update distance in minheap and heapify(i think)
 			}
 			edge = edge->next; //travel to next edge
 		}
-		free(min);
+		free(min); //extracted root is now free
 	}
 
     free(minHeap->pos);
