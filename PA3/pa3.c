@@ -63,7 +63,7 @@ void dijkstra(struct Matrix* m , int src, int parent[], int dist[])
 	for (v = 0; v < V; ++v)
 	{
 		dist[v] = INT_MAX;
-		minHeap->array[v] = newMinHeapNode(v, dist[v]);
+		minHeap->array[v] = newMinHeapNode(v, INT_MAX);
 		minHeap->pos[v] = v;
 		parent[v] = -1;
 	}
@@ -73,39 +73,111 @@ void dijkstra(struct Matrix* m , int src, int parent[], int dist[])
 
 	minHeap->size = V;
 	
-	struct AdjListNode* pCrawl = NULL;
+	struct AdjListNode* edge = NULL;
 
-	struct MinHeapNode* minHeapNode = NULL;
+	struct MinHeapNode* min = NULL;
 	while (minHeap->size != 0)
 	{
-		minHeapNode = extractMin(minHeap);
+		min = extractMin(minHeap); //extract root which should be min distance from srcs
+		//extract min is based on distance
 	
-		int u = minHeapNode->v;
+		int vertex = min->v; //corresponding vertex based on min position
 
-		pCrawl = m->list[u].head;
-		while (1)
+		edge = m->list[vertex].head; //pointer crawl is used to travel across adjlist to determine new min distances
+								  //vertex in adjList 
+								  /*example
+									u = 5
+									m->list[5].head
+									5->3->2->1
+									means 5 is connected to 3,2,1
+								  */
+		while (edge != NULL) //crawl until end of adjlist
 		{
-			v = pCrawl->dest;
+			int dest = edge->dest; //destination of edge
+			int weight = edge->weight; //weight of edge
 
-			if (isInMinHeap(minHeap, v) && dist[u] != INT_MAX && pCrawl->weight + dist[u] < dist[v])
+			if (weight + dist[vertex] < dist[dest]) //if the new calculated weight is less than the current weight
 			{
-				parent[v] = u;
+				parent[dest] = vertex; //updating path for shortest parent
 
-				dist[v] = dist[u] + pCrawl->weight;
+				dist[dest] = dist[vertex] + weight; //calculate new shortest path
 
-				decreaseKey(minHeap, v, dist[v]);
+				decreaseKey(minHeap, dest, dist[dest]); //
 			}
-			if (pCrawl->next == NULL)
-			{
-				break;
-			}
-			pCrawl = pCrawl->next;
+			edge = edge->next; //travel to next edge
 		}
-		free(minHeapNode);
+		free(min);
 	}
 
     free(minHeap->pos);
-    free(minHeap->array); //
+    free(minHeap->array);
+    free(minHeap);	
+
+	return;
+}
+
+void dijkstraOriginal(struct Matrix* m , int src, int parent[], int dist[])
+{
+	int V = m->V;
+
+	// minHeap represents set E
+	struct MinHeap* minHeap = createMinHeap(V);
+
+    int v;
+	for (v = 0; v < V; ++v)
+	{
+		dist[v] = INT_MAX;
+		minHeap->array[v] = newMinHeapNode(v, INT_MAX);
+		minHeap->pos[v] = v;
+		parent[v] = -1;
+	}
+
+	dist[src] = 0;
+	decreaseKey(minHeap, src, dist[src]);
+
+	minHeap->size = V;
+	
+	struct AdjListNode* edge = NULL;
+
+	struct MinHeapNode* min = NULL;
+	while (minHeap->size != 0)
+	{
+		min = extractMin(minHeap); //extract root which should be min distance from srcs
+		//extract min is based on distance
+	
+		int vertex = min->v; //corresponding vertex based on min position
+
+		edge = m->list[vertex].head; //pointer crawl is used to travel across adjlist to determine new min distances
+								  //vertex in adjList 
+								  /*example
+									u = 5
+									m->list[5].head
+									5->3->2->1
+									means 5 is connected to 3,2,1
+								  */
+		while (edge != NULL) //crawl until end of adjlist
+		{
+			int dest = edge->dest; //destination of edge
+			int weight = edge->weight; //weight of edge
+
+			if (  (minHeap->pos[dest] < minHeap->size) //not sure why this is necessary
+			   && (dist[vertex] != INT_MAX) //distance of source -> minVertex is not inf
+			   && (weight + dist[vertex] < dist[dest]) //if the new calculated weight is less than the current weight
+			   )
+			{
+				parent[dest] = vertex;
+
+				dist[dest] = dist[vertex] + weight;
+
+				decreaseKey(minHeap, dest, dist[dest]);
+			}
+			edge = edge->next; //travel to next edge
+		}
+		free(min);
+	}
+
+    free(minHeap->pos);
+    free(minHeap->array);
     free(minHeap);	
 
 	return;
@@ -169,7 +241,6 @@ int main(int argc, char* argv[])
     short r = 0, c = 0; //rows, columns
     fread(&r, sizeof(r), 1, inputGrid);
     fread(&c, sizeof(c), 1, inputGrid);
-
 	
     short *grid = (short *)malloc((r * c) * sizeof(short *)); //r * c * sizeof(short) = 40
 
@@ -249,16 +320,17 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	//printf("\n%d\n%d\n", dist[minidx], 1); //replace 1 with len(path)
 	int length = 0;
 	int j = minidx;
 	//printPath(parent, minidx, &length, r, c); //NEED TO COUNT LENGTH BEFORE WRITING TO BINARY FILE DONT DELETE THIS
 
-	while (parent[j] != -1)
-	{
-		length += 1;
-		j = parent[j];
-	}
+//NOT ME BUT STILL FLUFFY I THINK
+			while (parent[j] != -1)
+			{
+				length += 1;
+				j = parent[j];
+			}
+//
 
 	//writing fastest times
     FILE* fastestTimes = fopen(argv[3], "wb");
