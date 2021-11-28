@@ -66,12 +66,9 @@ void dijkstra(struct Matrix* m , int src, int parent[], int dist[])
 		parent[v] = -1;
 	}
 
-	//minHeap->array[src] = newMinHeapNode(src, dist[src]); //THIS SHIT
-	minHeap->pos[src] = src;
 	dist[src] = 0;
 	decreaseKey(minHeap, src, dist[src]);
 
-	
 	minHeap->size = V;
 	
 	struct AdjListNode* pCrawl = NULL;
