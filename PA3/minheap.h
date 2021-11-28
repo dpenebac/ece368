@@ -1,5 +1,6 @@
 #ifndef minheap
 #define minheap
+#include <stdlib.h>
 
 // Structure to represent a min heap node
 struct MinHeapNode
@@ -19,7 +20,7 @@ struct MinHeap
 
 	// This is needed for decreaseKey()
 	int *pos;
-	struct MinHeapNode **array;//////
+	struct MinHeapNode **array;
 };
 
 // A utility function to create a
@@ -59,7 +60,7 @@ void swapMinHeapNode(struct MinHeapNode** a, struct MinHeapNode** b)
 // This function also updates
 // position of nodes when they are swapped.
 // Position is needed for decreaseKey()
-void minHeapify(struct MinHeap* minHeap, int idx)
+void minHeapify(struct MinHeap* minHeap, int idx) //i think this is downward heapify
 {
 	int smallest, left, right;
 	smallest = idx;
@@ -116,7 +117,7 @@ struct MinHeapNode* extractMin(struct MinHeap* minHeap)
 	minHeap->pos[lastNode->v] = 0;
 
 	// Reduce heap size and heapify root
-	minHeap->size -= 1;
+	--minHeap->size;
 	minHeapify(minHeap, 0);
 
 	return root;
