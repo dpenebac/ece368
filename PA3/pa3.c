@@ -29,6 +29,7 @@ void writePath(int parent[], int j, int *length, int r, int c, FILE* output)
 	short row = j / c;
 
 	//NEED TO CHANGE THIS TO SOMETHING ELSE
+	//j is the (x,y) position, need to translate to r = x, c = y
 		short col = j;
 		while (col > c)
 		{
@@ -39,6 +40,7 @@ void writePath(int parent[], int j, int *length, int r, int c, FILE* output)
 			col = 0;
 		}
 
+	printf("%d %d\n", row, col);
 	fwrite(&row, sizeof(short), 1, output);
 	fwrite(&col, sizeof(short), 1, output);
 
@@ -291,7 +293,6 @@ int main(int argc, char* argv[])
 	free(grid);
 	free(dist);
 	free(parent);
-
 
     fclose(inputGrid);
     fclose(inputGridTxt);
