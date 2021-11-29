@@ -79,11 +79,12 @@ void dijkstra(struct Matrix* m , int src, int parent[], int dist[])
 	while (minHeap->size != 0)
 	{
 		min = extractMin(minHeap); //extract root which should be min distance from srcs
+		minHeapify(minHeap, 0);
 		//extract min is based on distance
 	
 		int vertex = min->v; //corresponding vertex based on min position
 
-		edge = m->list[vertex].head; //pointer crawl is used to travel across adjlist to determine new min distances
+		edge = m->list[vertex].head; //edge is used to travel across adjlist to determine new min distances
 								  //vertex in adjList 
 								  /*example
 									u = 5
@@ -94,13 +95,13 @@ void dijkstra(struct Matrix* m , int src, int parent[], int dist[])
 		while (edge != NULL) //crawl until end of adjlist
 		{
 			int dest = edge->dest; //destination of edge
-			int weight = edge->weight; //weight of edge
+			int newWeight = edge->weight + dist[vertex];
 
-			if (weight + dist[vertex] < dist[dest]) //if the new calculated weight is less than the current weight
+			if (newWeight < dist[dest]) //if the new calculated distance is less than the current distance
 			{
 				parent[dest] = vertex; //updating path for shortest parent
 
-				dist[dest] = dist[vertex] + weight; //calculate new shortest path
+				dist[dest] = newWeight; //update new shortest path
 
 				decreaseKey(minHeap, dest, dist[dest]); //update distance in minheap and heapify(i think)
 			}

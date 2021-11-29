@@ -19,8 +19,8 @@ struct MinHeap
 	int capacity;
 
 	// This is needed for decreaseKey()
-	int *pos;
-	struct MinHeapNode **array;
+	int *pos; //positiions of vertexes in the MinHeapNode array, update accordinlgy to prevent constant lookup
+	struct MinHeapNode **array; //array of (vertex, distance) where distance is the vertex's distance from the source
 };
 
 // A utility function to create a
@@ -118,12 +118,11 @@ struct MinHeapNode* extractMin(struct MinHeap* minHeap)
 
 	// Reduce heap size and heapify root
 	--minHeap->size;
-	minHeapify(minHeap, 0);
 
 	return root;
 }
 
-// Function to decreas dist value
+// Function to decrease dist value
 // of a given vertex v. This function
 // uses pos[] of min heap to get the
 // current index of node in min heap
@@ -138,14 +137,23 @@ void decreaseKey(struct MinHeap* minHeap, int v, int dist)
 	// Travel up while the complete
 	// tree is not hepified.
 	// This is a O(Logn) loop
-	while (i && minHeap->array[i]->dist < minHeap->array[(i - 1) / 2]->dist)
+	while (i > 0)
 	{
-		// Swap this node with its parent
-		minHeap->pos[minHeap->array[i]->v] = (i-1)/2;
-		minHeap->pos[minHeap->array[(i-1)/2]->v] = i;
-		swapMinHeapNode(&minHeap->array[i], &minHeap->array[(i - 1) / 2]);
+		if (minHeap->array[i]->dist < minHeap->array[(i - 1) / 2]->dist)
+		{
+			// Swap this node with its parent
+			int parent = (i - 1) / 2;
+			int child = i;
 
-		// move to parent index
+			//swap child vertex and parent vertex in position array
+			minHeap->pos[minHeap->array[child]->v] = parent;
+			minHeap->pos[minHeap->array[parent]->v] = child;
+
+			//swap parent and child in heap
+			swapMinHeapNode(&minHeap->array[i], &minHeap->array[(i - 1) / 2]);
+
+			// move to parent index
+		}
 		i = (i - 1) / 2;
 	}
 	return;
