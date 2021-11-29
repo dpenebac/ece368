@@ -9,7 +9,7 @@
 // vertices in graph)
 struct Matrix
 {
-	int V;
+	int V; //size of list
 	struct AdjList* list;
 };
 

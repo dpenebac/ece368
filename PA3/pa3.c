@@ -51,7 +51,6 @@ void writePath(int parent[], int j, int *length, int r, int c, FILE* output)
 // The main function that calculates
 // distances of shortest paths from src to all
 // vertices. It is a O(ELogV) function
-//THE ONLY THING WE MAKE IN HERE IS CREATEMINHEAP AND NEWMINHEAPNODE EVERYTHING ELSE IDC
 void dijkstra(struct Matrix* m , int src, int parent[], int dist[])
 {
 	int V = m->V;
@@ -79,8 +78,8 @@ void dijkstra(struct Matrix* m , int src, int parent[], int dist[])
 	while (minHeap->size != 0)
 	{
 		min = extractMin(minHeap); //extract root which should be min distance from srcs
-		minHeapify(minHeap, 0);
-		//extract min is based on distance
+								   //extract min is based on distance
+		minHeapify(minHeap, 0); //heapify
 	
 		int vertex = min->v; //corresponding vertex based on min position
 
@@ -103,7 +102,7 @@ void dijkstra(struct Matrix* m , int src, int parent[], int dist[])
 
 				dist[dest] = newWeight; //update new shortest path
 
-				decreaseKey(minHeap, dest, dist[dest]); //update distance in minheap and heapify(i think)
+				decreaseKey(minHeap, dest, dist[dest]); //update distance in minheap and heapify
 			}
 			edge = edge->next; //travel to next edge
 		}

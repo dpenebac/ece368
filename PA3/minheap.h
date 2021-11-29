@@ -139,7 +139,7 @@ void decreaseKey(struct MinHeap* minHeap, int v, int dist)
 	// This is a O(Logn) loop
 	while (i > 0)
 	{
-		if (minHeap->array[i]->dist < minHeap->array[(i - 1) / 2]->dist)
+		if (minHeap->array[i]->dist < minHeap->array[(i - 1) / 2]->dist) //heapify and update position array accordingly
 		{
 			// Swap this node with its parent
 			int parent = (i - 1) / 2;
