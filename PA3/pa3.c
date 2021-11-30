@@ -210,6 +210,14 @@ void dijkstraFluff(struct Matrix* m , int src, int parent[], int dist[])
 		parent[v] = -1;
 	}
 
+/*
+Instead of filling the priority queue with all nodes 
+in the initialization phase, it is also possible to 
+initialize it to contain only source; then, inside the 
+if alt < dist[v] block, the decrease_priority() 
+becomes an add_with_priority() operation if the node is 
+not already in the queue. wikipedia
+*/
 
 
 
@@ -229,29 +237,11 @@ i = minHeap->pos[src];
 // Get the node and update its dist value
 minHeap->array[i]->dist = dist[src];
 
-// Travel up while the complete
-// tree is not hepified.
-// This is a O(Logn) loop
-while (i > 0)
-{
-	// Swap this node with its parent
-	Parent = (i - 1) / 2;
-	child = i;
-
-	//swap child vertex and parent vertex in position array
-	//make swap for regular array
-	childIdx = minHeap->array[child]->v;
-	parentIdx = minHeap->array[Parent]->v;
-	//swap(minHeap->pos, childIdx, parentIdx);
-	minHeap->pos[childIdx] = Parent;
-	minHeap->pos[parentIdx] = child;
-
-	//swap parent and child in heap
-	swapMinHeapNode(&minHeap->array[child], &minHeap->array[Parent]);
-
-	// move to parent index
-	i = Parent;
-}
+//CHANGE THIS ONLY NEEDS TO SWAP SOURCE FROM BOTTOM TO TOP
+//OF MIN HEAP
+minHeap->pos[minHeap->array[i]->v] = 0;
+minHeap->pos[minHeap->array[0]->v] = i;
+swapMinHeapNode(&minHeap->array[i], &minHeap->array[0]);
 
 	
 	struct AdjListNode* edge = NULL;
@@ -262,12 +252,12 @@ while (i > 0)
 								   //extract min is based on distance
 		minHeapify(minHeap, 0); //heapify
 	
-		int vertex = min->v; //corresponding vertex based on min position
+		int vertex = min->v; //corresponding vertex index based on min position
 
 		edge = m->list[vertex].head; //edge is used to travel across adjlist to determine new min distances
 								  //vertex in adjList 
 								  /*example
-									u = 5
+									vertex = 5
 									m->list[5].head
 									5->3->2->1
 									means 5 is connected to 3,2,1
@@ -300,11 +290,12 @@ while (i > 0)
 				// Travel up while the complete
 				// tree is not hepified.
 				// This is a O(Logn) loop
+				//keep min heap property
 				while (i > 0) //change to for loop lmao
 				{
 					Parent = (i - 1) / 2;
 					child = i;
-					bool notHeap = minHeap->array[child]->dist < minHeap->array[Parent]->dist;
+					bool notHeap = minHeap->array[child]->dist < minHeap->array[Parent]->dist; //separate this into two ints this looks dumb
 					if (notHeap) //heapify and update position array accordingly
 					{
 						//swap child vertex and parent vertex in position array
