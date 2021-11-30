@@ -144,6 +144,7 @@ void dijkstraOriginal(struct Matrix* m , int src, int parent[], int dist[])
 	{
 		min = extractMin(minHeap); //extract root which should be min distance from srcs
 		//extract min is based on distance
+		minHeapify(minHeap,0);
 	
 		int vertex = min->v; //corresponding vertex based on min position
 
@@ -174,6 +175,163 @@ void dijkstraOriginal(struct Matrix* m , int src, int parent[], int dist[])
 			edge = edge->next; //travel to next edge
 		}
 		free(min);
+	}
+
+    free(minHeap->pos);
+    free(minHeap->array);
+    free(minHeap);	
+
+	return;
+}
+
+void dijkstraFluff(struct Matrix* m , int src, int parent[], int dist[])
+{
+	int V = m->V;
+
+	// minHeap represents set E
+	struct MinHeap* minHeap = createMinHeap(V);
+
+    int v;
+	for (v = 0; v < V; ++v)
+	{
+		dist[v] = INT_MAX;
+		minHeap->array[v] = newMinHeapNode(v, INT_MAX);
+		minHeap->pos[v] = v;
+		parent[v] = -1;
+	}
+
+	dist[src] = 0;
+
+
+
+
+
+
+int child;
+int Parent;
+int i;
+int childIdx;
+int parentIdx;
+//     decreaseKey(minHeap, src, dist[src]);
+//void decreaseKey(struct MinHeap* minHeap, int v, int dist)
+// Get the index of v in heap array
+i = minHeap->pos[src];
+
+// Get the node and update its dist value
+minHeap->array[i]->dist = dist[src];
+
+// Travel up while the complete
+// tree is not hepified.
+// This is a O(Logn) loop
+while (i > 0)
+{
+	// Swap this node with its parent
+	Parent = (i - 1) / 2;
+	child = i;
+
+	//swap child vertex and parent vertex in position array
+	//make swap for regular array
+	childIdx = minHeap->array[child]->v;
+	parentIdx = minHeap->array[Parent]->v;
+	//swap(minHeap->pos, childIdx, parentIdx);
+	minHeap->pos[childIdx] = Parent;
+	minHeap->pos[parentIdx] = child;
+
+	//swap parent and child in heap
+	swapMinHeapNode(&minHeap->array[child], &minHeap->array[Parent]);
+
+	// move to parent index
+	i = Parent;
+}
+
+
+
+
+
+
+
+
+
+	minHeap->size = V;
+	
+	struct AdjListNode* edge = NULL;
+
+	struct MinHeapNode* min = NULL;
+	while (minHeap->size != 0)
+	{
+		min = extractMin(minHeap); //extract root which should be min distance from srcs
+								   //extract min is based on distance
+		minHeapify(minHeap, 0); //heapify
+	
+		int vertex = min->v; //corresponding vertex based on min position
+
+		edge = m->list[vertex].head; //edge is used to travel across adjlist to determine new min distances
+								  //vertex in adjList 
+								  /*example
+									u = 5
+									m->list[5].head
+									5->3->2->1
+									means 5 is connected to 3,2,1
+								  */
+		while (edge != NULL) //crawl until end of adjlist
+		{
+			int dest = edge->dest; //destination of edge
+			int newWeight = edge->weight + dist[vertex];
+
+			if (newWeight < dist[dest]) //if the new calculated distance is less than the current distance
+			{
+				parent[dest] = vertex; //updating path for shortest parent
+
+				dist[dest] = newWeight; //update new shortest path
+
+
+
+
+
+				//decreaseKey(minHeap, dest, dist[dest]); //update distance in minheap and heapify
+				//void decreaseKey(struct MinHeap* minHeap, int v, int dist)
+				// Get the index of v in heap array
+				i = minHeap->pos[dest];
+
+				// Get the node and update its dist value
+				minHeap->array[i]->dist = dist[dest];
+
+				// Travel up while the complete
+				// tree is not hepified.
+				// This is a O(Logn) loop
+				while (i > 0) //change to for loop lmao
+				{
+					Parent = (i - 1) / 2;
+					child = i;
+					bool notHeap = minHeap->array[child]->dist < minHeap->array[Parent]->dist;
+					if (notHeap) //heapify and update position array accordingly
+					{
+						//swap child vertex and parent vertex in position array
+						//maybe make swap function for this as well
+						childIdx = minHeap->array[child]->v;
+						parentIdx = minHeap->array[Parent]->v;
+						//swap(minHeap->pos, childIdx, parentIdx);
+						minHeap->pos[childIdx] = Parent;
+						minHeap->pos[parentIdx] = child;
+
+						//swap parent and child in heap
+						swapMinHeapNode(&minHeap->array[child], &minHeap->array[Parent]);
+
+						// move to parent index
+					}
+					i = (i - 1) / 2;
+				}
+
+
+
+
+
+
+
+			}
+			edge = edge->next; //travel to next edge
+		}
+		free(min); //extracted root is now free
 	}
 
     free(minHeap->pos);
@@ -308,7 +466,7 @@ int main(int argc, char* argv[])
 	int *dist = (int*)malloc(v * sizeof(int*));
 	int *parent = (int*)malloc(v * sizeof(int*));
 	
-	dijkstra(m, v, parent, dist); //v is the last node which combines all the destinations
+	dijkstraFluff(m, v, parent, dist); //v is the last node which combines all the destinations
 
 	//fastest path
 	int minidx = 0;
