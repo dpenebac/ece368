@@ -260,9 +260,9 @@ swapMinHeapNode(&minHeap->array[i], &minHeap->array[0]);
 		*/
 
 	
-		int vertex = min->v; //corresponding vertex index based on min position
+		int vertexIdx = min->v; //corresponding vertex index based on min position
 
-		edge = m->list[vertex].head; //edge is used to travel across adjlist to determine new min distances
+		edge = m->list[vertexIdx].head; //edge is used to travel across adjlist to determine new min distances
 								  //vertex in adjList 
 								  /*example
 									vertex = 5
@@ -273,11 +273,11 @@ swapMinHeapNode(&minHeap->array[i], &minHeap->array[0]);
 		while (edge != NULL) //crawl until end of adjlist
 		{
 			int dest = edge->dest; //destination of edge
-			int newWeight = edge->weight + dist[vertex];
+			int newWeight = edge->weight + dist[vertexIdx];
 
-			if (newWeight < dist[dest]) //if the new calculated distance is less than the current distance
+			if (pos[dest] < minHeap->size && newWeight < dist[dest]) //if the new calculated distance is less than the current distance
 			{
-				parent[dest] = vertex; //updating path for shortest parent
+				parent[dest] = vertexIdx; //updating path for shortest parent
 
 				dist[dest] = newWeight; //update new shortest path
 
