@@ -51,6 +51,7 @@ void writePath(int parent[], int j, int *length, int r, int c, FILE* output)
 // The main function that calculates
 // distances of shortest paths from src to all
 // vertices. It is a O(ELogV) function
+/*
 void dijkstra(struct Matrix* m , int src, int parent[], int dist[])
 {
 	int V = m->V;
@@ -84,13 +85,6 @@ void dijkstra(struct Matrix* m , int src, int parent[], int dist[])
 		int vertex = min->v; //corresponding vertex based on min position
 
 		edge = m->list[vertex].head; //edge is used to travel across adjlist to determine new min distances
-								  //vertex in adjList 
-								  /*example
-									u = 5
-									m->list[5].head
-									5->3->2->1
-									means 5 is connected to 3,2,1
-								  */
 		while (edge != NULL) //crawl until end of adjlist
 		{
 			int dest = edge->dest; //destination of edge
@@ -149,13 +143,6 @@ void dijkstraOriginal(struct Matrix* m , int src, int parent[], int dist[])
 		int vertex = min->v; //corresponding vertex based on min position
 
 		edge = m->list[vertex].head; //pointer crawl is used to travel across adjlist to determine new min distances
-								  //vertex in adjList 
-								  /*example
-									u = 5
-									m->list[5].head
-									5->3->2->1
-									means 5 is connected to 3,2,1
-								  */
 		while (edge != NULL) //crawl until end of adjlist
 		{
 			int dest = edge->dest; //destination of edge
@@ -183,12 +170,13 @@ void dijkstraOriginal(struct Matrix* m , int src, int parent[], int dist[])
 
 	return;
 }
+*/
 
 void dijkstraFluff(struct Matrix* m , int src, int parent[], int dist[])
 {
 	int V = m->V;
 
-	//int *pos = (int *)malloc(V * sizeof(int *));
+	int *pos = (int *)malloc(V * sizeof(int));
 
 	// minHeap represents set E
 	struct MinHeap* minHeap = createMinHeap(V);
@@ -205,7 +193,7 @@ void dijkstraFluff(struct Matrix* m , int src, int parent[], int dist[])
 			dist[v] = 0; //setting min in minHeap
 		}
 		minHeap->array[v] = newMinHeapNode(v, INT_MAX);
-		minHeap->pos[v] = v;
+		pos[v] = v;
 		minHeap->size += 1;
 		parent[v] = -1;
 	}
@@ -222,8 +210,6 @@ not already in the queue. wikipedia
 
 
 
-
-
 int child;
 int Parent;
 int i;
@@ -232,25 +218,50 @@ int parentIdx;
 //     decreaseKey(minHeap, src, dist[src]);
 //void decreaseKey(struct MinHeap* minHeap, int v, int dist)
 // Get the index of v in heap array
-i = minHeap->pos[src];
+
+i = pos[src];
 
 // Get the node and update its dist value
 minHeap->array[i]->dist = dist[src];
 
 //CHANGE THIS ONLY NEEDS TO SWAP SOURCE FROM BOTTOM TO TOP
 //OF MIN HEAP
-minHeap->pos[minHeap->array[i]->v] = 0;
-minHeap->pos[minHeap->array[0]->v] = i;
+
+pos[minHeap->array[i]->v] = 0;
+pos[minHeap->array[0]->v] = i;
+
 swapMinHeapNode(&minHeap->array[i], &minHeap->array[0]);
 
 	
 	struct AdjListNode* edge = NULL;
 	struct MinHeapNode* min = NULL;
+
 	while (minHeap->size != 0)
-	{
-		min = extractMin(minHeap); //extract root which should be min distance from srcs
+	{	
+
+		//min = extractMin(minHeap); //extract root which should be min distance from srcs
 								   //extract min is based on distance
-		minHeapify(minHeap, 0); //heapify
+		//minHeapify(minHeap, 0); //heapify
+
+		
+		min = extractMinFluffy(minHeap, &pos, V);
+		minHeapifyFluffy(minHeap, 0, &pos, V); 
+
+		/*
+		printf("\nMIN: %d\n", min->v);
+		for (i = 0; i < V; i++)
+		{
+			printf("%d ", minHeap->array[i]->v);
+		}
+
+		printf("\nMin2: %d\n", min2->v);
+		for (i = 0; i < V; i++)
+		{
+			printf("%d ", test->array[i]->v);
+		}
+		printf("\n");
+		*/
+
 	
 		int vertex = min->v; //corresponding vertex index based on min position
 
@@ -277,12 +288,11 @@ swapMinHeapNode(&minHeap->array[i], &minHeap->array[0]);
 
 
 
-
-
 				//decreaseKey(minHeap, dest, dist[dest]); //update distance in minheap and heapify
 				//void decreaseKey(struct MinHeap* minHeap, int v, int dist)
 				// Get the index of v in heap array
-				i = minHeap->pos[dest];
+				i = pos[dest];
+				//i = minHeap->pos[dest];
 
 				// Get the node and update its dist value
 				minHeap->array[i]->dist = dist[dest];
@@ -294,17 +304,20 @@ swapMinHeapNode(&minHeap->array[i], &minHeap->array[0]);
 				while (i > 0) //change to for loop lmao
 				{
 					Parent = (i - 1) / 2;
-					child = i;
-					bool notHeap = minHeap->array[child]->dist < minHeap->array[Parent]->dist; //separate this into two ints this looks dumb
-					if (notHeap) //heapify and update position array accordingly
+					child = i; //separate this into two ints this looks dumb
+					if (minHeap->array[child]->dist < minHeap->array[Parent]->dist) //heapify and update position array accordingly
 					{
 						//swap child vertex and parent vertex in position array
 						//maybe make swap function for this as well
 						childIdx = minHeap->array[child]->v;
 						parentIdx = minHeap->array[Parent]->v;
 						//swap(minHeap->pos, childIdx, parentIdx);
-						minHeap->pos[childIdx] = Parent;
-						minHeap->pos[parentIdx] = child;
+						pos[childIdx] = Parent;
+						pos[parentIdx] = child;
+						
+						//minHeap->pos[childIdx] = Parent;
+						//minHeap->pos[parentIdx] = child;
+						
 
 						//swap parent and child in heap
 						swapMinHeapNode(&minHeap->array[child], &minHeap->array[Parent]);
@@ -315,20 +328,16 @@ swapMinHeapNode(&minHeap->array[i], &minHeap->array[0]);
 				}
 
 
-
-
-
-
-
 			}
 			edge = edge->next; //travel to next edge
 		}
 		free(min); //extracted root is now free
 	}
 
-    free(minHeap->pos);
+    //free(minHeap->pos);
     free(minHeap->array);
     free(minHeap);	
+	free(pos);
 
 	return;
 }
@@ -479,6 +488,7 @@ int main(int argc, char* argv[])
 			{
 				length += 1;
 				j = parent[j];
+				//printf("%d\n", parent[j]);
 			}
 //
 

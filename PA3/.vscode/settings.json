@@ -3,7 +3,8 @@
         "stdbool.h": "c",
         "array": "c",
         "random": "c",
-        "limits": "c"
+        "limits": "c",
+        "vector": "c"
     },
     "C_Cpp.errorSquiggles": "Enabled"
 }
