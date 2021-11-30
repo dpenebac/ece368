@@ -188,6 +188,8 @@ void dijkstraFluff(struct Matrix* m , int src, int parent[], int dist[])
 {
 	int V = m->V;
 
+	//int *pos = (int *)malloc(V * sizeof(int *));
+
 	// minHeap represents set E
 	struct MinHeap* minHeap = createMinHeap(V);
 
@@ -280,7 +282,6 @@ while (i > 0)
 				parent[dest] = vertex; //updating path for shortest parent
 
 				dist[dest] = newWeight; //update new shortest path
-
 
 
 
