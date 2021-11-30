@@ -285,7 +285,7 @@ while (i > 0)
 				dist[dest] = newWeight; //update new shortest path
 
 
-
+//
 
 
 				//decreaseKey(minHeap, dest, dist[dest]); //update distance in minheap and heapify
