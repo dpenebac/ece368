@@ -49,6 +49,18 @@ void swapMinHeapNode(struct MinHeapNode** a, struct MinHeapNode** b)
 	return;
 }
 
+bool isEmpty(struct MinHeap* m)
+{
+	if(m->size != 0)
+	{
+		return(false);
+	}
+	else
+	{
+		return(true);
+	}
+}
+
 // A standard function to
 // heapify at given idx
 // This function also updates
@@ -152,7 +164,9 @@ struct MinHeapNode* extractMinFluffy(struct MinHeap* minHeap, int **pos, int len
 	(*pos)[lastNode->v] = 0;
 
 	// Reduce heap size and heapify root
-	--minHeap->size;
+	minHeap->size -= 1;
+
+	minHeapifyFluffy(minHeap, 0, pos, length); 
 
 	return root;
 }

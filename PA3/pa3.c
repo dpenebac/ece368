@@ -188,15 +188,13 @@ void dijkstraFluff(struct Matrix* m , int src, int parent[], int dist[])
 		{
 			dist[v] = INT_MAX;
 		}
-		else
-		{
-			dist[v] = 0; //setting min in minHeap
-		}
 		minHeap->array[v] = newMinHeapNode(v, INT_MAX);
 		pos[v] = v;
 		minHeap->size += 1;
 		parent[v] = -1;
 	}
+
+	dist[src] = 0;
 
 /*
 Instead of filling the priority queue with all nodes 
@@ -235,8 +233,8 @@ swapMinHeapNode(&minHeap->array[i], &minHeap->array[0]);
 	
 	struct AdjListNode* edge = NULL;
 	struct MinHeapNode* min = NULL;
-
-	while (minHeap->size != 0)
+	
+	while (!(isEmpty(minHeap)))
 	{	
 
 		//min = extractMin(minHeap); //extract root which should be min distance from srcs
@@ -245,7 +243,6 @@ swapMinHeapNode(&minHeap->array[i], &minHeap->array[0]);
 
 		
 		min = extractMinFluffy(minHeap, &pos, V);
-		minHeapifyFluffy(minHeap, 0, &pos, V); 
 
 		/*
 		printf("\nMIN: %d\n", min->v);
