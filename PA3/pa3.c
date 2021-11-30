@@ -172,15 +172,11 @@ void dijkstraOriginal(struct Matrix* m , int src, int parent[], int dist[])
 }
 */
 
-void dijkstraFluff(struct Matrix* m , int src, int parent[], int dist[], int pos[])
+void dijkstraFluff(struct Matrix* m , int src, int parent[], int dist[])
 {
 	int V = m->V;
 
-	int child;
-	int Parent;
-	int i;
-	int childIdx;
-	int parentIdx;
+	int *pos = (int *)malloc(V * sizeof(int));
 
 	// minHeap represents set E
 	struct MinHeap* minHeap = createMinHeap(V);
@@ -191,28 +187,16 @@ void dijkstraFluff(struct Matrix* m , int src, int parent[], int dist[], int pos
 		if (v != src)
 		{
 			dist[v] = INT_MAX;
-			minHeap->array[v] = newMinHeapNode(v, INT_MAX);
 		}
 		else
 		{
-			dist[v] = 0; //setting 0 for src in minHeap
-			minHeap->array[v] = newMinHeapNode(v, 0);
+			dist[v] = 0; //setting min in minHeap
 		}
-		
+		minHeap->array[v] = newMinHeapNode(v, INT_MAX);
 		pos[v] = v;
 		minHeap->size += 1;
 		parent[v] = -1;
 	}
-
-
-	//     decreaseKey(minHeap, src, dist[src]);
-//void decreaseKey(struct MinHeap* minHeap, int v, int dist)
-// Get the index of v in heap array
-
-pos[minHeap->array[V - 1]->v] = 0;
-pos[minHeap->array[0]->v] = V - 1;
-
-swapMinHeapNode(&minHeap->array[V - 1], &minHeap->array[0]);
 
 /*
 Instead of filling the priority queue with all nodes 
@@ -223,6 +207,30 @@ becomes an add_with_priority() operation if the node is
 not already in the queue. wikipedia
 */
 
+
+
+
+int child;
+int Parent;
+int i;
+int childIdx;
+int parentIdx;
+//     decreaseKey(minHeap, src, dist[src]);
+//void decreaseKey(struct MinHeap* minHeap, int v, int dist)
+// Get the index of v in heap array
+
+i = pos[src];
+
+// Get the node and update its dist value
+minHeap->array[i]->dist = dist[src];
+
+//CHANGE THIS ONLY NEEDS TO SWAP SOURCE FROM BOTTOM TO TOP
+//OF MIN HEAP
+
+pos[minHeap->array[i]->v] = 0;
+pos[minHeap->array[0]->v] = i;
+
+swapMinHeapNode(&minHeap->array[i], &minHeap->array[0]);
 
 	
 	struct AdjListNode* edge = NULL;
@@ -236,8 +244,8 @@ not already in the queue. wikipedia
 		//minHeapify(minHeap, 0); //heapify
 
 		
-		min = extractMinFluffy(minHeap, &pos, V); //take min of the minHeap based on the distance
-		minHeapifyFluffy(minHeap, 0, &pos, V); //downward heapify from top
+		min = extractMinFluffy(minHeap, &pos, V);
+		minHeapifyFluffy(minHeap, 0, &pos, V); 
 
 		/*
 		printf("\nMIN: %d\n", min->v);
@@ -283,17 +291,16 @@ not already in the queue. wikipedia
 				//decreaseKey(minHeap, dest, dist[dest]); //update distance in minheap and heapify
 				//void decreaseKey(struct MinHeap* minHeap, int v, int dist)
 				// Get the index of v in heap array
-				i = pos[dest]; //index of destination vertex in the minheap array
+				i = pos[dest];
 				//i = minHeap->pos[dest];
 
 				// Get the node and update its dist value
-				minHeap->array[i]->dist = newWeight; //updating shortest path to node in minHeap
+				minHeap->array[i]->dist = dist[dest];
 
 				// Travel up while the complete
 				// tree is not hepified.
 				// This is a O(Logn) loop
-				// keep min heap property
-				// upward minheap
+				//keep min heap property
 				while (i > 0) //change to for loop lmao
 				{
 					Parent = (i - 1) / 2;
@@ -459,9 +466,8 @@ int main(int argc, char* argv[])
 
 	int *dist = (int*)malloc(v * sizeof(int*));
 	int *parent = (int*)malloc(v * sizeof(int*));
-	int *pos = (int *)malloc(v * sizeof(int));
 	
-	dijkstraFluff(m, v, parent, dist, pos); //v is the last node which combines all the destinations
+	dijkstraFluff(m, v, parent, dist); //v is the last node which combines all the destinations
 
 	//fastest path
 	int minidx = 0;
