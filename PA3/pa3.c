@@ -194,13 +194,20 @@ void dijkstraFluff(struct Matrix* m , int src, int parent[], int dist[])
     int v;
 	for (v = 0; v < V; ++v)
 	{
-		dist[v] = INT_MAX;
+		if (v != src)
+		{
+			dist[v] = INT_MAX;
+		}
+		else
+		{
+			dist[v] = 0; //setting min in minHeap
+		}
 		minHeap->array[v] = newMinHeapNode(v, INT_MAX);
 		minHeap->pos[v] = v;
+		minHeap->size += 1;
 		parent[v] = -1;
 	}
 
-	dist[src] = 0;
 
 
 
@@ -244,18 +251,8 @@ while (i > 0)
 	i = Parent;
 }
 
-
-
-
-
-
-
-
-
-	minHeap->size = V;
 	
 	struct AdjListNode* edge = NULL;
-
 	struct MinHeapNode* min = NULL;
 	while (minHeap->size != 0)
 	{
@@ -285,7 +282,10 @@ while (i > 0)
 				dist[dest] = newWeight; //update new shortest path
 
 
-//
+
+
+
+
 
 
 				//decreaseKey(minHeap, dest, dist[dest]); //update distance in minheap and heapify
