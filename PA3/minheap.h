@@ -195,6 +195,41 @@ struct MinHeapNode* extractMin(struct MinHeap* minHeap)
 	return root;
 }
 
+void update(struct MinHeap* m, int dest, int dist, int pos, int **posArr)
+{
+	int i = pos;
+
+	m->array[i]->dist = dist;
+
+	while (i > 0)
+	{
+		int Parent = (i - 1) / 2;
+		int child = i;
+
+		if (m->array[child]->dist < m->array[Parent]->dist) //heapify and update position array accordingly
+		{
+			//swap child vertex and parent vertex in position array
+			//maybe make swap function for this as well
+			int childIdx = m->array[child]->v;
+			int parentIdx = m->array[Parent]->v;
+			//swap(minHeap->pos, childIdx, parentIdx);
+			(*posArr)[childIdx] = Parent;
+			(*posArr)[parentIdx] = child;
+			
+			//minHeap->pos[childIdx] = Parent;
+			//minHeap->pos[parentIdx] = child;
+			
+
+			//swap parent and child in heap
+			swapMinHeapNode(&m->array[child], &m->array[Parent]);
+
+			// move to parent index
+		}
+		i = (i - 1) / 2;
+	}
+	return;
+}
+
 // Function to decrease dist value
 // of a given vertex v. This function
 // uses pos[] of min heap to get the

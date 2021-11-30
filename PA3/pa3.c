@@ -205,14 +205,7 @@ becomes an add_with_priority() operation if the node is
 not already in the queue. wikipedia
 */
 
-
-
-
-int child;
-int Parent;
 int i;
-int childIdx;
-int parentIdx;
 //     decreaseKey(minHeap, src, dist[src]);
 //void decreaseKey(struct MinHeap* minHeap, int v, int dist)
 // Get the index of v in heap array
@@ -236,29 +229,7 @@ swapMinHeapNode(&minHeap->array[i], &minHeap->array[0]);
 	
 	while (!(isEmpty(minHeap)))
 	{	
-
-		//min = extractMin(minHeap); //extract root which should be min distance from srcs
-								   //extract min is based on distance
-		//minHeapify(minHeap, 0); //heapify
-
-		
 		min = extractMinFluffy(minHeap, &pos, V); //extract min and heapify
-
-		/*
-		printf("\nMIN: %d\n", min->v);
-		for (i = 0; i < V; i++)
-		{
-			printf("%d ", minHeap->array[i]->v);
-		}
-
-		printf("\nMin2: %d\n", min2->v);
-		for (i = 0; i < V; i++)
-		{
-			printf("%d ", test->array[i]->v);
-		}
-		printf("\n");
-		*/
-
 	
 		int vertexIdx = min->v; //corresponding vertex index based on min position
 
@@ -285,15 +256,20 @@ swapMinHeapNode(&minHeap->array[i], &minHeap->array[0]);
 				//void decreaseKey(struct MinHeap* minHeap, int v, int dist)
 
 				//UPDATE (PQ)
+				//update(minHeap, dest, dist[dest], pos[dest], &pos);
 				// Get the index of v in heap array
-				i = pos[dest];
+				//i = pos[dest];
 				//i = minHeap->pos[dest];
 				// Get the node and update its dist value
-				minHeap->array[i]->dist = dist[dest];
+				//minHeap->array[i]->dist = dist[dest];
 				// Travel up while the complete
 				// tree is not hepified.
 				// This is a O(Logn) loop
-				//keep min heap property
+				//keep min heap property/
+
+				update(minHeap, dest, dist[dest], pos[dest], &pos);
+				/*i = pos[dest];
+				minHeap->array[i]->dist = dist[dest];
 				while (i > 0) //change to for loop lmao
 				{
 					Parent = (i - 1) / 2;
@@ -318,7 +294,7 @@ swapMinHeapNode(&minHeap->array[i], &minHeap->array[0]);
 						// move to parent index
 					}
 					i = (i - 1) / 2;
-				}
+				}*/
 
 
 			}
