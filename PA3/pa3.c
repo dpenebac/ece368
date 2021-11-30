@@ -242,7 +242,7 @@ swapMinHeapNode(&minHeap->array[i], &minHeap->array[0]);
 		//minHeapify(minHeap, 0); //heapify
 
 		
-		min = extractMinFluffy(minHeap, &pos, V);
+		min = extractMinFluffy(minHeap, &pos, V); //extract min and heapify
 
 		/*
 		printf("\nMIN: %d\n", min->v);
@@ -274,26 +274,22 @@ swapMinHeapNode(&minHeap->array[i], &minHeap->array[0]);
 		{
 			int dest = edge->dest; //destination of edge
 			int newWeight = edge->weight + dist[vertexIdx];
-
-			if (pos[dest] < minHeap->size && newWeight < dist[dest]) //if the new calculated distance is less than the current distance
+			bool inQueue = pos[dest] < minHeap->size;
+			if (inQueue && newWeight < dist[dest]) //if the new calculated distance is less than the current distance
 			{
 				parent[dest] = vertexIdx; //updating path for shortest parent
 
 				dist[dest] = newWeight; //update new shortest path
 
-
-
-
-
 				//decreaseKey(minHeap, dest, dist[dest]); //update distance in minheap and heapify
 				//void decreaseKey(struct MinHeap* minHeap, int v, int dist)
+
+				//UPDATE (PQ)
 				// Get the index of v in heap array
 				i = pos[dest];
 				//i = minHeap->pos[dest];
-
 				// Get the node and update its dist value
 				minHeap->array[i]->dist = dist[dest];
-
 				// Travel up while the complete
 				// tree is not hepified.
 				// This is a O(Logn) loop
