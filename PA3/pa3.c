@@ -172,7 +172,7 @@ void dijkstraOriginal(struct Matrix* m , int src, int parent[], int dist[])
 }
 */
 
-void dijkstraFluff(struct Matrix* m , int src, int parent[], int dist[])
+void dijkstraFluff(struct Matrix* m , int src, int predecessor[], int dist[])
 {
 	int V = m->V;
 
@@ -191,7 +191,7 @@ void dijkstraFluff(struct Matrix* m , int src, int parent[], int dist[])
 		minHeap->array[v] = newMinHeapNode(v, INT_MAX);
 		pos[v] = v;
 		minHeap->size += 1;
-		parent[v] = -1;
+		predecessor[v] = -1;
 	}
 
 	dist[src] = 0;
@@ -245,65 +245,20 @@ swapMinHeapNode(&minHeap->array[i], &minHeap->array[0]);
 		{
 			int dest = edge->dest; //destination of edge
 			int newWeight = edge->weight + dist[vertexIdx];
-			bool inQueue = pos[dest] < minHeap->size;
-			if (inQueue && newWeight < dist[dest]) //if the new calculated distance is less than the current distance
+
+			if (inQueue(minHeap, pos[dest]) && newWeight < dist[dest]) //if the new calculated distance is less than the current distance
 			{
-				parent[dest] = vertexIdx; //updating path for shortest parent
+				predecessor[dest] = vertexIdx; //updating path for shortest parent
 
 				dist[dest] = newWeight; //update new shortest path
 
-				//decreaseKey(minHeap, dest, dist[dest]); //update distance in minheap and heapify
-				//void decreaseKey(struct MinHeap* minHeap, int v, int dist)
-
-				//UPDATE (PQ)
-				//update(minHeap, dest, dist[dest], pos[dest], &pos);
-				// Get the index of v in heap array
-				//i = pos[dest];
-				//i = minHeap->pos[dest];
-				// Get the node and update its dist value
-				//minHeap->array[i]->dist = dist[dest];
-				// Travel up while the complete
-				// tree is not hepified.
-				// This is a O(Logn) loop
-				//keep min heap property/
-
 				update(minHeap, dest, dist[dest], pos[dest], &pos);
-				/*i = pos[dest];
-				minHeap->array[i]->dist = dist[dest];
-				while (i > 0) //change to for loop lmao
-				{
-					Parent = (i - 1) / 2;
-					child = i; //separate this into two ints this looks dumb
-					if (minHeap->array[child]->dist < minHeap->array[Parent]->dist) //heapify and update position array accordingly
-					{
-						//swap child vertex and parent vertex in position array
-						//maybe make swap function for this as well
-						childIdx = minHeap->array[child]->v;
-						parentIdx = minHeap->array[Parent]->v;
-						//swap(minHeap->pos, childIdx, parentIdx);
-						pos[childIdx] = Parent;
-						pos[parentIdx] = child;
-						
-						//minHeap->pos[childIdx] = Parent;
-						//minHeap->pos[parentIdx] = child;
-						
-
-						//swap parent and child in heap
-						swapMinHeapNode(&minHeap->array[child], &minHeap->array[Parent]);
-
-						// move to parent index
-					}
-					i = (i - 1) / 2;
-				}*/
-
-
 			}
 			edge = edge->next; //travel to next edge
 		}
 		free(min); //extracted root is now free
 	}
 
-    //free(minHeap->pos);
     free(minHeap->array);
     free(minHeap);	
 	free(pos);

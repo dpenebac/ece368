@@ -230,6 +230,11 @@ void update(struct MinHeap* m, int dest, int dist, int pos, int **posArr)
 	return;
 }
 
+bool inQueue(struct MinHeap *m, int idx)
+{
+	return(idx < m->size);
+}
+
 // Function to decrease dist value
 // of a given vertex v. This function
 // uses pos[] of min heap to get the
