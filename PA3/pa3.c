@@ -172,7 +172,7 @@ void dijkstraOriginal(struct Matrix* m , int src, int parent[], int dist[])
 }
 */
 
-void dijkstraFluff(struct Matrix* m , int src, int predecessor[], int dist[])
+void dijkstraFluff(struct Matrix* m , int src, int predecessor[], int distance[])
 {
 	int V = m->V;
 
@@ -186,7 +186,7 @@ void dijkstraFluff(struct Matrix* m , int src, int predecessor[], int dist[])
 	{
 		if (v != src)
 		{
-			dist[v] = INT_MAX;
+			distance[v] = INT_MAX;
 		}
 		minHeap->array[v] = newPath(v, INT_MAX);
 		pos[v] = v;
@@ -194,42 +194,42 @@ void dijkstraFluff(struct Matrix* m , int src, int predecessor[], int dist[])
 		predecessor[v] = -1;
 	}
 
-	dist[src] = 0;
+	distance[src] = 0;
 
 	//Putting the src node at the top
 	minHeap->array[src]->dist = 0;
 	pos[minHeap->array[src]->v] = 0;
 	pos[minHeap->array[0]->v] = src;
-	swapMinHeapNode(&minHeap->array[src], &minHeap->array[0]); //updating minheap appropriatly
+	swapPath(&minHeap->array[src], &minHeap->array[0]); //updating minheap appropriatly
 
 	struct AdjList* adj = NULL;
 	struct AdjListNode* edge = NULL;
-	struct Path* min = NULL;
+	struct Path* minPath = NULL;
 	
 	while (!(isEmpty(minHeap)))
 	{	
-		min = extractMinFluffy(minHeap, &pos, V); //extract min and heapify
+		minPath = extractMinFluffy(minHeap, &pos, V); //extract min path and heapify
 	
-		int vertexIdx = min->v; //corresponding vertex index based on min position
+		int vertexIdx = minPath->v; //corresponding vertex index based on minPath's vertex
 		adj = m->list;
 		edge = adj[vertexIdx].head; //edge is used to travel across adjlist to determine new min distances
 
 		while (edge != NULL) //crawl until end of adjlist
 		{
 			int dest = edge->dest; //destination of edge
-			int newWeight = edge->weight + dist[vertexIdx]; //new weight to determine if shortest
+			int newWeight = edge->weight + distance[vertexIdx]; //new weight to determine if shortest
 
-			if (inQueue(minHeap, pos[dest]) && newWeight < dist[dest]) //if the new calculated distance is less than the current distance
+			if (inQueue(minHeap, pos[dest]) && newWeight < distance[dest]) //if the new calculated distance is less than the current distance
 			{
 				predecessor[dest] = vertexIdx; //updating path for shortest parent
 
-				dist[dest] = newWeight; //update new shortest path
+				distance[dest] = newWeight; //update new shortest path
 
-				update(minHeap, dest, dist[dest], pos[dest], &pos); //update heap
+				update(minHeap, dest, distance[dest], pos[dest], &pos); //update heap
 			}
 			edge = edge->next; //travel to next edge
 		}
-		free(min); //extracted root is now free
+		free(minPath); //extracted root is now free
 	}
 
     free(minHeap->array);

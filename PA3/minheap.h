@@ -39,7 +39,7 @@ struct MinHeap* createMinHeap(int capacity)
 // A utility function to swap two
 // nodes of min heap.
 // Needed for min heapify
-void swapMinHeapNode(struct Path** a, struct Path** b)
+void swapPath(struct Path** a, struct Path** b)
 {
 	struct Path *t = *a;
 	*a = *b;
@@ -58,52 +58,6 @@ bool isEmpty(struct MinHeap* m)
 		return(true);
 	}
 }
-
-// A standard function to
-// heapify at given idx
-// This function also updates
-// position of nodes when they are swapped.
-// Position is needed for decreaseKey()
-/*
-void minHeapify(struct MinHeap* minHeap, int idx) //i think this is downward heapify
-{
-	int smallest, left, right;
-	smallest = idx;
-	left = 2 * idx + 1;
-	right = 2 * idx + 2;
-
-	if (left < minHeap->size && minHeap->array[left]->dist < minHeap->array[smallest]->dist)
-	{
-		smallest = left;
-	}
-
-	if (right < minHeap->size && minHeap->array[right]->dist < minHeap->array[smallest]->dist)
-	{
-		smallest = right;
-	}
-
-	if (smallest != idx)
-	{
-		// The nodes to be swapped in min heap
-		struct MinHeapNode *smallestNode;
-		struct MinHeapNode *idxNode;
-
-		smallestNode = minHeap->array[smallest];
-		idxNode = minHeap->array[idx];
-
-		// Swap positions
-		
-		//minHeap->pos[smallestNode->v] = idx;
-		//minHeap->pos[idxNode->v] = smallest;
-
-		// Swap nodes
-		swapMinHeapNode(&minHeap->array[smallest], &minHeap->array[idx]);
-
-		minHeapify(minHeap, smallest);
-	}
-	return;
-}
-*/
 
 void minHeapifyFluffy(struct MinHeap* minHeap, int idx, int **pos, int length) //i think this is downward heapify
 {
@@ -136,7 +90,7 @@ void minHeapifyFluffy(struct MinHeap* minHeap, int idx, int **pos, int length) /
 		(*pos)[idxNode->v] = smallest;
 
 		// Swap nodes
-		swapMinHeapNode(&minHeap->array[smallest], &minHeap->array[idx]);
+		swapPath(&minHeap->array[smallest], &minHeap->array[idx]);
 
 		minHeapifyFluffy(minHeap, smallest, pos, length);
 	}
@@ -219,7 +173,7 @@ void update(struct MinHeap* m, int dest, int dist, int pos, int **posArr)
 			
 
 			//swap parent and child in heap
-			swapMinHeapNode(&m->array[child], &m->array[Parent]);
+			swapPath(&m->array[child], &m->array[Parent]);
 
 			// move to parent index
 		}
