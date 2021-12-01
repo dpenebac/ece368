@@ -1,9 +1,7 @@
-#ifndef minheap
-#define minheap
 #include <stdlib.h>
 
 // Structure to represent a min heap node
-struct MinHeapNode
+struct Path
 {
 	int v;
 	int dist;
@@ -16,14 +14,14 @@ struct MinHeap
 	int size;	
 
 	// This is needed for decreaseKey()
-	struct MinHeapNode **array; //array of (vertex, distance) where distance is the vertex's distance from the source
+	struct Path **array; //array of path(vertex, distance) where distance is the vertex's distance from the source
 };
 
 // A utility function to create a
 // new Min Heap Node
-struct MinHeapNode* newMinHeapNode(int v, int dist)
+struct Path* newPath(int v, int dist)
 {
-	struct MinHeapNode* minHeapNode = (struct MinHeapNode*)malloc(sizeof(struct MinHeapNode));
+	struct Path* minHeapNode = (struct Path*)malloc(sizeof(struct Path));
 	minHeapNode->v = v;
 	minHeapNode->dist = dist;
 	return minHeapNode;
@@ -34,16 +32,16 @@ struct MinHeap* createMinHeap(int capacity)
 {
 	struct MinHeap* minHeap = (struct MinHeap*)malloc(sizeof(struct MinHeap));
 	minHeap->size = 0;
-	minHeap->array = (struct MinHeapNode**)malloc(capacity * sizeof(struct MinHeapNode*));
+	minHeap->array = (struct Path**)malloc(capacity * sizeof(struct Path*));
 	return minHeap;
 }
 
 // A utility function to swap two
 // nodes of min heap.
 // Needed for min heapify
-void swapMinHeapNode(struct MinHeapNode** a, struct MinHeapNode** b)
+void swapMinHeapNode(struct Path** a, struct Path** b)
 {
-	struct MinHeapNode *t = *a;
+	struct Path *t = *a;
 	*a = *b;
 	*b = t;
 	return;
@@ -127,8 +125,8 @@ void minHeapifyFluffy(struct MinHeap* minHeap, int idx, int **pos, int length) /
 	if (smallest != idx)
 	{
 		// The nodes to be swapped in min heap
-		struct MinHeapNode *smallestNode;
-		struct MinHeapNode *idxNode;
+		struct Path *smallestNode;
+		struct Path *idxNode;
 
 		smallestNode = minHeap->array[smallest];
 		idxNode = minHeap->array[idx];
@@ -145,7 +143,7 @@ void minHeapifyFluffy(struct MinHeap* minHeap, int idx, int **pos, int length) /
 	return;
 }
 
-struct MinHeapNode* extractMinFluffy(struct MinHeap* minHeap, int **pos, int length)
+struct Path* extractMinFluffy(struct MinHeap* minHeap, int **pos, int length)
 {	
 	if (minHeap->size == 0)
 	{
@@ -153,10 +151,10 @@ struct MinHeapNode* extractMinFluffy(struct MinHeap* minHeap, int **pos, int len
 	}
 
 	// Store the root node
-	struct MinHeapNode* root = minHeap->array[0];
+	struct Path* root = minHeap->array[0];
 
 	// Replace root node with last node
-	struct MinHeapNode* lastNode = minHeap->array[minHeap->size - 1];
+	struct Path* lastNode = minHeap->array[minHeap->size - 1];
 	minHeap->array[0] = lastNode;
 
 	// Update position of last node
@@ -171,7 +169,7 @@ struct MinHeapNode* extractMinFluffy(struct MinHeap* minHeap, int **pos, int len
 	return root;
 }
 
-struct MinHeapNode* extractMin(struct MinHeap* minHeap)
+struct Path* extractMin(struct MinHeap* minHeap)
 {
 	if (minHeap->size == 0)
 	{
@@ -179,10 +177,10 @@ struct MinHeapNode* extractMin(struct MinHeap* minHeap)
 	}
 
 	// Store the root node
-	struct MinHeapNode* root = minHeap->array[0];
+	struct Path* root = minHeap->array[0];
 
 	// Replace root node with last node
-	struct MinHeapNode* lastNode = minHeap->array[minHeap->size - 1];
+	struct Path* lastNode = minHeap->array[minHeap->size - 1];
 	minHeap->array[0] = lastNode;
 
 	// Update position of last node
@@ -286,4 +284,3 @@ bool isInMinHeap(struct MinHeap *minHeap, int v)
 	return false;
 }
 */
-#endif

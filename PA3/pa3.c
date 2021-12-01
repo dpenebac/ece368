@@ -188,7 +188,7 @@ void dijkstraFluff(struct Matrix* m , int src, int predecessor[], int dist[])
 		{
 			dist[v] = INT_MAX;
 		}
-		minHeap->array[v] = newMinHeapNode(v, INT_MAX);
+		minHeap->array[v] = newPath(v, INT_MAX);
 		pos[v] = v;
 		minHeap->size += 1;
 		predecessor[v] = -1;
@@ -204,7 +204,7 @@ void dijkstraFluff(struct Matrix* m , int src, int predecessor[], int dist[])
 
 	struct AdjList* adj = NULL;
 	struct AdjListNode* edge = NULL;
-	struct MinHeapNode* min = NULL;
+	struct Path* min = NULL;
 	
 	while (!(isEmpty(minHeap)))
 	{	
