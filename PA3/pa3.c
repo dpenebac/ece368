@@ -176,7 +176,7 @@ void dijkstraFluff(struct Matrix* m , int src, int predecessor[], int dist[])
 {
 	int V = m->V;
 
-	int *pos = (int *)malloc(V * sizeof(int));
+	int *pos = (int *)malloc(V * sizeof(int)); //pos array of each node
 
 	// minHeap represents set E
 	struct MinHeap* minHeap = createMinHeap(V);
@@ -196,34 +196,13 @@ void dijkstraFluff(struct Matrix* m , int src, int predecessor[], int dist[])
 
 	dist[src] = 0;
 
-/*
-Instead of filling the priority queue with all nodes 
-in the initialization phase, it is also possible to 
-initialize it to contain only source; then, inside the 
-if alt < dist[v] block, the decrease_priority() 
-becomes an add_with_priority() operation if the node is 
-not already in the queue. wikipedia
-*/
+	//Putting the src node at the top
+	minHeap->array[src]->dist = 0;
+	pos[minHeap->array[src]->v] = 0;
+	pos[minHeap->array[0]->v] = src;
+	swapMinHeapNode(&minHeap->array[src], &minHeap->array[0]); //updating minheap appropriatly
 
-int i;
-//     decreaseKey(minHeap, src, dist[src]);
-//void decreaseKey(struct MinHeap* minHeap, int v, int dist)
-// Get the index of v in heap array
-
-i = pos[src];
-
-// Get the node and update its dist value
-minHeap->array[i]->dist = dist[src];
-
-//CHANGE THIS ONLY NEEDS TO SWAP SOURCE FROM BOTTOM TO TOP
-//OF MIN HEAP
-
-pos[minHeap->array[i]->v] = 0;
-pos[minHeap->array[0]->v] = i;
-
-swapMinHeapNode(&minHeap->array[i], &minHeap->array[0]);
-
-	
+	struct AdjList* adj = NULL;
 	struct AdjListNode* edge = NULL;
 	struct MinHeapNode* min = NULL;
 	
@@ -232,19 +211,13 @@ swapMinHeapNode(&minHeap->array[i], &minHeap->array[0]);
 		min = extractMinFluffy(minHeap, &pos, V); //extract min and heapify
 	
 		int vertexIdx = min->v; //corresponding vertex index based on min position
+		adj = m->list;
+		edge = adj[vertexIdx].head; //edge is used to travel across adjlist to determine new min distances
 
-		edge = m->list[vertexIdx].head; //edge is used to travel across adjlist to determine new min distances
-								  //vertex in adjList 
-								  /*example
-									vertex = 5
-									m->list[5].head
-									5->3->2->1
-									means 5 is connected to 3,2,1
-								  */
 		while (edge != NULL) //crawl until end of adjlist
 		{
 			int dest = edge->dest; //destination of edge
-			int newWeight = edge->weight + dist[vertexIdx];
+			int newWeight = edge->weight + dist[vertexIdx]; //new weight to determine if shortest
 
 			if (inQueue(minHeap, pos[dest]) && newWeight < dist[dest]) //if the new calculated distance is less than the current distance
 			{
@@ -252,7 +225,7 @@ swapMinHeapNode(&minHeap->array[i], &minHeap->array[0]);
 
 				dist[dest] = newWeight; //update new shortest path
 
-				update(minHeap, dest, dist[dest], pos[dest], &pos);
+				update(minHeap, dest, dist[dest], pos[dest], &pos); //update heap
 			}
 			edge = edge->next; //travel to next edge
 		}

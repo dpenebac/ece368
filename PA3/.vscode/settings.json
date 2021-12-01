@@ -4,7 +4,8 @@
         "array": "c",
         "random": "c",
         "limits": "c",
-        "vector": "c"
+        "vector": "c",
+        "tuple": "c"
     },
     "C_Cpp.errorSquiggles": "Enabled"
 }

@@ -6,9 +6,12 @@ OBJS = $(SRCS:%.c=%.o)
 pa3: $(OBJS) #gcc files -o name of thing
 	gcc -std=c99 -pedantic -Wvla -Wall -Wshadow -O3 pa3.c -o pa3
 
-testAll: clean test1 test2 test3 test4 testMem
+testAll: clean test1 test2 test3 test4
 
 testMem: pa3
+	valgrind -s --leak-check=full --show-leak-kinds=all --track-origins=yes ./pa3 examples/4_5.b examples/answers/4_5.t examples/answers/4_5.f examples/answers/4_5.p
+	valgrind -s --leak-check=full --show-leak-kinds=all --track-origins=yes ./pa3 examples/5_4.b examples/answers/5_4.t examples/answers/5_4.f examples/answers/5_4.p
+	valgrind -s --leak-check=full --show-leak-kinds=all --track-origins=yes ./pa3 examples/5_5.b examples/answers/5_5.t examples/answers/5_5.f examples/answers/5_5.p
 	valgrind -s --leak-check=full --show-leak-kinds=all --track-origins=yes ./pa3 examples/7_7.b examples/answers/7_7.t examples/answers/7_7.f examples/answers/7_7.p
 
 test1: pa3
