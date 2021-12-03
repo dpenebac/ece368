@@ -172,7 +172,7 @@ void dijkstraOriginal(struct Matrix* m , int src, int parent[], int dist[])
 }
 */
 
-void dijkstraFluff(struct Matrix* m , int src, int predecessor[], int distance[])
+void dijkstra(struct Matrix* m , int src, int predecessor[], int distance[])
 {
 	int V = m->V;
 
@@ -200,7 +200,7 @@ void dijkstraFluff(struct Matrix* m , int src, int predecessor[], int distance[]
 	minHeap->array[src]->dist = 0;
 	pos[minHeap->array[src]->v] = 0;
 	pos[minHeap->array[0]->v] = src;
-	swapPath(&minHeap->array[src], &minHeap->array[0]); //updating minheap appropriatly
+	swapPath(&minHeap->array[src], &minHeap->array[0]); //updating minheap appropriatly to match position
 
 	struct AdjList* adj = NULL;
 	struct AdjListNode* edge = NULL;
@@ -361,14 +361,14 @@ int main(int argc, char* argv[])
 	}
 	//printf("\n\n");
 
-	int *dist = (int*)malloc(v * sizeof(int*));
-	int *parent = (int*)malloc(v * sizeof(int*));
+	int *dist = (int*)malloc(v * sizeof(int*)); //distance of each vertex
+	int *parent = (int*)malloc(v * sizeof(int*)); //path to source 
 	
-	dijkstraFluff(m, v, parent, dist); //v is the last node which combines all the destinations
+	dijkstra(m, v, parent, dist); //v is the last node which combines all the destinations
 
 	//fastest path
 	int minidx = 0;
-	for (i = 1; i < c; i++) //finding min path index
+	for (i = 1; i < c; i++) //finding min path index by traversing across dist array
 	{
 		if (dist[i] < dist[minidx])
 		{
@@ -378,16 +378,13 @@ int main(int argc, char* argv[])
 
 	int length = 0;
 	int j = minidx;
-	//printPath(parent, minidx, &length, r, c); //NEED TO COUNT LENGTH BEFORE WRITING TO BINARY FILE DONT DELETE THIS
 
-//NOT ME BUT STILL FLUFFY I THINK
-			while (parent[j] != -1)
-			{
-				length += 1;
-				j = parent[j];
-				//printf("%d\n", parent[j]);
-			}
-//
+	//Traversing backwards to find path to parent
+	while (parent[j] != -1)
+	{
+		length += 1;
+		j = parent[j];
+	}
 
 	//writing fastest times
     FILE* fastestTimes = fopen(argv[3], "wb");
@@ -403,16 +400,16 @@ int main(int argc, char* argv[])
 	fwrite(&length, sizeof(length), 1, fastestPath);
 	writePath(parent, minidx, &length, r, c, fastestPath);
 
-	//free matrix
+	//free
 	int d;
-	for(d=0; d<m->V; d++)
+	for(d = 0; d < m->V; d++)
     {
-        struct AdjListNode *p1 = m->list[d].head, *p2;
-        while(p1)
+        struct AdjListNode *curr = m->list[d].head, *next;
+        while(curr)
         {
-              p2=p1;
-              p1=p1->next;
-              free(p2);
+              next = curr;
+              curr = curr->next;
+              free(next);
         }
     }
 
