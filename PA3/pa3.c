@@ -181,7 +181,7 @@ void dijkstra(struct Matrix* m , int src, int predecessor[], int distance[])
 	int *pos = (int *)malloc(size * sizeof(int)); //pos array of each node in PQ
 
 	// minHeap represents set E
-	struct MinHeap* minHeap = createMinHeap(size);
+	struct MinHeap* minHeap = createHeap(size);
 
 	for (i = 0; i < size; i++)
 	{
@@ -219,7 +219,7 @@ void dijkstra(struct Matrix* m , int src, int predecessor[], int distance[])
 			if (inQueue(minHeap, pos[dest]) && distance[dest] > newWeight) //if the new calculated distance is less than the current distance
 			{
 				distance[dest] = newWeight; //update new shortest path
-				
+
 				update(minHeap, dest, distance[dest], pos[dest], &pos); //update heap
 
 				predecessor[dest] = vertexIdx; //updating path for shortest parent

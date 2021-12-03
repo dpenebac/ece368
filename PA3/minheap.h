@@ -1,35 +1,27 @@
 #include <stdlib.h>
 #include <limits.h>
 
-// Structure to represent a min heap node
 struct Path
 {
 	int v;
 	int dist;
 };
 
-// Structure to represent a min heap
 struct MinHeap
 {
-	// Number of heap nodes present currently
-	int size;	
-
-	// This is needed for decreaseKey()
+	int size;
 	struct Path **array; //array of path(vertex, distance) where distance is the vertex's distance from the source
 };
 
-// A utility function to create a
-// new Min Heap Node
 struct Path* newPath(int v, int dist)
 {
 	struct Path* minHeapNode = (struct Path*)malloc(sizeof(struct Path));
 	minHeapNode->v = v;
 	minHeapNode->dist = dist;
-	return minHeapNode;
+	return(minHeapNode);
 }
 
-// A utility function to create a Min Heap
-struct MinHeap* createMinHeap(int size)
+struct MinHeap* createHeap(int size)
 {
 	struct MinHeap* minHeap = (struct MinHeap*)malloc(sizeof(struct MinHeap));
 	minHeap->array = (struct Path**)malloc(size * sizeof(struct Path*));
@@ -45,9 +37,6 @@ struct MinHeap* createMinHeap(int size)
 	return(minHeap);
 }
 
-// A utility function to swap two
-// nodes of min heap.
-// Needed for min heapify
 void swapPath(struct Path** a, struct Path** b)
 {
 	struct Path *t = *a;
@@ -155,8 +144,8 @@ void update(struct MinHeap* m, int dest, int dist, int pos, int **posArr)
 			//swap parent and child in heap
 			swapPath(&m->array[child], &m->array[Parent]);
 
-			//move to parent index
 		}
+		//move to parent index
 		i = (i - 1) / 2;
 	}
 	return;
