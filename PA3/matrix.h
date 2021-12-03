@@ -5,18 +5,18 @@
 
 struct Matrix
 {
-	int V; //size of list
+	int numVertexes;
 	struct AdjList* list; //matrix contains lists of adjacency lists which contain adjacency listnodes
 };
 
-struct Matrix* createGraph(int V)
+struct Matrix* createGraph(int numVertexes)
 {
 	struct Matrix* m = malloc(sizeof(struct Matrix));
-	m->V = V;
-	m->list = malloc(V * sizeof(struct AdjList));
+	m->numVertexes = numVertexes;
+	m->list = malloc(numVertexes * sizeof(struct AdjList));
 
     int i;
-	for (i = 0; i < V; ++i) //initializing adjlist nodes
+	for (i = 0; i < numVertexes; ++i) //initializing adjlist nodes
 	{
 		m->list[i].head = NULL;
 	}

@@ -176,7 +176,7 @@ void dijkstra(struct Matrix* m , int src, int predecessor[], int distance[])
 {
 	int size, i;
 
-	size = m->V;
+	size = m->numVertexes;
 
 	int *pos = (int *)malloc(size * sizeof(int)); //pos array of each node in PQ
 
@@ -193,8 +193,8 @@ void dijkstra(struct Matrix* m , int src, int predecessor[], int distance[])
 	//Putting the src node at the top
 	distance[src] = 0;
 	minHeap->array[src]->dist = 0;
-	pos[minHeap->array[src]->v] = 0;
-	pos[minHeap->array[0]->v] = src;
+	pos[minHeap->array[src]->vertex] = 0;
+	pos[minHeap->array[0]->vertex] = src;
 	swapPath(&minHeap->array[src], &minHeap->array[0]); //updating minheap appropriatly to match position
 
 	struct AdjList* adj = NULL;
@@ -207,7 +207,7 @@ void dijkstra(struct Matrix* m , int src, int predecessor[], int distance[])
 	{	
 		minPath = extractMin(minHeap, &pos, size); //extract min path and heapify
 	
-		vertexIdx = minPath->v; //corresponding vertex index based on minPath's vertex
+		vertexIdx = minPath->vertex; //corresponding vertex index based on minPath's vertex
 		adj = m->list;
 		edge = adj[vertexIdx].head; //edge is used to travel across adjlist to determine new min distances
 
@@ -399,7 +399,7 @@ int main(int argc, char* argv[])
 
 	//free
 	int d;
-	for(d = 0; d < m->V; d++)
+	for(d = 0; d < m->numVertexes; d++)
     {
         struct AdjListNode *curr = m->list[d].head, *next;
         while(curr)

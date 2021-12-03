@@ -3,8 +3,8 @@
 
 struct Path
 {
-	int v;
-	int dist;
+	int vertex; //target vertex
+	int dist; //distance
 };
 
 struct MinHeap
@@ -13,15 +13,15 @@ struct MinHeap
 	struct Path **array; //array of path(vertex, distance) where distance is the vertex's distance from the source
 };
 
-struct Path* newPath(int v, int dist)
+struct Path* newPath(int vertex, int dist)
 {
 	struct Path* minHeapNode = (struct Path*)malloc(sizeof(struct Path));
-	minHeapNode->v = v;
+	minHeapNode->vertex = vertex;
 	minHeapNode->dist = dist;
 	return(minHeapNode);
 }
 
-struct MinHeap* createHeap(int size)
+struct MinHeap* createHeap(int size) //create heap with all paths as INTMAX
 {
 	struct MinHeap* minHeap = (struct MinHeap*)malloc(sizeof(struct MinHeap));
 	minHeap->array = (struct Path**)malloc(size * sizeof(struct Path*));
@@ -81,8 +81,8 @@ void heapifyDown(struct MinHeap* minHeap, int idx, int **pos, int length) //down
 	if (smallest != idx)
 	{
 		//Swap nodes in positions
-		(*pos)[smallestNode->v] = idx;
-		(*pos)[idxNode->v] = smallest;
+		(*pos)[smallestNode->vertex] = idx;
+		(*pos)[idxNode->vertex] = smallest;
 
 		//Swap
 		swapPath(&minHeap->array[smallest], &minHeap->array[idx]);
@@ -108,8 +108,8 @@ struct Path* extractMin(struct MinHeap* minHeap, int **pos, int length)
 	minHeap->array[0] = lastNode;
 
 	// Update position of last node
-	(*pos)[root->v] = minHeap->size-1;
-	(*pos)[lastNode->v] = 0;
+	(*pos)[root->vertex] = minHeap->size-1;
+	(*pos)[lastNode->vertex] = 0;
 
 	// Reduce heap size and heapify root
 	minHeap->size -= 1;
@@ -135,8 +135,8 @@ void update(struct MinHeap* m, int dest, int dist, int pos, int **posArr)
 		{
 			//swap child vertex and parent vertex in position array
 			//maybe make swap function for this as well
-			childIdx = m->array[child]->v;
-			parentIdx = m->array[Parent]->v;
+			childIdx = m->array[child]->vertex;
+			parentIdx = m->array[Parent]->vertex;
 			
 			(*posArr)[childIdx] = Parent;
 			(*posArr)[parentIdx] = child;
@@ -151,7 +151,14 @@ void update(struct MinHeap* m, int dest, int dist, int pos, int **posArr)
 	return;
 }
 
-bool inQueue(struct MinHeap *m, int idx)
+bool inQueue(struct MinHeap *m, int i)
 {
-	return(idx < m->size);
+	if (i < m->size)
+	{
+		return(true);
+	}
+	else
+	{
+		return(false);
+	}
 }
