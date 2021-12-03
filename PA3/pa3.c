@@ -283,11 +283,16 @@ void writeGrid(short r, short c, short *grid, FILE* output)
 
 int main(int argc, char* argv[])
 {
+	if (argc != 5)
+	{
+		return(EXIT_FAILURE);
+	}
+
     FILE* inputGrid = fopen(argv[1], "rb");
 
     if (inputGrid == NULL)
     {
-        return EXIT_FAILURE;
+        return(EXIT_FAILURE);
     }
     
     //find size
