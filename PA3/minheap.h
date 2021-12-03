@@ -31,9 +31,9 @@ struct Path* newPath(int v, int dist)
 struct MinHeap* createMinHeap(int capacity)
 {
 	struct MinHeap* minHeap = (struct MinHeap*)malloc(sizeof(struct MinHeap));
-	minHeap->size = 0;
 	minHeap->array = (struct Path**)malloc(capacity * sizeof(struct Path*));
-	return minHeap;
+	minHeap->size = 0;
+	return(minHeap);
 }
 
 // A utility function to swap two
@@ -142,7 +142,7 @@ struct Path* extractMin(struct MinHeap* minHeap)
 	//minHeap->pos[lastNode->v] = 0;
 
 	// Reduce heap size and heapify root
-	--minHeap->size;
+	minHeap->size -= 1;
 
 	return root;
 }
