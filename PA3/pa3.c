@@ -174,29 +174,24 @@ void dijkstraOriginal(struct Matrix* m , int src, int parent[], int dist[])
 
 void dijkstra(struct Matrix* m , int src, int predecessor[], int distance[])
 {
-	int V = m->V;
+	int size, i;
 
-	int *pos = (int *)malloc(V * sizeof(int)); //pos array of each node
+	size = m->V;
+
+	int *pos = (int *)malloc(size * sizeof(int)); //pos array of each node in PQ
 
 	// minHeap represents set E
-	struct MinHeap* minHeap = createMinHeap(V);
+	struct MinHeap* minHeap = createMinHeap(size);
 
-    int v;
-	for (v = 0; v < V; ++v)
+	for (i = 0; i < size; i++)
 	{
-		if (v != src)
-		{
-			distance[v] = INT_MAX;
-		}
-		minHeap->array[v] = newPath(v, INT_MAX);
-		pos[v] = v;
-		minHeap->size += 1;
-		predecessor[v] = -1;
+		distance[i] = INT_MAX;
+		predecessor[i] = -1;
+		pos[i] = i;
 	}
 
-	distance[src] = 0;
-
 	//Putting the src node at the top
+	distance[src] = 0;
 	minHeap->array[src]->dist = 0;
 	pos[minHeap->array[src]->v] = 0;
 	pos[minHeap->array[0]->v] = src;
@@ -205,27 +200,29 @@ void dijkstra(struct Matrix* m , int src, int predecessor[], int distance[])
 	struct AdjList* adj = NULL;
 	struct AdjListNode* edge = NULL;
 	struct Path* minPath = NULL;
+
+	int vertexIdx, dest, newWeight;
 	
 	while (!(isEmpty(minHeap)))
 	{	
-		minPath = extractMinFluffy(minHeap, &pos, V); //extract min path and heapify
+		minPath = extractMin(minHeap, &pos, size); //extract min path and heapify
 	
-		int vertexIdx = minPath->v; //corresponding vertex index based on minPath's vertex
+		vertexIdx = minPath->v; //corresponding vertex index based on minPath's vertex
 		adj = m->list;
 		edge = adj[vertexIdx].head; //edge is used to travel across adjlist to determine new min distances
 
 		while (edge != NULL) //crawl until end of adjlist
 		{
-			int dest = edge->dest; //destination of edge
-			int newWeight = edge->weight + distance[vertexIdx]; //new weight to determine if shortest
+			dest = edge->dest; //destination of edge
+			newWeight = edge->weight + distance[vertexIdx]; //new weight to determine if shortest
 
-			if (inQueue(minHeap, pos[dest]) && newWeight < distance[dest]) //if the new calculated distance is less than the current distance
+			if (inQueue(minHeap, pos[dest]) && distance[dest] > newWeight) //if the new calculated distance is less than the current distance
 			{
-				predecessor[dest] = vertexIdx; //updating path for shortest parent
-
 				distance[dest] = newWeight; //update new shortest path
-
+				
 				update(minHeap, dest, distance[dest], pos[dest], &pos); //update heap
+
+				predecessor[dest] = vertexIdx; //updating path for shortest parent
 			}
 			edge = edge->next; //travel to next edge
 		}
@@ -313,7 +310,7 @@ int main(int argc, char* argv[])
     writeGrid(r, c, grid, inputGridTxt);
     //printGrid(r, c, grid);
 
-    //Finding all paths
+	//Finding all paths
 	//make graph from matrix
 	int v;
 	v = r * c; //vertices, +2 is for Start and End

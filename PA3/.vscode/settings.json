@@ -5,7 +5,8 @@
         "random": "c",
         "limits": "c",
         "vector": "c",
-        "tuple": "c"
+        "tuple": "c",
+        "iterator": "c"
     },
     "C_Cpp.errorSquiggles": "Enabled"
 }

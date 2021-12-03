@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <limits.h>
 
 // Structure to represent a min heap node
 struct Path
@@ -28,11 +29,19 @@ struct Path* newPath(int v, int dist)
 }
 
 // A utility function to create a Min Heap
-struct MinHeap* createMinHeap(int capacity)
+struct MinHeap* createMinHeap(int size)
 {
 	struct MinHeap* minHeap = (struct MinHeap*)malloc(sizeof(struct MinHeap));
-	minHeap->array = (struct Path**)malloc(capacity * sizeof(struct Path*));
+	minHeap->array = (struct Path**)malloc(size * sizeof(struct Path*));
 	minHeap->size = 0;
+
+	int i;
+	for (i = 0; i < size; i++)
+	{
+		minHeap->array[i] = newPath(i, INT_MAX);
+		minHeap->size += 1;
+	}
+
 	return(minHeap);
 }
 
@@ -59,9 +68,10 @@ bool isEmpty(struct MinHeap* m)
 	}
 }
 
-void minHeapifyFluffy(struct MinHeap* minHeap, int idx, int **pos, int length) //i think this is downward heapify
+void heapifyDown(struct MinHeap* minHeap, int idx, int **pos, int length) //downward heapify
 {
 	int smallest, left, right;
+	struct Path *smallestNode, *idxNode;
 	smallest = idx;
 	left = 2 * idx + 1;
 	right = 2 * idx + 2;
@@ -76,28 +86,25 @@ void minHeapifyFluffy(struct MinHeap* minHeap, int idx, int **pos, int length) /
 		smallest = right;
 	}
 
+	smallestNode = minHeap->array[smallest];
+	idxNode = minHeap->array[idx];
+
 	if (smallest != idx)
 	{
-		// The nodes to be swapped in min heap
-		struct Path *smallestNode;
-		struct Path *idxNode;
-
-		smallestNode = minHeap->array[smallest];
-		idxNode = minHeap->array[idx];
-
-		// Swap positions
+		//Swap nodes in positions
 		(*pos)[smallestNode->v] = idx;
 		(*pos)[idxNode->v] = smallest;
 
-		// Swap nodes
+		//Swap
 		swapPath(&minHeap->array[smallest], &minHeap->array[idx]);
 
-		minHeapifyFluffy(minHeap, smallest, pos, length);
+		//maintain heap
+		heapifyDown(minHeap, smallest, pos, length);
 	}
 	return;
 }
 
-struct Path* extractMinFluffy(struct MinHeap* minHeap, int **pos, int length)
+struct Path* extractMin(struct MinHeap* minHeap, int **pos, int length)
 {	
 	if (minHeap->size == 0)
 	{
@@ -118,64 +125,37 @@ struct Path* extractMinFluffy(struct MinHeap* minHeap, int **pos, int length)
 	// Reduce heap size and heapify root
 	minHeap->size -= 1;
 
-	minHeapifyFluffy(minHeap, 0, pos, length); 
-
-	return root;
-}
-
-struct Path* extractMin(struct MinHeap* minHeap)
-{
-	if (minHeap->size == 0)
-	{
-		return NULL;
-	}
-
-	// Store the root node
-	struct Path* root = minHeap->array[0];
-
-	// Replace root node with last node
-	struct Path* lastNode = minHeap->array[minHeap->size - 1];
-	minHeap->array[0] = lastNode;
-
-	// Update position of last node
-	//minHeap->pos[root->v] = minHeap->size-1;
-	//minHeap->pos[lastNode->v] = 0;
-
-	// Reduce heap size and heapify root
-	minHeap->size -= 1;
+	heapifyDown(minHeap, 0, pos, length); 
 
 	return root;
 }
 
 void update(struct MinHeap* m, int dest, int dist, int pos, int **posArr)
 {
-	int i = pos;
+	int Parent, child, i, childIdx, parentIdx;
+	i = pos;
 
 	m->array[i]->dist = dist;
 
 	while (i > 0)
 	{
-		int Parent = (i - 1) / 2;
-		int child = i;
+		Parent = (i - 1) / 2;
+		child = i;
 
 		if (m->array[child]->dist < m->array[Parent]->dist) //heapify and update position array accordingly
 		{
 			//swap child vertex and parent vertex in position array
 			//maybe make swap function for this as well
-			int childIdx = m->array[child]->v;
-			int parentIdx = m->array[Parent]->v;
-			//swap(minHeap->pos, childIdx, parentIdx);
+			childIdx = m->array[child]->v;
+			parentIdx = m->array[Parent]->v;
+			
 			(*posArr)[childIdx] = Parent;
 			(*posArr)[parentIdx] = child;
-			
-			//minHeap->pos[childIdx] = Parent;
-			//minHeap->pos[parentIdx] = child;
-			
 
 			//swap parent and child in heap
 			swapPath(&m->array[child], &m->array[Parent]);
 
-			// move to parent index
+			//move to parent index
 		}
 		i = (i - 1) / 2;
 	}
@@ -186,55 +166,3 @@ bool inQueue(struct MinHeap *m, int idx)
 {
 	return(idx < m->size);
 }
-
-// Function to decrease dist value
-// of a given vertex v. This function
-// uses pos[] of min heap to get the
-// current index of node in min heap
-/*
-void decreaseKey(struct MinHeap* minHeap, int v, int dist)
-{
-	// Get the index of v in heap array
-	int i = minHeap->pos[v];
-
-	// Get the node and update its dist value
-	minHeap->array[i]->dist = dist;
-
-	// Travel up while the complete
-	// tree is not hepified.
-	// This is a O(Logn) loop
-	while (i > 0)
-	{
-		if (minHeap->array[i]->dist < minHeap->array[(i - 1) / 2]->dist) //heapify and update position array accordingly
-		{
-			// Swap this node with its parent
-			int parent = (i - 1) / 2;
-			int child = i;
-
-			//swap child vertex and parent vertex in position array
-			//minHeap->pos[minHeap->array[child]->v] = parent;
-			//minHeap->pos[minHeap->array[parent]->v] = child;
-
-			//swap parent and child in heap
-			swapMinHeapNode(&minHeap->array[i], &minHeap->array[(i - 1) / 2]);
-
-			// move to parent index
-		}
-		i = (i - 1) / 2;
-	}
-	return;
-}
-
-
-// A utility function to check if a given vertex
-// 'v' is in min heap or not
-bool isInMinHeap(struct MinHeap *minHeap, int v)
-{
-	if (minHeap->pos[v] < minHeap->size)
-	{
-		return true;
-	}
-
-	return false;
-}
-*/
