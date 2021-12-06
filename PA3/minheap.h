@@ -59,28 +59,48 @@ bool isEmpty(struct MinHeap* m)
 
 void heapifyDown(struct MinHeap* minHeap, int idx, int **pos, int length) //downward heapify
 {
-	int smallest, left, right;
+	int smallest, leftChild, rightChild;
 	struct Path *smallestNode, *idxNode;
 	smallest = idx;
-	left = 2 * idx + 1;
-	right = 2 * idx + 2;
+	leftChild = 2 * idx + 1;
+	rightChild = 2 * idx + 2;
 
-	if (left < minHeap->size && minHeap->array[left]->dist < minHeap->array[smallest]->dist)
+	int size = minHeap->size;
+	int smallestDist = minHeap->array[smallest]->dist;
+
+	if (leftChild < size && minHeap->array[leftChild]->dist < smallestDist)
 	{
-		smallest = left;
+		if (minHeap->array[leftChild]->dist < smallestDist)
+		{
+			smallest = leftChild;
+		}
+		else
+		{
+			smallest = idx;
+		}
 	}
 
-	if (right < minHeap->size && minHeap->array[right]->dist < minHeap->array[smallest]->dist)
+	int newIdx = smallest;
+	smallestDist = minHeap->array[smallest]->dist;
+	if (rightChild < minHeap->size)
 	{
-		smallest = right;
+		if (minHeap->array[rightChild]->dist < smallestDist)
+		{
+			smallest = rightChild;
+		}
+		else
+		{
+			smallest = newIdx;
+		}
 	}
 
+	//nodes to swap
 	smallestNode = minHeap->array[smallest];
 	idxNode = minHeap->array[idx];
 
 	if (smallest != idx)
 	{
-		//Swap nodes in positions
+		//Swap nodes in positions array
 		(*pos)[smallestNode->vertex] = idx;
 		(*pos)[idxNode->vertex] = smallest;
 
@@ -104,11 +124,12 @@ struct Path* extractMin(struct MinHeap* minHeap, int **pos, int length)
 	struct Path* root = minHeap->array[0];
 
 	// Replace root node with last node
-	struct Path* lastNode = minHeap->array[minHeap->size - 1];
+	int lastPos = minHeap->size - 1;
+	struct Path* lastNode = minHeap->array[lastPos];
 	minHeap->array[0] = lastNode;
 
 	// Update position of last node
-	(*pos)[root->vertex] = minHeap->size-1;
+	(*pos)[root->vertex] = lastPos;
 	(*pos)[lastNode->vertex] = 0;
 
 	// Reduce heap size and heapify root

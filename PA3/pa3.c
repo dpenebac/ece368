@@ -48,130 +48,6 @@ void writePath(int parent[], int j, int *length, int r, int c, FILE* output)
 	*length += 1;
 }
 
-// The main function that calculates
-// distances of shortest paths from src to all
-// vertices. It is a O(ELogV) function
-/*
-void dijkstra(struct Matrix* m , int src, int parent[], int dist[])
-{
-	int V = m->V;
-
-	// minHeap represents set E
-	struct MinHeap* minHeap = createMinHeap(V);
-
-    int v;
-	for (v = 0; v < V; ++v)
-	{
-		dist[v] = INT_MAX;
-		minHeap->array[v] = newMinHeapNode(v, INT_MAX);
-		minHeap->pos[v] = v;
-		parent[v] = -1;
-	}
-
-	dist[src] = 0;
-	decreaseKey(minHeap, src, dist[src]);
-
-	minHeap->size = V;
-	
-	struct AdjListNode* edge = NULL;
-
-	struct MinHeapNode* min = NULL;
-	while (minHeap->size != 0)
-	{
-		min = extractMin(minHeap); //extract root which should be min distance from srcs
-								   //extract min is based on distance
-		minHeapify(minHeap, 0); //heapify
-	
-		int vertex = min->v; //corresponding vertex based on min position
-
-		edge = m->list[vertex].head; //edge is used to travel across adjlist to determine new min distances
-		while (edge != NULL) //crawl until end of adjlist
-		{
-			int dest = edge->dest; //destination of edge
-			int newWeight = edge->weight + dist[vertex];
-
-			if (newWeight < dist[dest]) //if the new calculated distance is less than the current distance
-			{
-				parent[dest] = vertex; //updating path for shortest parent
-
-				dist[dest] = newWeight; //update new shortest path
-
-				decreaseKey(minHeap, dest, dist[dest]); //update distance in minheap and heapify
-			}
-			edge = edge->next; //travel to next edge
-		}
-		free(min); //extracted root is now free
-	}
-
-    free(minHeap->pos);
-    free(minHeap->array);
-    free(minHeap);	
-
-	return;
-}
-
-void dijkstraOriginal(struct Matrix* m , int src, int parent[], int dist[])
-{
-	int V = m->V;
-
-	// minHeap represents set E
-	struct MinHeap* minHeap = createMinHeap(V);
-
-    int v;
-	for (v = 0; v < V; ++v)
-	{
-		dist[v] = INT_MAX;
-		minHeap->array[v] = newMinHeapNode(v, INT_MAX);
-		minHeap->pos[v] = v;
-		parent[v] = -1;
-	}
-
-	dist[src] = 0;
-	decreaseKey(minHeap, src, dist[src]);
-
-	minHeap->size = V;
-	
-	struct AdjListNode* edge = NULL;
-
-	struct MinHeapNode* min = NULL;
-	while (minHeap->size != 0)
-	{
-		min = extractMin(minHeap); //extract root which should be min distance from srcs
-		//extract min is based on distance
-		minHeapify(minHeap,0);
-	
-		int vertex = min->v; //corresponding vertex based on min position
-
-		edge = m->list[vertex].head; //pointer crawl is used to travel across adjlist to determine new min distances
-		while (edge != NULL) //crawl until end of adjlist
-		{
-			int dest = edge->dest; //destination of edge
-			int weight = edge->weight; //weight of edge
-
-			if (  (minHeap->pos[dest] < minHeap->size) //not sure why this is necessary
-			   && (dist[vertex] != INT_MAX) //distance of source -> minVertex is not inf
-			   && (weight + dist[vertex] < dist[dest]) //if the new calculated weight is less than the current weight
-			   )
-			{
-				parent[dest] = vertex;
-
-				dist[dest] = dist[vertex] + weight;
-
-				decreaseKey(minHeap, dest, dist[dest]);
-			}
-			edge = edge->next; //travel to next edge
-		}
-		free(min);
-	}
-
-    free(minHeap->pos);
-    free(minHeap->array);
-    free(minHeap);	
-
-	return;
-}
-*/
-
 void dijkstra(struct Matrix* m , int src, int predecessor[], int distance[])
 {
 	int size, i;
@@ -312,6 +188,10 @@ int main(int argc, char* argv[])
 
     //write grid in text formatting to file
     FILE* inputGridTxt = fopen(argv[2], "w");
+	if (inputGridTxt == NULL)
+	{
+		return EXIT_FAILURE;
+	}
     writeGrid(r, c, grid, inputGridTxt);
     //printGrid(r, c, grid);
 
@@ -390,6 +270,10 @@ int main(int argc, char* argv[])
 
 	//writing fastest times
     FILE* fastestTimes = fopen(argv[3], "wb");
+	if (fastestTimes == NULL)
+	{
+		return EXIT_FAILURE;
+	}
 	fwrite(&c, sizeof(c), 1, fastestTimes);
 	for (i = 0; i < c; i++)
 	{
@@ -398,6 +282,10 @@ int main(int argc, char* argv[])
 	
 	//writing fastest path
     FILE* fastestPath = fopen(argv[4], "wb");
+	if (fastestPath == NULL)
+	{
+		return EXIT_FAILURE;
+	}
 	fwrite(&dist[minidx], sizeof(dist[minidx]), 1, fastestPath);
 	fwrite(&length, sizeof(length), 1, fastestPath);
 	writePath(parent, minidx, &length, r, c, fastestPath);
