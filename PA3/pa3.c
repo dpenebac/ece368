@@ -42,7 +42,7 @@ void writePath(int parent[], int j, int *length, int r, int c, FILE* output)
 
 	short col2 = col;
 
-	printf("%d %d\n", row, col);
+	//printf("%d %d\n", row, col);
 	fwrite(&row, sizeof(short), 1, output);
 	fwrite(&col2, sizeof(short), 1, output);
 
