@@ -38,6 +38,12 @@ test4: pa3
 	diff examples/answers/7_7.f examples/7_7.f
 	diff examples/answers/7_7.p examples/7_7.p
 	
+testTest: pa3
+	gcc -std=c99 -pedantic -Wvla -Wall -Wshadow -O3 maketest.c -o test
+	./test
+	./pa3 examples/test.b examples/answers/test.t examples/answers/test.f examples/answers/test.p
+	valgrind ./pa3 examples/test.b examples/answers/test.t examples/answers/test.f examples/answers/test.p
+
 
 clean: # remove all machine generated files
 	rm -f pa4 *.o output?
