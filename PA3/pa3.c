@@ -30,8 +30,8 @@ void writePath(int parent[], int j, int *length, int r, int c, FILE* output)
 
 	//NEED TO CHANGE THIS TO SOMETHING ELSE
 	//j is the (x,y) position, need to translate to r = x, c = y
-		short col = j;
-		while (col > c)
+		int col = j;
+		while (col > c && (col - c >= 0))
 		{
 			col -= c;
 		}
@@ -40,10 +40,11 @@ void writePath(int parent[], int j, int *length, int r, int c, FILE* output)
 			col = 0;
 		}
 
-	//printf("%d %d\n", row, col);
+	short col2 = col;
+
+	printf("%d %d\n", row, col);
 	fwrite(&row, sizeof(short), 1, output);
-	fwrite(&col, sizeof(short), 1, output);
-	//printf("%d, %d\n", row, col);
+	fwrite(&col2, sizeof(short), 1, output);
 
     writePath(parent, parent[j], length, r, c, output);
 	*length += 1;
@@ -253,7 +254,7 @@ int main(int argc, char* argv[])
 	int minidx = 0;
 	for (i = 1; i < c; i++) //finding min path index by traversing across dist array
 	{
-		if (dist[i] < dist[minidx])
+		if (dist[i] <= dist[minidx])
 		{
 			minidx = i;
 		}

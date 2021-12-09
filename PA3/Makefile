@@ -44,6 +44,5 @@ testTest: pa3
 	./pa3 examples/test.b examples/answers/test.t examples/answers/test.f examples/answers/test.p
 	valgrind ./pa3 examples/test.b examples/answers/test.t examples/answers/test.f examples/answers/test.p
 
-
 clean: # remove all machine generated files
 	rm -f pa4 *.o output?

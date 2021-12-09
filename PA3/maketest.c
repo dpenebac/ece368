@@ -16,11 +16,11 @@ int main()
     int i;
     for (i = 0; i < row * col; i++)
     {
-        short l = i;
+        short l = row + col;
         fwrite(&l, sizeof(l), 1, f);
     }
 
-    
+    fclose(f);
 
     return EXIT_SUCCESS;
 }
