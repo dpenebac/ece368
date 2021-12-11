@@ -44,5 +44,14 @@ testTest: pa3
 	./pa3 examples/test.b examples/answers/test.t examples/answers/test.f examples/answers/test.p
 	valgrind ./pa3 examples/test.b examples/answers/test.t examples/answers/test.f examples/answers/test.p
 
+testNew: pa3
+	valgrind ./pa3 tcs/10_10.b tcs/10_10.t tcs/10_10.f tcs/10_10.p
+	valgrind ./pa3 tcs/20_20.b tcs/20_20.t tcs/20_20.f tcs/20_20.p
+	valgrind ./pa3 tcs/30_30.b tcs/30_30.t tcs/30_30.f tcs/30_30.p
+	valgrind ./pa3 tcs/1K_1K.b tcs/1K_1K.t tcs/1K_1K.f tcs/1K_1K.p
+
+testTime: pa3
+	time ./pa3 tcs/1K_1K.b tcs/1K_1K.t tcs/1K_1K.f tcs/1K_1K.p
+
 clean: # remove all machine generated files
 	rm -f pa4 *.o output?
